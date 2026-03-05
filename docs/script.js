@@ -42,78 +42,78 @@ const PRESETS = {
 
 const ARCH_DETAILS = {
   ingestion: {
-    title: "Traffic ingestion and context capture",
-    text: "Stream network telemetry and function-level events into the SIF pipeline while preserving cloud-origin metadata for policy-aware analysis.",
+    title: "OSINT aggregation and telemetry intake (Research-3 unique)",
+    text: "Research-3 starts with a dual-source intake path: runtime network telemetry plus REST API open-source intelligence. This replaces static-only context from earlier stages with continuously refreshed threat evidence.",
     bullets: [
-      "Collect flow features and invocation metadata.",
-      "Attach provider, identity, and tenancy context.",
-      "Forward normalized records into AI detection pipelines.",
+      "Collect flow features, identity context, and tenant metadata from protected assets.",
+      "Query and normalize indicators from MISP, AlienVault OTX, and VirusTotal.",
+      "Attach source confidence and freshness score before model-stage fusion.",
     ],
   },
   feature: {
-    title: "Feature engineering and fusion",
-    text: "Apply data cleaning, normalization, temporal sequencing, and threat-intel enrichment so Research-1/Research-2 lineage can be fused into Research-3 runtime scoring.",
+    title: "Research-1 + Research-2 feature bridge",
+    text: "The bridge layer unifies Research-1 LSTM-style sequence evidence and Research-2 hybrid cross-cloud signals into a single Research-3 feature contract used by the autonomous core.",
     bullets: [
-      "Run preprocessing, deduplication, and anomaly correction.",
-      "Pull REST API threat-intel indicators and normalize confidence values.",
-      "Map each event into behavior, anomaly, identity, and intel feature groups.",
+      "Transform events into behavior, anomaly, identity, policy-drift, and OSINT dimensions.",
+      "Preserve cross-cloud portability through a normalized event schema.",
+      "Feed lineage-compatible vectors into adaptive policy scoring.",
     ],
   },
   detection: {
-    title: "Threat detection across two model generations",
-    text: "Run baseline lineage models and the Research-3 adaptive scoring layer, then reconcile confidence with federated policy thresholds.",
+    title: "Autonomous learning core (ASLF-OSINT)",
+    text: "Research-3 introduces a five-track learning core that continuously tunes decision behavior based on live intelligence and feedback from super and tenant operations.",
     bullets: [
-      "Compute explainable contributions for each risk dimension.",
-      "Compare confidence against allow/challenge/block thresholds.",
-      "Emit deterministic decision payload for orchestration.",
+      "Combine PPO, continual drift adaptation, meta-learning, transfer learning, and federated aggregation.",
+      "Calculate composite risk with explainable dimension-level contributions.",
+      "Emit deterministic allow/challenge/block payloads for enforcement.",
     ],
   },
   orchestration: {
-    title: "Cross-cloud serverless orchestration",
-    text: "Invoke cloud-native handlers for AWS, Azure, and GCP using normalized events so mitigation logic remains consistent and auditable.",
+    title: "Super-control and tenant compact federation",
+    text: "This is the main Research-3 architectural novelty: provider-level super control governs policy/version lifecycle, while tenant compact subsystems keep local protection active and synchronized.",
     bullets: [
-      "Dispatch BLOCK/CHALLENGE/ALLOW actions per provider.",
-      "Coordinate event buses and function triggers.",
-      "Persist execution telemetry with latency and cost metadata.",
+      "Super control creates tenant accounts, publishes upgrades, and monitors global posture.",
+      "Tenant subsystems protect local networks/cloud assets even during temporary super-control outage.",
+      "Synchronization loops propagate upgrades and return telemetry for global adaptation.",
     ],
   },
   policy: {
-    title: "Unified zero-trust policy enforcement",
-    text: "Use a policy decision layer to validate identity and context for every request, ensuring consistent governance across providers.",
+    title: "Federated zero-trust response mesh",
+    text: "The response layer enforces policy decisions across AWS, Azure, GCP, and private federation nodes under strict identity and scope checks.",
     bullets: [
-      "Evaluate policy-as-code rules and identity claims.",
-      "Enforce least-privilege access at runtime.",
-      "Propagate policy updates with low delay and high consistency.",
+      "Evaluate policy-as-code with role, tenant, and identity confidence controls.",
+      "Map decisions to provider-native enforcement actions with audit visibility.",
+      "Maintain high policy consistency through federated update convergence.",
     ],
   },
 };
 
 const ARCH_MODE_DETAILS = {
   logical: {
-    title: "Logical architecture view",
-    text: "The system is organized into independent logical layers so data ingestion, detection quality, and policy governance can evolve without tightly coupled rewrites.",
+    title: "Logical lineage view",
+    text: "Research-3 uses a three-tier logical stack: prior-model lineage layer (Research-1/Research-2), autonomous intelligence layer (ASLF-OSINT core), and super-tenant governance layer.",
     bullets: [
-      "Layered separation keeps architecture maintainable.",
-      "Detection model upgrades do not break policy engine logic.",
-      "Unified policy remains central while execution stays distributed.",
+      "Research-1 and Research-2 components are preserved as input lineage, not discarded.",
+      "Autonomous learning core manages adaptation and decision synthesis.",
+      "Super control governs platform-wide policy while tenant nodes keep local autonomy.",
     ],
   },
   dataflow: {
-    title: "Data-flow architecture view",
-    text: "Events move through a closed-loop path: telemetry capture, feature preparation, hybrid model scoring, policy evaluation, and response actuation with audit feedback.",
+    title: "Data-flow adaptation loop",
+    text: "Research-3 dataflow is a closed adaptive loop: telemetry + OSINT intake, lineage-aware feature bridge, autonomous scoring, federated enforcement, and feedback synchronization.",
     bullets: [
-      "Context-rich records are normalized before inference.",
-      "Model outputs are converted into deterministic action payloads.",
-      "Each decision writes back to telemetry for continual tuning.",
+      "Live OSINT is fused with runtime events before inference.",
+      "Decision payloads are enforced at tenant edge and cloud runtime.",
+      "Super-control analytics continuously recalibrate model and policy bundles.",
     ],
   },
   deployment: {
-    title: "Deployment architecture view",
-    text: "Runtime execution is cloud-distributed while policy intelligence stays unified. This enables provider resilience with consistent identity and access controls.",
+    title: "Deployment governance view",
+    text: "Research-3 deploys as provider-operated multi-tenant security service: one super control plane and many tenant compact subsystems across cloud and local environments.",
     bullets: [
-      "AWS, Azure, and GCP handlers share a common event contract.",
-      "Control plane enforces zero-trust parity across clouds.",
-      "Failover keeps policy behavior stable during provider shifts.",
+      "AWS, Azure, GCP, and private nodes receive unified policy semantics.",
+      "Tenant-local enforcement reduces hard dependency on central uptime.",
+      "Auto-upgrade sync keeps all tenants aligned with newest secured release.",
     ],
   },
 };
