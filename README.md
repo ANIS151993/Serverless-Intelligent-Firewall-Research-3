@@ -44,8 +44,18 @@ This repository is the combined and extended Research-3 artifact built from the 
 cd /path/to/Serverless-Intelligent-Firewall-Research-3
 PYTHONPATH=src python3 run_firewall.py evaluate --event examples/events/benign.json
 bash scripts/run_tests.sh
+export ASLF_SUPER_ADMIN_USER=admin
+export ASLF_SUPER_ADMIN_PASS='change-me-now'
+export ASLF_JWT_SECRET='replace-with-strong-secret'
 python3 run_control_api.py --host 0.0.0.0 --port 9000
 ```
+
+Auth and streaming endpoints:
+
+- `POST /auth/super/login`
+- `POST /auth/tenant/login`
+- `GET /ws/super?token=<jwt>`
+- `GET /ws/tenant/<tenant_id>?token=<jwt>`
 
 ## Rebuild encrypted artifacts
 

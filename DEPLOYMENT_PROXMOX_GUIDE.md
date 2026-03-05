@@ -27,6 +27,9 @@ Set optional threat-intel API keys:
 export ABUSEIPDB_API_KEY="<key>"
 export OTX_API_KEY="<key>"
 export SIF_DRY_RUN=false
+export ASLF_SUPER_ADMIN_USER=admin
+export ASLF_SUPER_ADMIN_PASS='change-me-now'
+export ASLF_JWT_SECRET='replace-with-strong-entropy-secret'
 ```
 
 ## 4. Validate before service mode
@@ -44,6 +47,8 @@ python3 run_control_api.py --host 0.0.0.0 --port 9000
 
 Main endpoints:
 - `GET /health`
+- `POST /auth/super/login`
+- `POST /auth/tenant/login`
 - `POST /super/tenants`
 - `POST /super/tenants/{tenant_id}/assets`
 - `GET /super/dashboard`
@@ -51,6 +56,8 @@ Main endpoints:
 - `POST /tenant/{tenant_id}/events`
 - `GET /tenant/{tenant_id}/dashboard`
 - `POST /tenant/{tenant_id}/sync`
+- `GET /ws/super?token=<jwt>`
+- `GET /ws/tenant/{tenant_id}?token=<jwt>`
 
 ## 6. Systemd service
 

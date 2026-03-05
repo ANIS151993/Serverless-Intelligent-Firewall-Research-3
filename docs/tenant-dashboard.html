@@ -39,9 +39,18 @@
           <input id="tenantApiBaseInput" type="text" value="http://127.0.0.1:9000" placeholder="http://127.0.0.1:9000">
         </label>
         <label class="field-inline">
+          Tenant JWT
+          <input id="tenantJwtInput" type="text" placeholder="Paste tenant Bearer token">
+        </label>
+        <label class="field-inline">
           Tenant ID
           <input id="tenantIdInput" type="text" value="tenant-demo" placeholder="tenant-xxxxxx">
         </label>
+        <label class="field-inline">
+          Tenant API token
+          <input id="tenantApiTokenInput" type="password" placeholder="tenant bootstrap API token">
+        </label>
+        <button class="btn btn-secondary" type="button" id="tenantLoginBtn">Tenant login</button>
         <button class="btn btn-primary" type="button" id="refreshTenantBtn">Refresh tenant dashboard</button>
         <span class="status-chip" id="tenantModeChip">Mode: demo</span>
       </div>

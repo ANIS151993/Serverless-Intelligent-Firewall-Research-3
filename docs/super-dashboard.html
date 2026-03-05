@@ -39,6 +39,19 @@
           API base URL
           <input id="apiBaseInput" type="text" value="http://127.0.0.1:9000" placeholder="http://127.0.0.1:9000">
         </label>
+        <label class="field-inline">
+          Super JWT
+          <input id="superJwtInput" type="text" placeholder="Paste Bearer token or login below">
+        </label>
+        <label class="field-inline">
+          Admin username
+          <input id="superUserInput" type="text" value="admin" placeholder="admin">
+        </label>
+        <label class="field-inline">
+          Admin password
+          <input id="superPassInput" type="password" placeholder="******">
+        </label>
+        <button class="btn btn-secondary" type="button" id="superLoginBtn">Login</button>
         <button class="btn btn-primary" type="button" id="refreshSuperBtn">Refresh dashboard</button>
         <span class="status-chip" id="superModeChip">Mode: demo</span>
       </div>

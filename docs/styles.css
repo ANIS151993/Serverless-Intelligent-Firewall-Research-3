@@ -1826,7 +1826,7 @@ body.gate-locked {
   box-shadow: var(--shadow-sm);
   display: grid;
   gap: 10px;
-  grid-template-columns: 1.2fr 1.2fr auto auto;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   align-items: end;
 }
 

@@ -11,10 +11,18 @@ function toggleNav() {
 
 async function fetchJson(url, options = {}) {
   const response = await fetch(url, options);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
+  const text = await response.text();
+  let payload;
+  try {
+    payload = text ? JSON.parse(text) : {};
+  } catch {
+    payload = { raw: text };
   }
-  return response.json();
+  if (!response.ok) {
+    const err = payload?.error || `HTTP ${response.status}`;
+    throw new Error(err);
+  }
+  return payload;
 }
 
 function createChart(id, config) {
@@ -26,6 +34,26 @@ function createChart(id, config) {
     return null;
   }
   return new Chart(node, config);
+}
+
+function authHeaders(token) {
+  if (!token) {
+    return { "Content-Type": "application/json" };
+  }
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+function toWsUrl(baseUrl, path, token) {
+  const clean = (baseUrl || "").trim().replace(/\/$/, "");
+  if (!clean) {
+    return "";
+  }
+  const wsBase = clean.replace(/^http:\/\//i, "ws://").replace(/^https:\/\//i, "wss://");
+  const q = token ? `?token=${encodeURIComponent(token)}` : "";
+  return `${wsBase}${path}${q}`;
 }
 
 function demoSuperDashboard() {
@@ -89,7 +117,6 @@ function demoTenantDashboard(tenantId) {
     tenant: {
       tenant_id: tenantId,
       organization_name: "Demo Enterprise",
-      assets: [],
       event_count: ts.length,
       avg_risk_score: 41.5,
     },
@@ -133,6 +160,8 @@ function demoTenantDashboard(tenantId) {
 
 let superCharts = [];
 let tenantCharts = [];
+let superSocket = null;
+let tenantSocket = null;
 
 function destroyCharts(list) {
   list.forEach((chart) => {
@@ -212,22 +241,103 @@ function renderSuperDashboard(data) {
   );
 }
 
-async function loadSuperDashboard() {
+function closeSuperSocket() {
+  if (superSocket && superSocket.readyState <= 1) {
+    superSocket.close();
+  }
+  superSocket = null;
+}
+
+function openSuperSocket() {
   const base = (byId("apiBaseInput")?.value || "").trim().replace(/\/$/, "");
+  const token = (byId("superJwtInput")?.value || "").trim();
+  const modeChip = byId("superModeChip");
+  if (!base || !token) {
+    return;
+  }
+
+  closeSuperSocket();
+  const url = toWsUrl(base, "/ws/super", token);
+  try {
+    superSocket = new WebSocket(url);
+  } catch {
+    return;
+  }
+
+  superSocket.onopen = () => {
+    modeChip.textContent = "Mode: live API + WebSocket";
+  };
+
+  superSocket.onmessage = (event) => {
+    try {
+      const parsed = JSON.parse(event.data);
+      if (parsed.type === "super_dashboard") {
+        renderSuperDashboard(parsed.payload || {});
+      }
+    } catch {
+      // Ignore malformed messages.
+    }
+  };
+
+  superSocket.onerror = () => {
+    modeChip.textContent = "Mode: live API (WS error)";
+  };
+}
+
+async function loginSuperAdmin() {
+  const base = (byId("apiBaseInput")?.value || "").trim().replace(/\/$/, "");
+  const username = (byId("superUserInput")?.value || "").trim();
+  const password = byId("superPassInput")?.value || "";
   const modeChip = byId("superModeChip");
 
+  if (!base || !username || !password) {
+    modeChip.textContent = "Mode: missing credentials";
+    return;
+  }
+
   try {
-    const data = await fetchJson(`${base}/super/dashboard`);
-    modeChip.textContent = "Mode: live API";
-    renderSuperDashboard(data);
-  } catch {
+    const result = await fetchJson(`${base}/auth/super/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    byId("superJwtInput").value = result.token || "";
+    modeChip.textContent = "Mode: authenticated";
+    await loadSuperDashboard();
+  } catch (error) {
+    modeChip.textContent = `Mode: login failed (${error.message})`;
+  }
+}
+
+async function loadSuperDashboard() {
+  const base = (byId("apiBaseInput")?.value || "").trim().replace(/\/$/, "");
+  const token = (byId("superJwtInput")?.value || "").trim();
+  const modeChip = byId("superModeChip");
+
+  if (!base || !token) {
     modeChip.textContent = "Mode: demo";
     renderSuperDashboard(demoSuperDashboard());
+    closeSuperSocket();
+    return;
+  }
+
+  try {
+    const data = await fetchJson(`${base}/super/dashboard`, {
+      headers: authHeaders(token),
+    });
+    modeChip.textContent = "Mode: live API";
+    renderSuperDashboard(data);
+    openSuperSocket();
+  } catch (error) {
+    modeChip.textContent = `Mode: demo (${error.message})`;
+    renderSuperDashboard(demoSuperDashboard());
+    closeSuperSocket();
   }
 }
 
 async function createTenantFromUi() {
   const base = (byId("apiBaseInput")?.value || "").trim().replace(/\/$/, "");
+  const token = (byId("superJwtInput")?.value || "").trim();
   const org = (byId("tenantOrgInput")?.value || "").trim();
   const email = (byId("tenantEmailInput")?.value || "").trim();
   const out = byId("createTenantResult");
@@ -240,18 +350,19 @@ async function createTenantFromUi() {
   try {
     const result = await fetchJson(`${base}/super/tenants`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(token),
       body: JSON.stringify({ organization_name: org, admin_email: email }),
     });
-    out.textContent = `Tenant created: ${result.tenant_id} | token: ${result.api_token}`;
+    out.textContent = `Tenant created: ${result.tenant_id} | api_token: ${result.api_token}`;
     await loadSuperDashboard();
-  } catch {
-    out.textContent = "Could not create tenant (API unavailable).";
+  } catch (error) {
+    out.textContent = `Could not create tenant: ${error.message}`;
   }
 }
 
 async function publishUpgradeFromUi() {
   const base = (byId("apiBaseInput")?.value || "").trim().replace(/\/$/, "");
+  const token = (byId("superJwtInput")?.value || "").trim();
   const version = (byId("upgradeVersionInput")?.value || "").trim();
   const notes = (byId("upgradeNotesInput")?.value || "").trim();
   const out = byId("publishUpgradeResult");
@@ -264,13 +375,13 @@ async function publishUpgradeFromUi() {
   try {
     const result = await fetchJson(`${base}/super/upgrades`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(token),
       body: JSON.stringify({ version, release_notes: notes }),
     });
     out.textContent = `Upgrade response: ${result.status}`;
     await loadSuperDashboard();
-  } catch {
-    out.textContent = "Could not publish upgrade (API unavailable).";
+  } catch (error) {
+    out.textContent = `Could not publish upgrade: ${error.message}`;
   }
 }
 
@@ -361,24 +472,107 @@ function renderTenantDashboard(data) {
   );
 }
 
+function closeTenantSocket() {
+  if (tenantSocket && tenantSocket.readyState <= 1) {
+    tenantSocket.close();
+  }
+  tenantSocket = null;
+}
+
+function openTenantSocket() {
+  const base = (byId("tenantApiBaseInput")?.value || "").trim().replace(/\/$/, "");
+  const tenantId = (byId("tenantIdInput")?.value || "").trim();
+  const token = (byId("tenantJwtInput")?.value || "").trim();
+  const modeChip = byId("tenantModeChip");
+
+  if (!base || !tenantId || !token) {
+    return;
+  }
+
+  closeTenantSocket();
+  const url = toWsUrl(base, `/ws/tenant/${encodeURIComponent(tenantId)}`, token);
+  try {
+    tenantSocket = new WebSocket(url);
+  } catch {
+    return;
+  }
+
+  tenantSocket.onopen = () => {
+    modeChip.textContent = "Mode: live API + WebSocket";
+  };
+
+  tenantSocket.onmessage = (event) => {
+    try {
+      const parsed = JSON.parse(event.data);
+      if (parsed.type === "tenant_dashboard") {
+        renderTenantDashboard(parsed.payload || {});
+      }
+    } catch {
+      // Ignore malformed frame data.
+    }
+  };
+
+  tenantSocket.onerror = () => {
+    modeChip.textContent = "Mode: live API (WS error)";
+  };
+}
+
+async function loginTenantAdmin() {
+  const base = (byId("tenantApiBaseInput")?.value || "").trim().replace(/\/$/, "");
+  const tenantId = (byId("tenantIdInput")?.value || "").trim();
+  const apiToken = byId("tenantApiTokenInput")?.value || "";
+  const modeChip = byId("tenantModeChip");
+
+  if (!base || !tenantId || !apiToken) {
+    modeChip.textContent = "Mode: missing tenant credentials";
+    return;
+  }
+
+  try {
+    const result = await fetchJson(`${base}/auth/tenant/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenant_id: tenantId, api_token: apiToken }),
+    });
+    byId("tenantJwtInput").value = result.token || "";
+    modeChip.textContent = "Mode: tenant authenticated";
+    await loadTenantDashboard();
+  } catch (error) {
+    modeChip.textContent = `Mode: login failed (${error.message})`;
+  }
+}
+
 async function loadTenantDashboard() {
   const base = (byId("tenantApiBaseInput")?.value || "").trim().replace(/\/$/, "");
   const tenantId = (byId("tenantIdInput")?.value || "tenant-demo").trim();
+  const token = (byId("tenantJwtInput")?.value || "").trim();
   const modeChip = byId("tenantModeChip");
 
-  try {
-    const data = await fetchJson(`${base}/tenant/${encodeURIComponent(tenantId)}/dashboard`);
-    modeChip.textContent = "Mode: live API";
-    renderTenantDashboard(data);
-  } catch {
+  if (!base || !tenantId || !token) {
     modeChip.textContent = "Mode: demo";
     renderTenantDashboard(demoTenantDashboard(tenantId));
+    closeTenantSocket();
+    return;
+  }
+
+  try {
+    const data = await fetchJson(`${base}/tenant/${encodeURIComponent(tenantId)}/dashboard`, {
+      headers: authHeaders(token),
+    });
+    modeChip.textContent = "Mode: live API";
+    renderTenantDashboard(data);
+    openTenantSocket();
+  } catch (error) {
+    modeChip.textContent = `Mode: demo (${error.message})`;
+    renderTenantDashboard(demoTenantDashboard(tenantId));
+    closeTenantSocket();
   }
 }
 
 async function simulateTenantEvent() {
   const base = (byId("tenantApiBaseInput")?.value || "").trim().replace(/\/$/, "");
   const tenantId = (byId("tenantIdInput")?.value || "tenant-demo").trim();
+  const token = (byId("tenantJwtInput")?.value || "").trim();
 
   const payload = {
     event_id: `evt-${Date.now()}`,
@@ -403,13 +597,13 @@ async function simulateTenantEvent() {
   try {
     const result = await fetchJson(`${base}/tenant/${encodeURIComponent(tenantId)}/events`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(token),
       body: JSON.stringify(payload),
     });
     out.textContent = `Decision: ${result.decision?.action || "unknown"} | Risk: ${result.model?.risk_score || "-"}`;
     await loadTenantDashboard();
-  } catch {
-    out.textContent = "Could not reach tenant API endpoint. Use local API server or keep demo mode.";
+  } catch (error) {
+    out.textContent = `Could not submit event: ${error.message}`;
   }
 }
 
@@ -418,6 +612,7 @@ function initSuperPage() {
     return;
   }
   byId("refreshSuperBtn")?.addEventListener("click", loadSuperDashboard);
+  byId("superLoginBtn")?.addEventListener("click", loginSuperAdmin);
   byId("createTenantBtn")?.addEventListener("click", createTenantFromUi);
   byId("publishUpgradeBtn")?.addEventListener("click", publishUpgradeFromUi);
   loadSuperDashboard();
@@ -428,6 +623,7 @@ function initTenantPage() {
     return;
   }
   byId("refreshTenantBtn")?.addEventListener("click", loadTenantDashboard);
+  byId("tenantLoginBtn")?.addEventListener("click", loginTenantAdmin);
   byId("simulateEventBtn")?.addEventListener("click", simulateTenantEvent);
   loadTenantDashboard();
 }

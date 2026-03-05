@@ -63,9 +63,11 @@ class TenantAccount:
     allow_count: int
     avg_risk_score: float
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, include_secret: bool = False) -> Dict[str, Any]:
         payload = asdict(self)
         payload["assets"] = [asdict(asset) for asset in self.assets]
+        if not include_secret:
+            payload.pop("api_token", None)
         return payload
 
 
@@ -132,6 +134,13 @@ class SuperControlSystem:
 
     def list_tenants(self) -> List[Dict[str, Any]]:
         return [tenant.to_dict() for tenant in self.tenants.values()]
+
+    def validate_tenant_api_token(self, tenant_id: str, api_token: str) -> bool:
+        tenant = self._get_tenant(tenant_id)
+        return secrets.compare_digest(tenant.api_token, api_token)
+
+    def tenant_exists(self, tenant_id: str) -> bool:
+        return tenant_id in self.tenants
 
     def add_asset(
         self,
@@ -349,7 +358,7 @@ class SuperControlSystem:
             "platform_version": self.platform_version,
             "global_policy": self.global_policy,
             "upgrade_log": self.upgrade_log,
-            "tenants": {tenant_id: tenant.to_dict() for tenant_id, tenant in self.tenants.items()},
+            "tenants": {tenant_id: tenant.to_dict(include_secret=True) for tenant_id, tenant in self.tenants.items()},
             "telemetry": self.telemetry,
         }
         self.state_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")

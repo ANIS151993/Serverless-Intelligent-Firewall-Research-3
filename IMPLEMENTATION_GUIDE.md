@@ -36,7 +36,9 @@ flowchart LR
 - `src/sif/multi_tenant.py`
   - Super control account management, tenant assets, telemetry, and upgrade rollout.
 - `src/sif/api_server.py`
-  - HTTP endpoints for super dashboard and tenant dashboard operations.
+  - HTTP + WebSocket endpoints for super dashboard and tenant dashboard operations.
+- `src/sif/auth.py`
+  - JWT issuance/verification and role-based access control (RBAC).
 
 ## 3. End-to-end event flow
 
@@ -87,6 +89,8 @@ python3 run_control_api.py --host 0.0.0.0 --port 9000
 ```
 
 Key endpoints:
+- `POST /auth/super/login`
+- `POST /auth/tenant/login`
 - `POST /super/tenants` (create corporate client account)
 - `POST /super/tenants/{tenant_id}/assets` (register local/cloud assets)
 - `GET /super/dashboard` (global operator metrics)
@@ -94,6 +98,8 @@ Key endpoints:
 - `POST /tenant/{tenant_id}/events` (tenant-local protection event)
 - `GET /tenant/{tenant_id}/dashboard` (tenant monitoring data)
 - `POST /tenant/{tenant_id}/sync` (tenant auto-upgrade sync)
+- `GET /ws/super?token=<jwt>` (real-time super dashboard stream)
+- `GET /ws/tenant/{tenant_id}?token=<jwt>` (real-time tenant stream)
 
 ## 8. Proxmox deployment
 
