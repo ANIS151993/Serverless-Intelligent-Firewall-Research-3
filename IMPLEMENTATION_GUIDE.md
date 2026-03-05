@@ -33,6 +33,10 @@ flowchart LR
   - Propagates decisions to peer control nodes.
 - `src/sif/firewall.py`
   - End-to-end pipeline coordinator.
+- `src/sif/multi_tenant.py`
+  - Super control account management, tenant assets, telemetry, and upgrade rollout.
+- `src/sif/api_server.py`
+  - HTTP endpoints for super dashboard and tenant dashboard operations.
 
 ## 3. End-to-end event flow
 
@@ -74,13 +78,30 @@ This updates model weights in:
 bash scripts/run_tests.sh
 ```
 
-## 7. Proxmox deployment
+## 7. Super control and tenant operation
+
+Start the API server:
+
+```bash
+python3 run_control_api.py --host 0.0.0.0 --port 9000
+```
+
+Key endpoints:
+- `POST /super/tenants` (create corporate client account)
+- `POST /super/tenants/{tenant_id}/assets` (register local/cloud assets)
+- `GET /super/dashboard` (global operator metrics)
+- `POST /super/upgrades` (publish global version/policy update)
+- `POST /tenant/{tenant_id}/events` (tenant-local protection event)
+- `GET /tenant/{tenant_id}/dashboard` (tenant monitoring data)
+- `POST /tenant/{tenant_id}/sync` (tenant auto-upgrade sync)
+
+## 8. Proxmox deployment
 
 Use:
 
 - [DEPLOYMENT_PROXMOX_GUIDE.md](DEPLOYMENT_PROXMOX_GUIDE.md)
 
-## 8. Artifact protection and release workflow
+## 9. Artifact protection and release workflow
 
 1. Update manuscript/source files in `artifacts/`.
 2. Rebuild preview + encrypted archives:

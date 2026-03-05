@@ -62,10 +62,10 @@
           <article class="report-panel">
             <h3>Research-3 role</h3>
             <ul class="report-list">
-              <li>Upgrade model quality through XGBoost plus BiGRU hybrid fusion.</li>
-              <li>Extend runtime from single-cloud to AWS, Azure, and GCP orchestration.</li>
-              <li>Add unified zero-trust control plane for identity and policy consistency.</li>
-              <li>Measure practical SLOs: latency, cold-start, cost, and policy propagation.</li>
+              <li>Add autonomous learning with PPO, continual drift adaptation, meta-learning, and federated updates.</li>
+              <li>Integrate live threat-intel APIs (MISP, OTX, VirusTotal) for continuous model context refresh.</li>
+              <li>Introduce super-control plus tenant-local compact subsystem topology.</li>
+              <li>Enforce federated zero-trust policy with automatic cross-tenant upgrade rollout.</li>
             </ul>
           </article>
         </div>
@@ -104,12 +104,12 @@
             </defs>
 
             <rect x="30" y="60" width="210" height="90" rx="14" fill="url(#boxA)"></rect>
-            <text x="50" y="98" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Traffic + telemetry</text>
-            <text x="50" y="124" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">Flow logs, identity context</text>
+            <text x="50" y="98" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Traffic + OSINT feed</text>
+            <text x="50" y="124" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">Flow logs + MISP/OTX/VT</text>
 
             <rect x="285" y="60" width="220" height="90" rx="14" fill="url(#boxA)"></rect>
-            <text x="305" y="98" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Feature engineering</text>
-            <text x="305" y="124" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">Clean, normalize, sequence</text>
+            <text x="305" y="98" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Tenant subsystem</text>
+            <text x="305" y="124" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">Local compact firewall</text>
 
             <rect x="550" y="35" width="230" height="90" rx="14" fill="url(#boxA)"></rect>
             <text x="570" y="73" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Research-1 model path</text>
@@ -117,11 +117,11 @@
 
             <rect x="550" y="165" width="230" height="90" rx="14" fill="url(#boxA)"></rect>
             <text x="570" y="203" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Research-3 model path</text>
-            <text x="570" y="228" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">XGBoost + BiGRU fusion</text>
+            <text x="570" y="228" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">PPO + SSF + Meta + FedNova</text>
 
             <rect x="825" y="95" width="230" height="90" rx="14" fill="url(#boxA)"></rect>
-            <text x="845" y="133" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Response orchestrator</text>
-            <text x="845" y="158" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">AWS | Azure | GCP actions</text>
+            <text x="845" y="133" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Super control plane</text>
+            <text x="845" y="158" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">Tenant sync + upgrade orchestration</text>
 
             <rect x="1080" y="95" width="95" height="90" rx="14" fill="#0f766e"></rect>
             <text x="1096" y="131" fill="#ffffff" font-size="16" font-family="Manrope, sans-serif">UCP</text>
@@ -158,23 +158,23 @@
         <div class="implementation-roadmap">
           <article class="roadmap-step">
             <strong>Step 1</strong>
-            <h3>Data and feature pipeline</h3>
-            <p>Automate CIC-style feature extraction from cloud flow logs and function traces. Ensure consistent schema across all providers before model scoring.</p>
+            <h3>OSINT and telemetry ingestion</h3>
+            <p>Ingest flow/identity telemetry plus MISP, OTX, and VirusTotal indicators through REST clients and normalize into a unified event schema.</p>
           </article>
           <article class="roadmap-step">
             <strong>Step 2</strong>
-            <h3>Model deployment strategy</h3>
-            <p>Run baseline LSTM first, then deploy hybrid model as shadow mode. Compare decision drift before moving to active enforcement.</p>
+            <h3>Multi-paradigm autonomous model</h3>
+            <p>Deploy PPO policy optimization, SSF drift adaptation, prototypical meta-learning, and federated update aggregation.</p>
           </article>
           <article class="roadmap-step">
             <strong>Step 3</strong>
-            <h3>Orchestration and response</h3>
-            <p>Use event buses and provider-native function triggers to execute block/challenge/allow workflows with minimal response latency.</p>
+            <h3>Tenant-local enforcement</h3>
+            <p>Provision each client with a compact local subsystem that executes allow/challenge/block decisions independently when needed.</p>
           </article>
           <article class="roadmap-step">
             <strong>Step 4</strong>
-            <h3>Zero-trust policy integration</h3>
-            <p>Apply policy-as-code and identity verification for every service interaction, not only external ingress requests.</p>
+            <h3>Super-control synchronization</h3>
+            <p>Use the super dashboard to publish upgrades and policies globally so all tenant subsystems auto-sync with minimal operational friction.</p>
           </article>
         </div>
 
@@ -183,18 +183,13 @@
           <p>
             The following workflow describes a practical event path compatible with both research phases. It can be implemented as serverless handlers and queue workers.
           </p>
-          <pre class="code-block"><code>def firewall_event_handler(flow_event):
-    features = preprocess(flow_event)
-    baseline_pred = lstm_predict(features)             # Research-1
-    hybrid_pred = fusion_predict(features)             # Research-3
-    final_pred = reconcile_predictions(baseline_pred, hybrid_pred)
-
-    context = build_zero_trust_context(flow_event, final_pred)
-    decision = policy_decision_point(context)
-
-    if decision in {"BLOCK", "CHALLENGE"}:
-        dispatch_cross_cloud_response(flow_event, decision)
-    persist_audit_log(flow_event, final_pred, decision)
+          <pre class="code-block"><code>def tenant_subsystem_event(event):
+    intel = ingest_osint(event.ip, event.domain, event.hash)
+    features = build_feature_bundle(event, intel)
+    risk = autonomous_model_predict(features)   # PPO + SSF + Meta + Fed
+    decision = zero_trust_decision(risk, event.identity, event.policy_state)
+    execute_local_response(event.provider, decision)
+    sync_telemetry_to_super_control(event, risk, decision)
     return decision</code></pre>
         </div>
       </section>
@@ -233,11 +228,11 @@
           <article class="report-panel">
             <h3>Pre-production checklist</h3>
             <ul class="report-list">
-              <li>Validate model quality against replayed production traffic slices.</li>
-              <li>Set response-time SLOs and alert thresholds per cloud provider.</li>
-              <li>Define policy fallback behavior for temporary control-plane outages.</li>
-              <li>Run red-team simulations for DDoS, credential abuse, and policy drift cases.</li>
-              <li>Document rollback path from hybrid enforcement to baseline mode.</li>
+              <li>Validate model quality on CICIDS2017, CIC-IDS2018, UNSW-NB15, and NSL-KDD slices.</li>
+              <li>Exercise tenant-local failover where super control is temporarily unavailable.</li>
+              <li>Run policy sync tests after publishing a new super-control release.</li>
+              <li>Replay DDoS, credential abuse, and policy drift scenarios at tenant scope.</li>
+              <li>Verify explainability outputs (SHAP/LIME) for analyst trust reporting.</li>
             </ul>
           </article>
           <article class="report-panel">

@@ -19,6 +19,8 @@
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">&#9776;</button>
       <ul class="nav-links" id="nav-links">
         <li><a href="#overview">Overview</a></li>
+        <li><a href="super-dashboard.html">Super Dashboard</a></li>
+        <li><a href="tenant-dashboard.html">Tenant Dashboard</a></li>
         <li><a href="#author-focus">Author</a></li>
         <li><a href="#linkage">R1 to R3</a></li>
         <li><a href="#video">Video</a></li>
@@ -48,7 +50,7 @@
           <h1 class="hero-title">Autonomous Self-Learning Serverless Intelligent Firewall</h1>
           <p class="hero-subtitle">
             Integrating REST API-driven open-source threat intelligence, multi-paradigm machine learning, and federated zero-trust architectures.
-            This portal combines your Research-1 and Research-2 lineage into a stronger Research-3 artifact with executable code, interactive validation, and protected manuscript distribution.
+            This portal combines your Research-1 and Research-2 lineage into a stronger Research-3 artifact with executable code, super-control operations, tenant-local subsystems, and protected manuscript distribution.
           </p>
 
           <div class="author-block">
@@ -66,6 +68,8 @@
           <div class="hero-actions">
             <a class="btn btn-primary" href="#lab">Try the Test Lab</a>
             <a class="btn btn-secondary" href="#results">Open Graph Dashboard</a>
+            <a class="btn btn-secondary" href="super-dashboard.html">Open Super Dashboard</a>
+            <a class="btn btn-secondary" href="tenant-dashboard.html">Open Tenant Dashboard</a>
             <a class="btn btn-secondary" href="report.html">Read the HTML Report</a>
             <a class="btn btn-secondary" href="implementation.html" data-open-implementation-gate>Implementation Guide</a>
             <button class="btn btn-ghost" type="button" data-open-gate>Secure Downloads</button>
@@ -96,20 +100,20 @@
           </p>
           <div class="metric-grid">
             <div class="metric-card">
-              <strong>98%</strong>
-              <span>Accuracy / Precision / Recall / F1</span>
+              <strong>98.7%</strong>
+              <span>Detection accuracy</span>
             </div>
             <div class="metric-card">
-              <strong>0.990</strong>
-              <span>ROC-AUC</span>
+              <strong>94.3%</strong>
+              <span>Zero-day detection (5-shot)</span>
             </div>
             <div class="metric-card">
-              <strong>135 ms</strong>
-              <span>Cross-cloud avg. response latency</span>
+              <strong>87 ms</strong>
+              <span>Average response latency</span>
             </div>
             <div class="metric-card">
-              <strong>99.6%</strong>
-              <span>Policy consistency</span>
+              <strong>99.8%</strong>
+              <span>Federated policy consistency</span>
             </div>
           </div>
         </aside>
@@ -143,6 +147,12 @@
             <h3>Federated zero-trust operation</h3>
             <p>
               Policy enforcement remains consistent across AWS, Azure, GCP, and Proxmox nodes through a federated control path designed for low-latency allow/challenge/block outcomes.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Super control and tenant autonomy</h3>
+            <p>
+              A global super-control layer provisions corporate clients, while each tenant runs a compact local subsystem that remains protective during disconnection and syncs upgrades automatically.
             </p>
           </article>
         </div>
@@ -238,11 +248,11 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Core model</td><td>LSTM IDS</td><td><strong>XGBoost + BiGRU</strong></td></tr>
-                <tr><td>Cloud scope</td><td>Single-cloud oriented</td><td><strong>AWS + Azure + GCP</strong></td></tr>
-                <tr><td>Policy control</td><td>Zero-trust concept</td><td><strong>Unified control plane</strong></td></tr>
-                <tr><td>Avg response latency</td><td>N/A</td><td><strong>135 ms</strong></td></tr>
-                <tr><td>Policy consistency</td><td>N/A</td><td><strong>99.6%</strong></td></tr>
+                <tr><td>Core model</td><td>LSTM IDS</td><td><strong>Autonomous multi-paradigm engine</strong></td></tr>
+                <tr><td>Threat context</td><td>Static datasets</td><td><strong>Live REST API OSINT feeds</strong></td></tr>
+                <tr><td>Deployment scope</td><td>Single-cloud oriented</td><td><strong>AWS + Azure + GCP + Proxmox</strong></td></tr>
+                <tr><td>Avg response latency</td><td>N/A</td><td><strong>87 ms</strong></td></tr>
+                <tr><td>Federated consistency</td><td>N/A</td><td><strong>99.8%</strong></td></tr>
               </tbody>
             </table>
           </article>
@@ -315,7 +325,7 @@
           <div class="video-chapter-buttons">
             <button class="video-chapter-btn is-active" type="button" data-video-start="0" data-video-node="1" data-video-title="Intro and motivation" data-video-note="Explains the core security gap in serverless and why Research-3 extends Research-1 into cross-cloud zero-trust enforcement.">00:00 Intro</button>
             <button class="video-chapter-btn" type="button" data-video-start="45" data-video-node="2" data-video-title="Architecture breakdown" data-video-note="Walks through detection, orchestration, and unified control plane interactions in the ASLF-OSINT architecture.">00:45 Architecture</button>
-            <button class="video-chapter-btn" type="button" data-video-start="95" data-video-node="3" data-video-title="Model strategy and evaluation" data-video-note="Discusses model choices, hybrid detection logic, and key metrics including 98% accuracy and 0.990 ROC-AUC.">01:35 Model + Results</button>
+            <button class="video-chapter-btn" type="button" data-video-start="95" data-video-node="3" data-video-title="Model strategy and evaluation" data-video-note="Discusses autonomous learning logic and reported metrics including 98.7% accuracy and 94.3% zero-day detection.">01:35 Model + Results</button>
             <button class="video-chapter-btn" type="button" data-video-start="150" data-video-node="4" data-video-title="Cross-cloud orchestration" data-video-note="Covers runtime behavior across AWS, Azure, and GCP including latency, scalability, and event routing patterns.">02:30 Multi-cloud</button>
             <button class="video-chapter-btn" type="button" data-video-start="205" data-video-node="5" data-video-title="Practical implementation guidance" data-video-note="Summarizes real-world rollout direction and links directly to the implementation blueprint in this website.">03:25 Implementation</button>
           </div>
@@ -601,11 +611,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>RF</td><td>94.85%</td><td>94.47%</td><td>94.98%</td><td>94.22%</td></tr>
-                <tr><td>XGBoost</td><td>95.41%</td><td>95.02%</td><td>95.81%</td><td>95.91%</td></tr>
-                <tr><td>CNN</td><td>95.56%</td><td>95.25%</td><td>95.93%</td><td>95.09%</td></tr>
                 <tr><td>LSTM</td><td>96.14%</td><td>96.92%</td><td>96.65%</td><td>96.78%</td></tr>
-                <tr class="highlight"><td>ASLF-OSINT</td><td>98.00%</td><td>98.00%</td><td>98.00%</td><td>98.00%</td></tr>
+                <tr><td>Research-2 Hybrid</td><td>98.00%</td><td>98.00%</td><td>98.00%</td><td>98.00%</td></tr>
+                <tr class="highlight"><td>ASLF-OSINT</td><td>98.70%</td><td>98.62%</td><td>98.75%</td><td>98.68%</td></tr>
               </tbody>
             </table>
           </article>
@@ -622,10 +630,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>AWS Lambda</td><td>135 ms</td><td>221 ms</td><td>$0.24</td></tr>
-                <tr><td>Azure Functions</td><td>142 ms</td><td>263 ms</td><td>$0.27</td></tr>
-                <tr><td>Google Cloud Functions</td><td>135 ms</td><td>249 ms</td><td>$0.25</td></tr>
-                <tr class="highlight"><td>Cross-cloud avg.</td><td>135 ms</td><td>244 ms</td><td>$0.25</td></tr>
+                <tr><td>AWS Lambda</td><td>84 ms</td><td>221 ms</td><td>$0.24</td></tr>
+                <tr><td>Azure Functions</td><td>89 ms</td><td>263 ms</td><td>$0.27</td></tr>
+                <tr><td>Google Cloud Functions</td><td>88 ms</td><td>249 ms</td><td>$0.25</td></tr>
+                <tr class="highlight"><td>Super-tenant avg.</td><td>87 ms</td><td>244 ms</td><td>$0.25</td></tr>
               </tbody>
             </table>
           </article>
@@ -642,10 +650,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>AWS</td><td>88 ms</td><td>110 ms</td><td>99.6%</td></tr>
-                <tr><td>Azure</td><td>92 ms</td><td>116 ms</td><td>99.4%</td></tr>
-                <tr><td>GCP</td><td>85 ms</td><td>108 ms</td><td>99.7%</td></tr>
-                <tr class="highlight"><td>Cross-cloud avg.</td><td>88.3 ms</td><td>111.3 ms</td><td>99.6%</td></tr>
+                <tr><td>AWS</td><td>92 ms</td><td>109 ms</td><td>99.8%</td></tr>
+                <tr><td>Azure</td><td>101 ms</td><td>115 ms</td><td>99.7%</td></tr>
+                <tr><td>GCP</td><td>96 ms</td><td>107 ms</td><td>99.9%</td></tr>
+                <tr class="highlight"><td>Federated avg.</td><td>95 ms</td><td>110.3 ms</td><td>99.8%</td></tr>
               </tbody>
             </table>
           </article>
@@ -670,17 +678,17 @@
           <article class="roadmap-step">
             <strong>Stage 2</strong>
             <h3>Hybrid detection upgrade (Research-3)</h3>
-            <p>Add XGBoost plus BiGRU fusion for stronger static and temporal attack coverage, and calibrate thresholds for lower operational false positives.</p>
+            <p>Integrate PPO, SSF, meta-learning, transfer learning, and federated updates for autonomous adaptive detection.</p>
           </article>
           <article class="roadmap-step">
             <strong>Stage 3</strong>
             <h3>Cross-cloud orchestration</h3>
-            <p>Deploy handlers on AWS Lambda, Azure Functions, and GCP Functions with normalized event schema, queue routing, and unified telemetry.</p>
+            <p>Provision tenant-local compact subsystems and connect them to the super control plane for synchronized telemetry and policy flow.</p>
           </article>
           <article class="roadmap-step">
             <strong>Stage 4</strong>
             <h3>Unified zero-trust control plane</h3>
-            <p>Implement policy-as-code and identity abstraction to keep enforcement consistent across all providers during runtime and failover conditions.</p>
+            <p>Implement policy-as-code with automated global upgrades so all client subsystems receive new defenses without manual redeployment.</p>
           </article>
         </div>
 
@@ -777,6 +785,30 @@ log_decision_to_unified_telemetry()</code></pre>
         </p>
 
         <div class="resource-grid">
+          <article class="resource-card">
+            <div class="resource-meta">
+              <span class="pill">Public page</span>
+              <span class="pill accent">Operator</span>
+            </div>
+            <h3>Super control dashboard</h3>
+            <p>
+              Fleet-level control for tenant provisioning, global policy rollout, version upgrades, and cross-tenant threat analytics.
+            </p>
+            <a class="btn btn-dark" href="super-dashboard.html">Open super dashboard</a>
+          </article>
+
+          <article class="resource-card">
+            <div class="resource-meta">
+              <span class="pill">Public page</span>
+              <span class="pill accent">Client</span>
+            </div>
+            <h3>Tenant sub-dashboard</h3>
+            <p>
+              Corporate client view for protected assets, provider traffic distribution, risk timeline, and local event simulation.
+            </p>
+            <a class="btn btn-dark" href="tenant-dashboard.html">Open tenant dashboard</a>
+          </article>
+
           <article class="resource-card">
             <div class="resource-meta">
               <span class="pill">Public page</span>

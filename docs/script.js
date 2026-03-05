@@ -740,7 +740,7 @@ function buildLineTrendChart(id) {
       datasets: [
         {
           label: "Training accuracy",
-          data: [82, 89, 92, 94.5, 95.5, 96.4, 97.1, 97.8, 98],
+          data: [83, 90, 93.4, 95.2, 96.1, 96.9, 97.5, 98.2, 98.7],
           borderColor: "#17395c",
           backgroundColor: "rgba(23,57,92,0.15)",
           pointRadius: 3,
@@ -749,7 +749,7 @@ function buildLineTrendChart(id) {
         },
         {
           label: "Validation accuracy",
-          data: [80, 87, 90.4, 93, 94.8, 95.7, 96.5, 97.2, 97.8],
+          data: [79.6, 86.8, 90.8, 93.7, 95, 95.9, 96.9, 97.8, 98.3],
           borderColor: "#d97706",
           backgroundColor: "rgba(217,119,6,0.14)",
           pointRadius: 3,
@@ -810,7 +810,7 @@ function buildPolicyRadar(id) {
       datasets: [
         {
           label: "Research-3 ASLF-OSINT",
-          data: [96, 99.6, 93, 95, 97, 98],
+          data: [96, 99.8, 93, 95, 97, 98],
           borderColor: "#0f766e",
           backgroundColor: "rgba(15,118,110,0.16)",
           pointBackgroundColor: "#0f766e",
@@ -847,18 +847,18 @@ function initCharts() {
   createChart("performanceChart", {
     type: "bar",
     data: {
-      labels: ["RF", "XGBoost", "CNN", "LSTM", "ASLF-OSINT"],
+      labels: ["Research-1 LSTM", "Research-2 Hybrid", "ASLF-OSINT"],
       datasets: [
         {
-          label: "Accuracy (%)",
-          data: [94.85, 95.41, 95.56, 96.14, 98],
-          backgroundColor: ["#c3d3e4", "#a7c4df", "#8bb5d7", "#5f94bf", "#0f766e"],
+          label: "Detection accuracy (%)",
+          data: [96.14, 98.0, 98.7],
+          backgroundColor: ["#8bb5d7", "#5f94bf", "#0f766e"],
           borderRadius: 10,
         },
         {
-          label: "ROC-AUC",
-          data: [94.2, 95.9, 95.1, 96.6, 99],
-          backgroundColor: ["#f1ddbb", "#eec98f", "#eabf73", "#e4a146", "#d97706"],
+          label: "Zero-day detection (%)",
+          data: [71.2, 82.4, 94.3],
+          backgroundColor: ["#f1ddbb", "#e4a146", "#d97706"],
           borderRadius: 10,
         },
       ],
@@ -868,7 +868,7 @@ function initCharts() {
       maintainAspectRatio: false,
       scales: {
         y: {
-          min: 90,
+          min: 60,
           max: 100,
           ticks: {
             callback(value) {
@@ -888,17 +888,17 @@ function initCharts() {
   createChart("cloudChart", {
     type: "bar",
     data: {
-      labels: ["AWS Lambda", "Azure Functions", "Google Cloud", "Cross-cloud avg"],
+      labels: ["AWS Lambda", "Azure Functions", "Google Cloud", "Super-Tenant avg"],
       datasets: [
         {
           label: "Avg latency (ms)",
-          data: [135, 142, 135, 135],
+          data: [84, 89, 88, 87],
           backgroundColor: ["#17395c", "#285f8f", "#4d8fc8", "#0f766e"],
           borderRadius: 10,
         },
         {
-          label: "Cold start (ms)",
-          data: [221, 263, 249, 244],
+          label: "Policy sync delay (ms)",
+          data: [92, 101, 96, 95],
           backgroundColor: ["#d9c4a5", "#d5b17b", "#d18e52", "#d97706"],
           borderRadius: 10,
         },
@@ -922,13 +922,13 @@ function initCharts() {
       datasets: [
         {
           label: "Research-1",
-          data: [8.5, 2.5, 5.5, 5, 6],
+          data: [8.5, 2.5, 5.5, 5.1, 6.0],
           backgroundColor: "#a7c4df",
           borderRadius: 8,
         },
         {
           label: "Research-3",
-          data: [9.8, 9.6, 9.7, 9.2, 9.5],
+          data: [9.8, 9.6, 9.8, 9.4, 9.6],
           backgroundColor: "#0f766e",
           borderRadius: 8,
         },
@@ -969,7 +969,7 @@ function initCharts() {
         },
         {
           label: "Research-3",
-          data: [9.4, 9.6, 9.4, 9.2, 9.1, 9.7],
+          data: [9.5, 9.8, 9.5, 9.4, 9.3, 9.7],
           borderColor: "#17395c",
           backgroundColor: "rgba(23,57,92,0.14)",
           pointBackgroundColor: "#17395c",
@@ -1006,31 +1006,31 @@ function initCharts() {
       datasets: [
         {
           label: "AWS Lambda",
-          data: [{ x: 135, y: 0.24 }],
+          data: [{ x: 84, y: 0.24 }],
           pointRadius: 9,
           backgroundColor: "#17395c",
         },
         {
           label: "Azure Functions",
-          data: [{ x: 142, y: 0.27 }],
+          data: [{ x: 89, y: 0.27 }],
           pointRadius: 9,
           backgroundColor: "#285f8f",
         },
         {
           label: "Google Cloud Functions",
-          data: [{ x: 135, y: 0.25 }],
+          data: [{ x: 88, y: 0.25 }],
           pointRadius: 9,
           backgroundColor: "#d97706",
         },
         {
           label: "Cross-cloud fused runtime",
-          data: [{ x: 135, y: 0.25 }],
+          data: [{ x: 87, y: 0.25 }],
           pointRadius: 10,
           backgroundColor: "#0f766e",
         },
         {
           label: "Proxmox federated node",
-          data: [{ x: 128, y: 0.19 }],
+          data: [{ x: 79, y: 0.19 }],
           pointRadius: 8,
           backgroundColor: "#4d8fc8",
         },
@@ -1045,8 +1045,8 @@ function initCharts() {
             display: true,
             text: "Average latency (ms)",
           },
-          min: 120,
-          max: 160,
+          min: 60,
+          max: 120,
         },
         y: {
           title: {

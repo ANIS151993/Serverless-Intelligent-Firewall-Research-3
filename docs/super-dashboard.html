@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASLF-OSINT Super Control Dashboard</title>
+  <meta name="description" content="Super control dashboard for managing all tenant subsystems and global policy in ASLF-OSINT.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <script src="dashboard.js" defer></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">ASLF-OSINT</a>
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Portal</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#tenants">Tenants</a></li>
+        <li><a href="#upgrade">Upgrade</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="page-shell">
+    <div class="page-head" id="overview">
+      <p class="section-kicker">Operator Plane</p>
+      <h1 class="page-title">Super Control Dashboard</h1>
+      <p class="page-subtitle">
+        Central control for all corporate tenants: account provisioning, global policy, rollout orchestration, and cross-tenant threat monitoring.
+      </p>
+
+      <div class="dashboard-control-bar">
+        <label class="field-inline">
+          API base URL
+          <input id="apiBaseInput" type="text" value="http://127.0.0.1:9000" placeholder="http://127.0.0.1:9000">
+        </label>
+        <button class="btn btn-primary" type="button" id="refreshSuperBtn">Refresh dashboard</button>
+        <span class="status-chip" id="superModeChip">Mode: demo</span>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric-card"><strong id="metricPlatformVersion">3.0.0</strong><span>Platform version</span></article>
+        <article class="metric-card"><strong id="metricTenantCount">0</strong><span>Corporate tenants</span></article>
+        <article class="metric-card"><strong id="metricTotalEvents">0</strong><span>Total protected events</span></article>
+        <article class="metric-card"><strong id="metricBlocked">0</strong><span>Blocked threats</span></article>
+      </div>
+    </div>
+
+    <div class="container">
+      <section class="report-section" id="tenants">
+        <h2>Tenant fleet posture</h2>
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3>Per-tenant event load</h3>
+            <div class="chart-wrap"><canvas id="tenantEventsChart"></canvas></div>
+          </article>
+          <article class="chart-card">
+            <h3>Global decision distribution</h3>
+            <div class="chart-wrap"><canvas id="superDecisionChart"></canvas></div>
+          </article>
+        </div>
+
+        <article class="report-panel">
+          <h3>Tenant registry</h3>
+          <div class="table-wrap">
+            <table class="stats-table" id="tenantTable">
+              <thead>
+                <tr>
+                  <th>Tenant</th>
+                  <th>Organization</th>
+                  <th>Assets</th>
+                  <th>Version</th>
+                  <th>Events</th>
+                  <th>Blocked</th>
+                  <th>Avg risk</th>
+                </tr>
+              </thead>
+              <tbody id="tenantTableBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="report-section" id="upgrade">
+        <h2>Provisioning and upgrade controls</h2>
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Create tenant account</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="tenantOrgInput">Organization name</label>
+                <input id="tenantOrgInput" type="text" placeholder="Example: Apex Financial Group">
+              </div>
+              <div class="field">
+                <label for="tenantEmailInput">Admin email</label>
+                <input id="tenantEmailInput" type="email" placeholder="soc@apex.example">
+              </div>
+            </div>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-block" type="button" id="createTenantBtn">Create tenant</button>
+            </div>
+            <p class="note" id="createTenantResult">Create a tenant to generate API token and subsystem bootstrap package.</p>
+          </article>
+
+          <article class="report-panel">
+            <h3>Publish global upgrade</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="upgradeVersionInput">Target version</label>
+                <input id="upgradeVersionInput" type="text" placeholder="3.1.0">
+              </div>
+              <div class="field">
+                <label for="upgradeNotesInput">Release notes</label>
+                <input id="upgradeNotesInput" type="text" placeholder="Policy optimizer hotfix and dashboard patch">
+              </div>
+            </div>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-block" type="button" id="publishUpgradeBtn">Publish upgrade</button>
+            </div>
+            <p class="note" id="publishUpgradeResult">Tenants automatically receive this version on next sync.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>Super control dashboard for ASLF-OSINT multi-tenant operations.</div>
+      <div><a href="tenant-dashboard.html">Open tenant dashboard</a></div>
+    </div>
+    <div class="copyright-bar">© 2026 MD ANISUR RAHMAN CHOWDHURY. All Rights Reserved.</div>
+  </footer>
+</body>
+</html>

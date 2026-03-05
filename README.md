@@ -11,6 +11,8 @@ This repository is the combined and extended Research-3 artifact built from the 
 - HTML report: <https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/report.html>
 - Poster page: <https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/poster.html>
 - Implementation guide: <https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/implementation.html>
+- Super control dashboard: <https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/super-dashboard.html>
+- Tenant dashboard: <https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/tenant-dashboard.html>
 
 ## What is included
 
@@ -27,6 +29,8 @@ This repository is the combined and extended Research-3 artifact built from the 
 - federated zero-trust policy engine (`src/sif/zero_trust.py`)
 - provider action orchestration (`src/sif/orchestrator.py`)
 - federated propagation coordinator (`src/sif/federation.py`)
+- multi-tenant super control + tenant subsystem (`src/sif/multi_tenant.py`)
+- control API server (`src/sif/api_server.py`, `run_control_api.py`)
 
 3. Encrypted document distribution flow:
 - first-page public preview PDF
@@ -40,6 +44,7 @@ This repository is the combined and extended Research-3 artifact built from the 
 cd /path/to/Serverless-Intelligent-Firewall-Research-3
 PYTHONPATH=src python3 run_firewall.py evaluate --event examples/events/benign.json
 bash scripts/run_tests.sh
+python3 run_control_api.py --host 0.0.0.0 --port 9000
 ```
 
 ## Rebuild encrypted artifacts
@@ -61,8 +66,11 @@ Default password used by gate/hash and artifact packaging:
 │   ├── report.html
 │   ├── poster.html
 │   ├── implementation.html
+│   ├── super-dashboard.html
+│   ├── tenant-dashboard.html
 │   ├── styles.css
 │   ├── script.js
+│   ├── dashboard.js
 │   └── assets/
 │       ├── images/
 │       └── papers/

@@ -38,10 +38,10 @@
 
       <div class="report-band">
         <div class="report-metrics">
-          <span class="report-chip">98% accuracy</span>
-          <span class="report-chip">0.990 ROC-AUC</span>
-          <span class="report-chip">135 ms cross-cloud latency</span>
-          <span class="report-chip">99.6% policy consistency</span>
+          <span class="report-chip">98.7% detection accuracy</span>
+          <span class="report-chip">87 ms average latency</span>
+          <span class="report-chip">94.3% zero-day detection</span>
+          <span class="report-chip">99.8% federated consistency</span>
         </div>
         <div class="hero-actions">
           <button class="btn btn-primary" type="button" data-open-gate>Secure downloads</button>
@@ -68,6 +68,7 @@
         </p>
         <div class="hero-actions">
           <a class="btn btn-secondary btn-block" href="poster.html">Open poster page</a>
+          <a class="btn btn-secondary btn-block" href="super-dashboard.html">Open super dashboard</a>
           <a class="btn btn-secondary btn-block" href="index.html">Return to portal</a>
         </div>
       </aside>
@@ -77,34 +78,35 @@
       <section class="report-section" id="method">
         <h2>Research scope and methodology</h2>
         <p>
-          The paper uses the CIC-IDS2017 dataset and applies a multi-stage preprocessing pipeline: column normalization, duplicate removal, anomaly correction, class consolidation, manual outlier filtering, and balancing by undersampling. This reduces noise and gives the downstream learning pipeline a cleaner feature space.
+          The manuscript combines benchmark IDS datasets (CICIDS2017, CIC-IDS2018, UNSW-NB15, NSL-KDD) with 30 days of live threat-intel feeds from MISP, AlienVault OTX, and VirusTotal. The pipeline is designed for autonomous retraining under concept drift.
         </p>
 
         <div class="report-columns">
           <article class="report-panel">
-            <h3>Data preparation pipeline</h3>
+            <h3>Threat-intel and data pipeline</h3>
             <ul class="report-list">
-              <li>Remove duplicate rows and redundant columns.</li>
-              <li>Replace infinite values and drop rows with missing values.</li>
-              <li>Consolidate attack labels into broader operational classes.</li>
-              <li>Standardize numerical features and trim high-impact outliers.</li>
-              <li>Balance remaining classes for more stable supervised learning.</li>
+              <li>REST API ingestion from MISP, AlienVault OTX, and VirusTotal.</li>
+              <li>Indicator normalization for IP/domain/hash intelligence.</li>
+              <li>Feature alignment with flow, identity, and policy context.</li>
+              <li>Continuous drift-sensitive buffering for autonomous retraining.</li>
+              <li>Cross-tenant telemetry aggregation through super control.</li>
             </ul>
           </article>
 
           <article class="report-panel">
-            <h3>Model design</h3>
+            <h3>Autonomous learning engine</h3>
             <ul class="report-list">
-              <li>XGBoost captures non-linear feature importance and supports fast feature-level learning.</li>
-              <li>BiGRU models bidirectional temporal relationships in traffic behavior.</li>
-              <li>A weighted fusion layer balances static and temporal evidence.</li>
-              <li>Serverless response hooks trigger provider-specific actions after detection.</li>
+              <li>Reinforcement learning (PPO) for response policy optimization.</li>
+              <li>Continual learning (SSF) for concept drift adaptation.</li>
+              <li>Meta-learning (prototypical framework) for few-shot zero-day recognition.</li>
+              <li>Federated learning (FedNova) for privacy-preserving distributed updates.</li>
+              <li>Explainability layer via SHAP and LIME for analyst trust.</li>
             </ul>
           </article>
         </div>
 
         <div class="report-highlight">
-          <strong>Design intent:</strong> the architecture deliberately separates detection from policy governance so identity, trust, and response can evolve independently as workloads shift across clouds.
+          <strong>Design intent:</strong> each tenant runs a compact local subsystem for resilient protection, while the super-control plane orchestrates global policy and auto-upgrade propagation.
         </div>
       </section>
 
@@ -119,10 +121,10 @@
           <article class="report-panel">
             <h3>Operational layers</h3>
             <ul class="report-list">
-              <li><strong>Detection layer:</strong> classifies traffic and scores threats.</li>
-              <li><strong>Orchestration layer:</strong> triggers event-driven response workflows.</li>
-              <li><strong>Policy layer:</strong> enforces zero-trust decisions using cloud-agnostic identity and policy logic.</li>
-              <li><strong>Provider layer:</strong> executes localized actions in each cloud without losing global policy consistency.</li>
+              <li><strong>Super control layer:</strong> provisions tenants, publishes upgrades, and aggregates fleet telemetry.</li>
+              <li><strong>Tenant subsystem layer:</strong> keeps local protection active with reduced dependency on central control.</li>
+              <li><strong>Federated policy layer:</strong> enforces synchronized zero-trust decisions across distributed nodes.</li>
+              <li><strong>Provider execution layer:</strong> maps decisions into AWS/Azure/GCP/Proxmox actions.</li>
             </ul>
           </article>
         </div>
@@ -181,11 +183,11 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Accuracy</td><td>98.00%</td></tr>
-                <tr><td>Precision</td><td>98.00%</td></tr>
-                <tr><td>Recall</td><td>98.00%</td></tr>
-                <tr><td>F1-score</td><td>98.00%</td></tr>
-                <tr class="highlight"><td>ROC-AUC</td><td>0.990</td></tr>
+                <tr><td>Detection accuracy</td><td>98.7%</td></tr>
+                <tr><td>Zero-day detection (5-shot)</td><td>94.3%</td></tr>
+                <tr><td>Drift adaptation time</td><td>12.4 minutes</td></tr>
+                <tr><td>Analyst trust (SHAP/LIME)</td><td>91.2%</td></tr>
+                <tr class="highlight"><td>Federated policy consistency</td><td>99.8%</td></tr>
               </tbody>
             </table>
           </article>
@@ -200,10 +202,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Policy propagation delay</td><td>88.3 ms average</td></tr>
-                <tr><td>Identity verification latency</td><td>111.3 ms average</td></tr>
-                <tr><td>Policy consistency</td><td>99.6%</td></tr>
-                <tr class="highlight"><td>Cross-cloud avg. latency</td><td>135 ms</td></tr>
+                <tr><td>Average inference + decision latency</td><td>87 ms</td></tr>
+                <tr><td>Cross-cloud support</td><td>AWS, Azure, GCP</td></tr>
+                <tr><td>Tenant-super sync mode</td><td>Hybrid autonomous</td></tr>
+                <tr class="highlight"><td>Federated consistency</td><td>99.8%</td></tr>
               </tbody>
             </table>
           </article>

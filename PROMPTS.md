@@ -10,7 +10,7 @@
 
 ## Prompt 3: Production API service
 
-"Implement `api/server.py` using FastAPI (or stdlib HTTP fallback if dependencies are unavailable) exposing `/health`, `/evaluate`, `/learn`, and `/federation/ingest`. Add request validation, structured JSON logs, and a systemd deployment snippet in `DEPLOYMENT_PROXMOX_GUIDE.md`."
+"Extend `src/sif/api_server.py` with hardened auth and tenant scoping. Add API token verification for `/super/*` and `/tenant/*`, request schema validation, structured audit logs, and endpoint-level rate limiting."
 
 ## Prompt 4: Federated policy drift analytics
 
