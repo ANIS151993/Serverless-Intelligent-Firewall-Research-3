@@ -5,6 +5,16 @@ Integrating REST API-Driven Open-Source Threat Intelligence, Multi-Paradigm Mach
 
 This repository is the combined and extended Research-3 artifact built from the Research-1 and Research-2 lineage.
 
+## Research-3 novelty over prior stages
+
+| Dimension | Research-1 | Research-2 | Research-3 |
+|---|---|---|---|
+| Detection core | LSTM baseline | XGBoost + BiGRU hybrid | Adaptive multi-paradigm stack |
+| Control model | Single-track baseline | Unified cross-cloud control | Super control + tenant compact subsystems |
+| Learning updates | Manual retraining | Scheduled updates | Autonomous OSINT-driven adaptation |
+| Tenant operation | Not a primary focus | Partial | Full corporate tenant onboarding, sync, and live monitoring |
+| Real-time admin observability | Limited | Moderate | Super and tenant WebSocket dashboards with RBAC APIs |
+
 ## Live Portal (GitHub Pages)
 
 - Main portal: <https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/>

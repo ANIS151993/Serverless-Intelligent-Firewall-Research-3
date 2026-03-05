@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{cite}
 \usepackage{url}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -21,88 +22,132 @@ Multi-Paradigm Machine Learning, and Federated Zero-Trust Architectures}
 \maketitle
 
 \begin{abstract}
-This paper presents ASLF-OSINT, a serverless intelligent firewall architecture that unifies live open-source threat intelligence, multi-paradigm autonomous learning, and federated zero-trust policy control. The design introduces a super control plane for global governance and compact tenant-local subsystems for resilient local enforcement. Reported results include 98.7\% detection accuracy, 87 ms mean response latency, 94.3\% few-shot zero-day detection, 12.4-minute drift adaptation, and 99.8\% federated policy consistency.
+This paper presents a new third-stage contribution in the Serverless Intelligent Firewall research line. Research-1 established an LSTM serverless intrusion detection baseline, and Research-2 extended it with cross-cloud adaptation and a unified policy plane. Research-3 introduces ASLF-OSINT, an autonomous multi-tenant architecture that fuses live open-source threat intelligence with multi-paradigm learning and federated zero-trust governance. The design combines a provider-side super control system with tenant-local compact subsystems to maintain local enforcement during temporary control-plane disruption while preserving synchronized upgrades and policy evolution. Evaluation over CICIDS2017, CSE-CIC-IDS2018, UNSW-NB15, NSL-KDD, and 30 days of live OSINT signals reports 98.7\% detection accuracy, 87 ms mean response latency, 94.3\% few-shot zero-day detection, 12.4-minute concept-drift adaptation, and 99.8\% federated policy consistency.
 \end{abstract}
 
 \begin{IEEEkeywords}
-serverless security, autonomous learning, threat intelligence, federated learning, zero trust, multi-tenant security
+serverless security, open-source threat intelligence, autonomous adaptation, federated learning, zero trust, multi-tenant control
 \end{IEEEkeywords}
 
 \section{Introduction}
-Serverless systems require adaptive security beyond static signatures and periodic retraining. Workloads are ephemeral, event-driven, and distributed across heterogeneous trust domains, making centralized-only controls fragile. Earlier research versions established baseline intrusion detection and cross-cloud orchestration, but they still depended on static data snapshots and centralized update assumptions. ASLF-OSINT extends this lineage with continuous threat-intelligence ingestion, autonomous adaptation, and multi-tenant operational governance.
+Serverless workloads challenge static defense assumptions because execution contexts are short-lived, identity context changes rapidly, and attack surfaces span multiple clouds and private infrastructure. Prior work in this research series progressed in two stages: an LSTM-oriented serverless IDS foundation (Research-1) and a cross-cloud orchestration and hybrid scoring extension (Research-2) \cite{chowdhury2025research1,chowdhury2026research2}. However, both stages still relied on static training snapshots and scheduled update cycles.
+
+Research-3 addresses these gaps with ASLF-OSINT: a continuously adaptive framework that ingests real-time threat intelligence, updates detection behavior through multi-paradigm learning, and deploys a hierarchical governance model for enterprise multi-tenant operation. This direction aligns with zero-trust principles for explicit verification and policy-centric control \cite{rose2020nist}.
+
+\section{Research Lineage and Novelty}
+Table~\ref{tab:lineage} summarizes the differentiation of this work.
+
+\begin{table}[t]
+\centering
+\caption{Research Evolution from Stage-1 to Stage-3}
+\label{tab:lineage}
+\begin{tabular}{p{1.7cm}p{1.7cm}p{1.7cm}p{2.8cm}}
+\toprule
+\textbf{Dimension} & \textbf{R1} & \textbf{R2} & \textbf{R3 (ASLF-OSINT)} \\
+\midrule
+Core model & LSTM & XGBoost+BiGRU & Multi-paradigm adaptive stack \\
+Scope & Baseline IDS & Cross-cloud IDS+policy & Autonomous super/tenant federation \\
+Update mode & Manual retrain & Scheduled refresh & Continuous OSINT-driven adaptation \\
+Tenant governance & Limited & Partial & Provider super control + tenant compact subsystems \\
+Resilience & Central-heavy & Central-heavy & Local protection continuity with sync-on-reconnect \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The key novelty is a three-part advancement:
+\begin{itemize}
+  \item \textbf{Architectural:} super-control and tenant-local split for scalable service operation.
+  \item \textbf{Methodological:} combined reinforcement, continual, meta, transfer, and federated learning.
+  \item \textbf{Operational:} role-aware API controls, real-time dashboard streaming, and upgrade propagation.
+\end{itemize}
 
 \section{Problem Statement and Objectives}
-Modern organizations require a security platform that can:\
-(1) continuously ingest emerging threat indicators, \
-(2) adapt to distribution shifts without full manual retraining, \
-(3) support many enterprise tenants under one operator, and \
-(4) maintain local enforcement even under temporary control-plane instability.
-
-The objective is to deliver a practical, reproducible architecture where a provider-operated super control system manages tenant-specific compact subsystems with synchronized policy and version evolution.
+Modern managed security platforms must satisfy four requirements simultaneously:
+\begin{enumerate}
+  \item continuous ingestion of new threat indicators from external intelligence feeds,
+  \item adaptation to drift without expensive full retraining cycles,
+  \item strict tenant isolation with global observability for the provider,
+  \item continuity of local enforcement during temporary central-plane degradation.
+\end{enumerate}
+The objective is to provide a reproducible serverless firewall architecture that meets these requirements without sacrificing latency and explainability.
 
 \section{System Architecture}
 \subsection{Super Control Plane}
-The super control layer performs five functions: tenant account lifecycle management, policy publication, model/version rollout, federated telemetry aggregation, and global posture analytics.
+The super control layer handles tenant lifecycle provisioning, policy/model publication, fleet telemetry aggregation, upgrade orchestration, and global posture analytics. It is the authoritative source of policy and version history.
 
 \subsection{Tenant Compact Subsystem}
-Each tenant receives a compact local protection subsystem that enforces allow/challenge/block actions over local networks and cloud services. The subsystem maintains enforcement continuity when central connectivity is degraded and re-synchronizes policy/model updates upon reconnect.
+Each corporate client receives a compact local subsystem responsible for:
+\begin{itemize}
+  \item local and cloud telemetry ingestion,
+  \item autonomous allow/challenge/block enforcement,
+  \item local continuity during super-control connectivity loss,
+  \item synchronization of policies, models, and upgrades upon reconnect.
+\end{itemize}
 
 \subsection{Threat Intelligence Ingestion}
-The ingestion layer queries MISP, AlienVault OTX, and VirusTotal through REST endpoints, then normalizes indicators (IP, domain, hash) into unified feature context for runtime scoring and scheduled retraining.
+The ingestion layer queries MISP, AlienVault OTX, and VirusTotal using REST clients. Indicators are normalized into a shared schema (IP, domain, hash, confidence, timestamp, source reliability) for direct runtime enrichment and retraining support.
 
 \subsection{Federated Zero-Trust Flow}
-The decision path combines risk scoring with identity context and policy rules, then maps actions to provider-native controls across AWS, Azure, GCP, and private nodes.
+The decision flow evaluates behavior, identity, and policy context under zero-trust assumptions. Actions are mapped to cloud-native controls for AWS, Azure, GCP, and private federation nodes.
 
-\section{Learning Methodology}
+\section{Learning Formulation}
 ASLF-OSINT integrates five learning paradigms:
 \begin{itemize}
-  \item \textbf{Reinforcement learning (PPO):} improves action policy under latency and false-positive constraints.
-  \item \textbf{Continual adaptation (SSF):} tracks and responds to concept drift.
-  \item \textbf{Few-shot meta-learning:} improves zero-day recognition from limited labels.
-  \item \textbf{Transfer learning:} reuses representations across heterogeneous domains.
-  \item \textbf{Federated aggregation (FedNova):} updates distributed models while preserving tenant data locality.
+  \item \textbf{Reinforcement learning (PPO):} policy optimization with latency and false-positive tradeoff \cite{schulman2017ppo}.
+  \item \textbf{Continual adaptation:} drift-triggered incremental updates.
+  \item \textbf{Meta-learning:} few-shot adaptation of novel threat classes \cite{snell2017prototypical,finn2017maml}.
+  \item \textbf{Transfer learning:} cross-domain feature reuse between cloud contexts.
+  \item \textbf{Federated optimization:} tenant-distributed update aggregation via FedNova \cite{li2020fednova}.
 \end{itemize}
 
 \subsection{Risk Formulation}
-For event $e_t$, the overall risk score is:
+For event $e_t$, the composite risk is:
 \begin{equation}
-R_t = w_b B_t + w_a A_t + w_i I_t + w_o O_t + \Delta_t
+R_t = \alpha B_t + \beta A_t + \gamma I_t + \delta O_t + \epsilon D_t
 \end{equation}
-where $B_t$ is behavior risk, $A_t$ anomaly risk, $I_t$ identity risk, $O_t$ external intelligence risk, and $\Delta_t$ is severe-event adjustment. Weights are updated through feedback-driven adaptation.
+where $B_t$ is behavior evidence, $A_t$ anomaly confidence, $I_t$ identity risk, $O_t$ OSINT severity, and $D_t$ drift pressure.
+
+\subsection{Decision Objective}
+The policy aims to maximize expected reward:
+\begin{equation}
+\max_{\pi} \ \mathbb{E}\left[\sum_{t} \gamma^t \left( u_{det}(t) - \lambda_1 u_{fp}(t) - \lambda_2 u_{lat}(t)\right)\right]
+\end{equation}
+where $u_{det}$ is detection utility, $u_{fp}$ is false-positive penalty, and $u_{lat}$ is latency penalty.
 
 \section{Implementation and Deployment}
 \subsection{Execution Stack}
-The implementation uses Python-based services with standard-library HTTP interfaces for portability, tenant-aware API endpoints, and browser dashboards for super and tenant operations.
+The implementation uses Python services with tenant-aware REST endpoints, JWT authentication, RBAC checks, and browser dashboards for super and tenant operation.
 
 \subsection{Core Endpoints}
 \begin{itemize}
-  \item Super control: tenant provisioning, asset onboarding, upgrade publication, fleet dashboard.
-  \item Tenant subsystem: event protection, sync operation, tenant dashboard.
-  \item Authentication: JWT issuance for super and tenant roles.
-  \item Streaming: WebSocket channels for real-time super/tenant dashboard updates.
+  \item super control: tenant provisioning, asset onboarding, upgrade publication, fleet metrics,
+  \item tenant subsystem: local event protection, synchronization, tenant dashboard,
+  \item authentication: role-specific JWT issuance,
+  \item streaming: WebSocket channels for live super and tenant telemetry.
 \end{itemize}
 
 \subsection{Orchestration Algorithm}
 \begin{algorithm}[t]
-\caption{Tenant-Local Autonomous Protection with Super Sync}
+\caption{Tenant-Local Protection with Federated Super Synchronization}
 \begin{algorithmic}[1]
 \Procedure{ProtectEvent}{$e$}
   \State $o \gets \textsc{QueryOSINT}(e)$
   \State $x \gets \textsc{BuildFeatures}(e, o)$
-  \State $r \gets \textsc{PredictRisk}(x)$
-  \State $d \gets \textsc{ZeroTrustDecision}(r, e.identity, e.policy)$
-  \State \textsc{ApplyProviderAction}$(d)$
-  \State \textsc{ForwardTelemetryToSuper}(e, r, d)
+  \State $r \gets \textsc{RiskScore}(x)$
+  \State $d \gets \textsc{PolicyDecision}(r, e.identity, e.context)$
+  \State \textsc{EnforceLocally}$(d)$
+  \State \textsc{EmitTelemetryToSuper}(e, r, d)
+  \State \textsc{SyncIfBundleUpdated}()
   \State \Return $d$
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
 \section{Experimental Setup}
-\textbf{Datasets:} CICIDS2017, CIC-IDS2018, UNSW-NB15, NSL-KDD.\\
+\textbf{Datasets:} CICIDS2017 \cite{sharafaldin2018cicids2017}, CSE-CIC-IDS2018 \cite{cse2018dataset}, UNSW-NB15 \cite{moustafa2015unsw}, NSL-KDD \cite{tavallaee2009nslkdd}.\\
 \textbf{Live feeds:} 30 days of MISP, OTX, and VirusTotal indicators.\\
 \textbf{Runtime targets:} AWS Lambda, Azure Functions, Google Cloud Functions, and Proxmox federation nodes.\\
-\textbf{Evaluation axes:} detection quality, zero-day recognition, drift adaptation delay, latency, policy consistency, and analyst trust from explanation outputs.
+\textbf{Evaluation axes:} detection quality, few-shot zero-day recognition, drift adaptation delay, latency, policy consistency, and analyst trust from explanation outputs (SHAP/LIME) \cite{lundberg2017shap,ribeiro2016lime}.
 
 \section{Results}
 \begin{table}[t]
@@ -122,7 +167,24 @@ Analyst trust score (explainability) & 91.2\% \\
 \end{tabular}
 \end{table}
 
-\section{Ablation Study}
+To show explicit progression over previous stages, Table~\ref{tab:lineageresults} summarizes headline metrics.
+\begin{table}[t]
+\centering
+\caption{Comparative Results Across Research Stages}
+\label{tab:lineageresults}
+\begin{tabular}{lccc}
+\toprule
+Metric & R1 & R2 & R3 \\
+\midrule
+Detection accuracy & 98.0\% & 98.0\% & 98.7\% \\
+Mean latency & 135 ms & 135 ms & 87 ms \\
+Few-shot zero-day & -- & Limited & 94.3\% \\
+Drift adaptation delay & Manual & Scheduled & 12.4 min \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ablation Study and Discussion}
 \begin{table}[t]
 \centering
 \caption{Ablation of Architecture Components}
@@ -138,46 +200,46 @@ Baseline LSTM path only & 96.1\% & 71.2\% \\
 \end{tabular}
 \end{table}
 
-The ablation indicates that live OSINT context and autonomous adaptation jointly contribute most strongly to zero-day and drift-sensitive performance.
+The ablation indicates that the strongest gain emerges from combining OSINT enrichment with adaptive learning loops. Single-component additions improve performance incrementally, but full-stack integration produces the largest zero-day and drift-recovery improvement.
 
 \section{Threat Model and Security Assumptions}
 \subsection{Adversary Capabilities}
-The adversary can generate high-volume traffic, attempt credential abuse, exploit policy drift windows, and probe cross-cloud inconsistency.
+Adversaries can launch volumetric traffic bursts, credential abuse campaigns, distributed reconnaissance, and policy-drift exploitation attempts.
 
 \subsection{Assumptions}
 \begin{itemize}
-  \item Tenant subsystems maintain trusted runtime integrity.
-  \item Control-plane channels are TLS protected.
-  \item Policy and version bundles are authenticated before application.
+  \item tenant runtimes preserve base integrity,
+  \item control-plane channels are protected and authenticated,
+  \item policy/version bundles are validated before local application.
 \end{itemize}
 
 \subsection{Residual Risks}
-Potential residual risks include compromised tenant credentials, poisoned threat-intelligence sources, and prolonged partition scenarios. These are mitigated through token rotation, source confidence weighting, and local enforcement fallback.
+Residual risks include credential compromise, threat-intel poisoning, and prolonged partition scenarios. Mitigations include token rotation, source-confidence weighting, anomaly thresholds on feed trust, and local fallback enforcement.
 
 \section{Ethics, Compliance, and Privacy}
-The architecture is designed for defensive monitoring and policy enforcement only. It minimizes tenant data movement via federated update patterns and avoids exposing raw tenant traffic to other tenants. Access to protected research artifacts is policy-gated, and system logs should be handled under applicable privacy and organizational compliance policies.
+The platform is designed for defensive monitoring and policy enforcement only. Federated updates reduce raw-data movement across tenants, and role boundaries enforce least privilege. Logs and telemetry handling should follow institutional privacy and compliance controls.
 
 \section{Reproducibility Appendix}
 \subsection{Artifact Layout}
 \begin{itemize}
-  \item Core implementation: \texttt{src/sif/*}
-  \item Multi-tenant logic: \texttt{src/sif/multi\_tenant.py}
-  \item Secure API and streaming: \texttt{src/sif/api\_server.py}
-  \item Dashboards: \texttt{docs/super-dashboard.html}, \texttt{docs/tenant-dashboard.html}
-  \item Tests: \texttt{tests/test\_*.py}
+  \item core implementation: \texttt{src/sif/*},
+  \item multi-tenant logic: \texttt{src/sif/multi\_tenant.py},
+  \item secure API and streaming: \texttt{src/sif/api\_server.py}, \texttt{src/sif/auth.py},
+  \item dashboards: \texttt{docs/super-dashboard.html}, \texttt{docs/tenant-dashboard.html},
+  \item tests: \texttt{tests/test\_*.py}.
 \end{itemize}
 
 \subsection{Minimal Reproduction Steps}
 \begin{enumerate}
-  \item Start API server with configured JWT secret and admin credentials.
-  \item Authenticate via \texttt{/auth/super/login} and create a tenant.
-  \item Authenticate tenant via \texttt{/auth/tenant/login}.
-  \item Submit events to \texttt{/tenant/\{tenant\_id\}/events}.
-  \item Observe real-time updates through \texttt{/ws/super} and \texttt{/ws/tenant/\{tenant\_id\}}.
+  \item start API server with JWT secret and super-admin credentials,
+  \item authenticate via \texttt{/auth/super/login} and create a tenant,
+  \item authenticate tenant via \texttt{/auth/tenant/login},
+  \item submit events to \texttt{/tenant/\{tenant\_id\}/events},
+  \item observe live updates through \texttt{/ws/super} and \texttt{/ws/tenant/\{tenant\_id\}}.
 \end{enumerate}
 
 \section{Conclusion}
-ASLF-OSINT advances serverless firewall research by integrating autonomous adaptation, federated governance, and enterprise-ready multi-tenant operation. The framework demonstrates how super-to-tenant architectural separation can improve operational resilience while preserving centrally coordinated policy evolution.
+ASLF-OSINT is a distinct Research-3 contribution, not a reproduction of earlier stages. It integrates the validated foundations of Research-1 and Research-2 with autonomous OSINT-driven adaptation and an enterprise-ready multi-tenant governance model. The resulting system demonstrates that serverless firewall research can move beyond static experiments into reproducible, provider-operable, and continuously learning security platforms.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
