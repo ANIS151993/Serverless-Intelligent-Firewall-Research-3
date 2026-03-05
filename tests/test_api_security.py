@@ -28,6 +28,8 @@ class ApiSecurityTests(unittest.TestCase):
         handler.ws_super = []
         handler.ws_tenant = {}
         handler.rate_windows = {}
+        handler.auth_failures = {}
+        handler.auth_lockouts = {}
         handler.allowed_origins = "*"
 
         try:
@@ -128,6 +130,93 @@ class ApiSecurityTests(unittest.TestCase):
         status, result = self._request("POST", f"/tenant/{tenant_id}/events", sample_event, token=tenant_token)
         self.assertEqual(status, 200)
         self.assertIn("decision", result)
+
+    def test_tenant_lifecycle_and_audit_api(self):
+        status, login = self._request(
+            "POST",
+            "/auth/super/login",
+            {"username": "admin", "password": "change-me-now"},
+        )
+        self.assertEqual(status, 200)
+        super_token = login["token"]
+
+        status, created = self._request(
+            "POST",
+            "/super/tenants",
+            {"organization_name": "Delta Corp", "admin_email": "soc@delta.example"},
+            token=super_token,
+        )
+        self.assertEqual(status, 201)
+        tenant_id = created["tenant_id"]
+        old_api_token = created["api_token"]
+
+        status, rotated = self._request("POST", f"/super/tenants/{tenant_id}/rotate-token", {}, token=super_token)
+        self.assertEqual(status, 200)
+        new_api_token = rotated["api_token"]
+        self.assertNotEqual(old_api_token, new_api_token)
+
+        status, _ = self._request(
+            "POST",
+            "/auth/tenant/login",
+            {"tenant_id": tenant_id, "api_token": old_api_token},
+        )
+        self.assertEqual(status, 401)
+
+        status, tenant_login = self._request(
+            "POST",
+            "/auth/tenant/login",
+            {"tenant_id": tenant_id, "api_token": new_api_token},
+        )
+        self.assertEqual(status, 200)
+        tenant_token = tenant_login["token"]
+
+        status, _ = self._request(
+            "POST",
+            f"/super/tenants/{tenant_id}/disable",
+            {"reason": "incident_triage"},
+            token=super_token,
+        )
+        self.assertEqual(status, 200)
+
+        status, disabled_dash = self._request("GET", f"/tenant/{tenant_id}/dashboard", token=tenant_token)
+        self.assertEqual(status, 403)
+        self.assertEqual(disabled_dash["error"], "tenant_not_active")
+
+        status, _ = self._request(
+            "POST",
+            f"/super/tenants/{tenant_id}/reactivate",
+            {},
+            token=super_token,
+        )
+        self.assertEqual(status, 200)
+
+        status, audit = self._request("GET", f"/super/audit?tenant_id={tenant_id}&limit=20", token=super_token)
+        self.assertEqual(status, 200)
+        actions = {entry["action"] for entry in audit["events"]}
+        self.assertIn("tenant_disabled", actions)
+        self.assertIn("tenant_reactivated", actions)
+        self.assertIn("tenant_token_rotated", actions)
+
+        status, deleted = self._request("DELETE", f"/super/tenants/{tenant_id}", token=super_token)
+        self.assertEqual(status, 200)
+        self.assertEqual(deleted["status"], "deleted")
+
+    def test_super_login_lockout(self):
+        for _ in range(5):
+            status, _ = self._request(
+                "POST",
+                "/auth/super/login",
+                {"username": "admin", "password": "wrong-password"},
+            )
+            self.assertEqual(status, 401)
+
+        status, payload = self._request(
+            "POST",
+            "/auth/super/login",
+            {"username": "admin", "password": "wrong-password"},
+        )
+        self.assertEqual(status, 423)
+        self.assertEqual(payload["error"], "auth_temporarily_locked")
 
 
 if __name__ == "__main__":

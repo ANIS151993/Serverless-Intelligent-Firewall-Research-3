@@ -10,6 +10,11 @@ from typing import Any, Dict, List, Optional
 from .firewall import ServerlessIntelligentFirewall
 
 
+TENANT_STATUS_ACTIVE = "active"
+TENANT_STATUS_DISABLED = "disabled"
+TENANT_STATUS_DELETED = "deleted"
+
+
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -62,6 +67,11 @@ class TenantAccount:
     challenged_count: int
     allow_count: int
     avg_risk_score: float
+    status: str
+    disabled_at: Optional[str]
+    disabled_reason: Optional[str]
+    deleted_at: Optional[str]
+    last_token_rotated_at: Optional[str]
 
     def to_dict(self, include_secret: bool = False) -> Dict[str, Any]:
         payload = asdict(self)
@@ -69,6 +79,19 @@ class TenantAccount:
         if not include_secret:
             payload.pop("api_token", None)
         return payload
+
+
+@dataclass
+class AuditEntry:
+    event_id: str
+    timestamp: str
+    actor: str
+    action: str
+    tenant_id: Optional[str]
+    details: Dict[str, Any]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
 
 
 class SuperControlSystem:
@@ -90,6 +113,7 @@ class SuperControlSystem:
         self.upgrade_log: List[Dict[str, Any]] = []
         self.tenants: Dict[str, TenantAccount] = {}
         self.telemetry: Dict[str, List[Dict[str, Any]]] = {}
+        self.audit_log: List[AuditEntry] = []
         self._load_state()
 
     def create_tenant(self, organization_name: str, admin_email: str) -> Dict[str, Any]:
@@ -111,9 +135,20 @@ class SuperControlSystem:
             challenged_count=0,
             allow_count=0,
             avg_risk_score=0.0,
+            status=TENANT_STATUS_ACTIVE,
+            disabled_at=None,
+            disabled_reason=None,
+            deleted_at=None,
+            last_token_rotated_at=None,
         )
         self.tenants[tenant_id] = tenant
         self.telemetry[tenant_id] = []
+        self._record_audit(
+            actor="system:super_control",
+            action="tenant_created",
+            tenant_id=tenant_id,
+            details={"organization_name": organization_name, "admin_email": admin_email},
+        )
         self._save_state()
         return {
             "tenant_id": tenant_id,
@@ -122,7 +157,7 @@ class SuperControlSystem:
         }
 
     def bootstrap_subsystem(self, tenant_id: str) -> Dict[str, Any]:
-        tenant = self._get_tenant(tenant_id)
+        tenant = self._get_active_tenant(tenant_id)
         return {
             "tenant_id": tenant.tenant_id,
             "super_control_endpoint": "/tenant/{tenant_id}/sync",
@@ -137,10 +172,115 @@ class SuperControlSystem:
 
     def validate_tenant_api_token(self, tenant_id: str, api_token: str) -> bool:
         tenant = self._get_tenant(tenant_id)
+        if tenant.status != TENANT_STATUS_ACTIVE:
+            return False
+        if not tenant.api_token:
+            return False
         return secrets.compare_digest(tenant.api_token, api_token)
 
     def tenant_exists(self, tenant_id: str) -> bool:
-        return tenant_id in self.tenants
+        return tenant_id in self.tenants and self.tenants[tenant_id].status != TENANT_STATUS_DELETED
+
+    def get_tenant(self, tenant_id: str) -> Dict[str, Any]:
+        return self._get_tenant(tenant_id).to_dict()
+
+    def list_audit(self, limit: int = 100, tenant_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        max_items = min(max(int(limit), 1), 500)
+        items = self.audit_log
+        if tenant_id:
+            items = [entry for entry in items if entry.tenant_id == tenant_id]
+        return [entry.to_dict() for entry in items[-max_items:]][::-1]
+
+    def disable_tenant(self, tenant_id: str, actor: str, reason: str = "admin_request") -> Dict[str, Any]:
+        tenant = self._get_tenant(tenant_id)
+        if tenant.status == TENANT_STATUS_DELETED:
+            raise PermissionError("tenant_deleted")
+
+        tenant.status = TENANT_STATUS_DISABLED
+        tenant.disabled_at = _utc_now()
+        tenant.disabled_reason = reason
+        self._record_audit(
+            actor=actor,
+            action="tenant_disabled",
+            tenant_id=tenant_id,
+            details={"reason": reason},
+        )
+        self._save_state()
+        return {
+            "tenant_id": tenant_id,
+            "status": tenant.status,
+            "disabled_at": tenant.disabled_at,
+            "disabled_reason": tenant.disabled_reason,
+        }
+
+    def reactivate_tenant(self, tenant_id: str, actor: str) -> Dict[str, Any]:
+        tenant = self._get_tenant(tenant_id)
+        if tenant.status == TENANT_STATUS_DELETED:
+            raise PermissionError("tenant_deleted")
+
+        tenant.status = TENANT_STATUS_ACTIVE
+        tenant.disabled_at = None
+        tenant.disabled_reason = None
+        self._record_audit(
+            actor=actor,
+            action="tenant_reactivated",
+            tenant_id=tenant_id,
+            details={},
+        )
+        self._save_state()
+        return {"tenant_id": tenant_id, "status": tenant.status}
+
+    def rotate_tenant_api_token(self, tenant_id: str, actor: str) -> Dict[str, Any]:
+        tenant = self._get_tenant(tenant_id)
+        if tenant.status != TENANT_STATUS_ACTIVE:
+            raise PermissionError("tenant_not_active")
+
+        tenant.api_token = secrets.token_urlsafe(24)
+        tenant.last_token_rotated_at = _utc_now()
+        self._record_audit(
+            actor=actor,
+            action="tenant_token_rotated",
+            tenant_id=tenant_id,
+            details={"rotated_at": tenant.last_token_rotated_at},
+        )
+        self._save_state()
+        return {
+            "tenant_id": tenant_id,
+            "api_token": tenant.api_token,
+            "rotated_at": tenant.last_token_rotated_at,
+        }
+
+    def delete_tenant(self, tenant_id: str, actor: str, hard_delete: bool = False) -> Dict[str, Any]:
+        tenant = self._get_tenant(tenant_id)
+        if hard_delete:
+            self.tenants.pop(tenant_id, None)
+            self.telemetry.pop(tenant_id, None)
+            self._record_audit(
+                actor=actor,
+                action="tenant_hard_deleted",
+                tenant_id=tenant_id,
+                details={},
+            )
+            self._save_state()
+            return {"tenant_id": tenant_id, "status": "hard_deleted"}
+
+        tenant.status = TENANT_STATUS_DELETED
+        tenant.deleted_at = _utc_now()
+        tenant.disabled_at = tenant.deleted_at
+        tenant.disabled_reason = "deleted"
+        tenant.api_token = ""
+        self._record_audit(
+            actor=actor,
+            action="tenant_deleted",
+            tenant_id=tenant_id,
+            details={"mode": "soft_delete"},
+        )
+        self._save_state()
+        return {
+            "tenant_id": tenant_id,
+            "status": tenant.status,
+            "deleted_at": tenant.deleted_at,
+        }
 
     def add_asset(
         self,
@@ -153,7 +293,7 @@ class SuperControlSystem:
         criticality: str = "medium",
         tags: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
-        tenant = self._get_tenant(tenant_id)
+        tenant = self._get_active_tenant(tenant_id)
         asset = ClientAsset(
             asset_id=f"asset-{secrets.token_hex(4)}",
             asset_type=asset_type,
@@ -165,6 +305,12 @@ class SuperControlSystem:
             created_at=_utc_now(),
         )
         tenant.assets.append(asset)
+        self._record_audit(
+            actor="system:super_control",
+            action="tenant_asset_added",
+            tenant_id=tenant_id,
+            details={"asset_id": asset.asset_id, "provider": provider, "asset_type": asset_type},
+        )
         self._save_state()
         return asdict(asset)
 
@@ -191,10 +337,16 @@ class SuperControlSystem:
         return {"status": "published", "release": release}
 
     def sync_tenant(self, tenant_id: str, installed_version: str) -> Dict[str, Any]:
-        tenant = self._get_tenant(tenant_id)
+        tenant = self._get_active_tenant(tenant_id)
         if version_is_newer(self.platform_version, installed_version):
             tenant.installed_version = self.platform_version
             tenant.subsystem_version = self.platform_version
+            self._record_audit(
+                actor=f"tenant:{tenant_id}",
+                action="tenant_upgraded",
+                tenant_id=tenant_id,
+                details={"target_version": self.platform_version},
+            )
             self._save_state()
             return {
                 "upgrade_available": True,
@@ -209,7 +361,7 @@ class SuperControlSystem:
         }
 
     def ingest_telemetry(self, tenant_id: str, event: Dict[str, Any], evaluation: Dict[str, Any]) -> Dict[str, Any]:
-        tenant = self._get_tenant(tenant_id)
+        tenant = self._get_active_tenant(tenant_id)
         decision = evaluation.get("decision", {}).get("action", "ALLOW")
         risk = float(evaluation.get("model", {}).get("risk_score", 0.0))
 
@@ -249,8 +401,17 @@ class SuperControlSystem:
         total_blocks = 0
         total_challenges = 0
         total_allows = 0
+        active_tenants = 0
+        disabled_tenants = 0
+        deleted_tenants = 0
 
         for tenant in self.tenants.values():
+            if tenant.status == TENANT_STATUS_ACTIVE:
+                active_tenants += 1
+            elif tenant.status == TENANT_STATUS_DISABLED:
+                disabled_tenants += 1
+            else:
+                deleted_tenants += 1
             total_events += tenant.event_count
             total_blocks += tenant.blocked_count
             total_challenges += tenant.challenged_count
@@ -266,12 +427,16 @@ class SuperControlSystem:
                     "challenged": tenant.challenged_count,
                     "allowed": tenant.allow_count,
                     "avg_risk_score": round(tenant.avg_risk_score, 2),
+                    "status": tenant.status,
                 }
             )
 
         return {
             "platform_version": self.platform_version,
             "tenant_count": len(self.tenants),
+            "active_tenants": active_tenants,
+            "disabled_tenants": disabled_tenants,
+            "deleted_tenants": deleted_tenants,
             "total_events": total_events,
             "total_blocked": total_blocks,
             "total_challenged": total_challenges,
@@ -279,11 +444,12 @@ class SuperControlSystem:
             "global_policy": self.global_policy,
             "recent_releases": self.upgrade_log[-10:],
             "tenants": tenant_cards,
+            "recent_audit_events": self.list_audit(limit=20),
             "generated_at": _utc_now(),
         }
 
     def tenant_dashboard(self, tenant_id: str) -> Dict[str, Any]:
-        tenant = self._get_tenant(tenant_id)
+        tenant = self._get_active_tenant(tenant_id)
         stream = self.telemetry.get(tenant_id, [])[-200:]
 
         per_provider: Dict[str, int] = {}
@@ -317,6 +483,33 @@ class SuperControlSystem:
             raise KeyError(f"unknown tenant_id: {tenant_id}")
         return self.tenants[tenant_id]
 
+    def _get_active_tenant(self, tenant_id: str) -> TenantAccount:
+        tenant = self._get_tenant(tenant_id)
+        if tenant.status == TENANT_STATUS_DELETED:
+            raise PermissionError("tenant_deleted")
+        if tenant.status != TENANT_STATUS_ACTIVE:
+            raise PermissionError("tenant_not_active")
+        return tenant
+
+    def _record_audit(
+        self,
+        *,
+        actor: str,
+        action: str,
+        tenant_id: Optional[str],
+        details: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        entry = AuditEntry(
+            event_id=f"audit-{secrets.token_hex(6)}",
+            timestamp=_utc_now(),
+            actor=actor,
+            action=action,
+            tenant_id=tenant_id,
+            details=details or {},
+        )
+        self.audit_log.append(entry)
+        self.audit_log = self.audit_log[-10000:]
+
     def _load_state(self) -> None:
         if not self.state_path.exists():
             return
@@ -349,9 +542,26 @@ class SuperControlSystem:
                 challenged_count=int(item.get("challenged_count", 0)),
                 allow_count=int(item.get("allow_count", 0)),
                 avg_risk_score=float(item.get("avg_risk_score", 0.0)),
+                status=str(item.get("status", TENANT_STATUS_ACTIVE)),
+                disabled_at=item.get("disabled_at"),
+                disabled_reason=item.get("disabled_reason"),
+                deleted_at=item.get("deleted_at"),
+                last_token_rotated_at=item.get("last_token_rotated_at"),
             )
 
         self.telemetry = payload.get("telemetry", {})
+        self.audit_log = []
+        for item in payload.get("audit_log", []):
+            self.audit_log.append(
+                AuditEntry(
+                    event_id=str(item.get("event_id", f"audit-{secrets.token_hex(6)}")),
+                    timestamp=str(item.get("timestamp", _utc_now())),
+                    actor=str(item.get("actor", "system:unknown")),
+                    action=str(item.get("action", "unknown")),
+                    tenant_id=item.get("tenant_id"),
+                    details=item.get("details", {}),
+                )
+            )
 
     def _save_state(self) -> None:
         payload = {
@@ -360,6 +570,7 @@ class SuperControlSystem:
             "upgrade_log": self.upgrade_log,
             "tenants": {tenant_id: tenant.to_dict(include_secret=True) for tenant_id, tenant in self.tenants.items()},
             "telemetry": self.telemetry,
+            "audit_log": [entry.to_dict() for entry in self.audit_log],
         }
         self.state_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 

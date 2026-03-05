@@ -4,7 +4,14 @@ import os
 import time
 import unittest
 
-from sif.auth import AuthClaims, JwtAuthManager, issue_super_admin_token, claims_allow_tenant, validate_super_credentials
+from sif.auth import (
+    AuthClaims,
+    JwtAuthManager,
+    claims_allow_tenant,
+    issue_super_admin_token,
+    load_jwt_auth_manager_from_env,
+    validate_super_credentials,
+)
 
 
 class AuthTests(unittest.TestCase):
@@ -44,6 +51,42 @@ class AuthTests(unittest.TestCase):
                 os.environ.pop("ASLF_SUPER_ADMIN_PASS", None)
             else:
                 os.environ["ASLF_SUPER_ADMIN_PASS"] = old_pass
+
+    def test_jwt_rotation_verify_set(self):
+        old_single = os.getenv("ASLF_JWT_SECRET")
+        old_multi = os.getenv("ASLF_JWT_SECRETS")
+        old_ephemeral = os.getenv("ASLF_ALLOW_EPHEMERAL_JWT")
+        try:
+            os.environ.pop("ASLF_JWT_SECRET", None)
+            os.environ["ASLF_JWT_SECRETS"] = "new-signing-key,old-key"
+            os.environ.pop("ASLF_ALLOW_EPHEMERAL_JWT", None)
+
+            manager = load_jwt_auth_manager_from_env()
+            old_manager = JwtAuthManager("old-key")
+            token = old_manager.issue_token(
+                AuthClaims(
+                    sub="tenant:tenant-1",
+                    role="tenant_admin",
+                    tenant_id="tenant-1",
+                    iat=int(time.time()),
+                    exp=int(time.time()) + 60,
+                )
+            )
+            claims = manager.verify_token(token)
+            self.assertEqual(claims["tenant_id"], "tenant-1")
+        finally:
+            if old_single is None:
+                os.environ.pop("ASLF_JWT_SECRET", None)
+            else:
+                os.environ["ASLF_JWT_SECRET"] = old_single
+            if old_multi is None:
+                os.environ.pop("ASLF_JWT_SECRETS", None)
+            else:
+                os.environ["ASLF_JWT_SECRETS"] = old_multi
+            if old_ephemeral is None:
+                os.environ.pop("ASLF_ALLOW_EPHEMERAL_JWT", None)
+            else:
+                os.environ["ASLF_ALLOW_EPHEMERAL_JWT"] = old_ephemeral
 
 
 if __name__ == "__main__":

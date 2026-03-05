@@ -17,7 +17,11 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=9000)
     args = parser.parse_args()
 
-    serve(REPO_ROOT, host=args.host, port=args.port)
+    try:
+        serve(REPO_ROOT, host=args.host, port=args.port)
+    except ValueError as exc:
+        print(f"startup_configuration_error: {exc}", file=sys.stderr)
+        return 2
     return 0
 
 

@@ -8,7 +8,7 @@ import secrets
 import time
 from dataclasses import dataclass
 from hashlib import sha256
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
 
 @dataclass
@@ -30,10 +30,16 @@ class AuthClaims:
 
 
 class JwtAuthManager:
-    def __init__(self, secret: str) -> None:
+    def __init__(self, secret: str, verify_secrets: Optional[Iterable[str]] = None) -> None:
         if not secret:
             raise ValueError("JWT secret must not be empty")
         self.secret = secret.encode("utf-8")
+        verify = list(verify_secrets or [secret])
+        if not verify:
+            raise ValueError("JWT verify secret set must not be empty")
+        self.verify_secrets: List[bytes] = [item.encode("utf-8") for item in verify if item]
+        if not self.verify_secrets:
+            raise ValueError("JWT verify secret set must not be empty")
 
     def issue_token(self, claims: AuthClaims) -> str:
         header = {"alg": "HS256", "typ": "JWT"}
@@ -51,9 +57,14 @@ class JwtAuthManager:
 
         header_b64, payload_b64, sig_b64 = parts
         msg = f"{header_b64}.{payload_b64}".encode("utf-8")
-        expected_sig = hmac.new(self.secret, msg, sha256).digest()
         provided_sig = self._b64url_decode(sig_b64)
-        if not hmac.compare_digest(expected_sig, provided_sig):
+        matched = False
+        for verify_secret in self.verify_secrets:
+            expected_sig = hmac.new(verify_secret, msg, sha256).digest()
+            if hmac.compare_digest(expected_sig, provided_sig):
+                matched = True
+                break
+        if not matched:
             raise ValueError("invalid_token_signature")
 
         payload = json.loads(self._b64url_decode(payload_b64).decode("utf-8"))
@@ -125,3 +136,21 @@ def validate_super_credentials(username: str, password: str) -> bool:
 
 def generate_api_secret() -> str:
     return secrets.token_urlsafe(32)
+
+
+def load_jwt_auth_manager_from_env() -> JwtAuthManager:
+    rotated = [item.strip() for item in os.getenv("ASLF_JWT_SECRETS", "").split(",") if item.strip()]
+    single = os.getenv("ASLF_JWT_SECRET", "").strip()
+    allow_ephemeral = os.getenv("ASLF_ALLOW_EPHEMERAL_JWT", "").strip().lower() in {"1", "true", "yes", "y"}
+
+    if rotated:
+        return JwtAuthManager(rotated[0], verify_secrets=rotated)
+
+    if single:
+        return JwtAuthManager(single)
+
+    if allow_ephemeral:
+        generated = f"dev-{secrets.token_hex(24)}"
+        return JwtAuthManager(generated)
+
+    raise ValueError("missing_jwt_secret")

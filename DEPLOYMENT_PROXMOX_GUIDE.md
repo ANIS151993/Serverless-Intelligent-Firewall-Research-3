@@ -109,7 +109,8 @@ PYTHONUNBUFFERED=1
 PYTHONPATH=/opt/sif-research-3/src
 ASLF_SUPER_ADMIN_USER=admin
 ASLF_SUPER_ADMIN_PASS=change-this-now
-ASLF_JWT_SECRET=replace-with-very-long-random-secret
+ASLF_JWT_SECRETS=replace-with-new-signing-secret,replace-with-previous-secret
+ASLF_ALLOW_EPHEMERAL_JWT=false
 ASLF_ALLOWED_ORIGINS=https://anis151993.github.io
 SIF_DRY_RUN=true
 ENV
@@ -132,10 +133,17 @@ Create `/opt/sif-research-3/.env.tenant`:
 cat >/opt/sif-research-3/.env.tenant <<'ENV'
 PYTHONUNBUFFERED=1
 PYTHONPATH=/opt/sif-research-3/src
+ASLF_JWT_SECRETS=replace-with-new-signing-secret,replace-with-previous-secret
+ASLF_ALLOW_EPHEMERAL_JWT=false
 ASLF_ALLOWED_ORIGINS=https://anis151993.github.io
 SIF_DRY_RUN=true
 ENV
 ```
+
+JWT keying notes:
+- recommended: set `ASLF_JWT_SECRETS` for rotation (`new,old,...`)
+- fallback: set `ASLF_JWT_SECRET`
+- startup fails if neither key variable is set unless `ASLF_ALLOW_EPHEMERAL_JWT=true`
 
 ### 4.3 Runtime peer configuration (both)
 
@@ -447,6 +455,49 @@ curl -s https://sif1.marcbd.site/super/dashboard \
   -H "Authorization: Bearer $SUPER_TOKEN" | jq '.tenants[] | select(.tenant_id=="'"$TENANT_ID"'")'
 ```
 
+### 11.4 Tenant lifecycle controls + audit
+
+Disable a tenant:
+
+```bash
+curl -s -X POST "https://sif1.marcbd.site/super/tenants/$TENANT_ID/disable" \
+  -H "Authorization: Bearer $SUPER_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"reason":"incident_triage"}' | jq
+```
+
+Rotate tenant API token:
+
+```bash
+curl -s -X POST "https://sif1.marcbd.site/super/tenants/$TENANT_ID/rotate-token" \
+  -H "Authorization: Bearer $SUPER_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{}' | jq
+```
+
+Reactivate tenant:
+
+```bash
+curl -s -X POST "https://sif1.marcbd.site/super/tenants/$TENANT_ID/reactivate" \
+  -H "Authorization: Bearer $SUPER_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{}' | jq
+```
+
+Read audit events:
+
+```bash
+curl -s "https://sif1.marcbd.site/super/audit?tenant_id=$TENANT_ID&limit=20" \
+  -H "Authorization: Bearer $SUPER_TOKEN" | jq
+```
+
+Delete tenant:
+
+```bash
+curl -s -X DELETE "https://sif1.marcbd.site/super/tenants/$TENANT_ID" \
+  -H "Authorization: Bearer $SUPER_TOKEN" | jq
+```
+
 ---
 
 ## 12. Edge fallback mode (reduced dependency)
@@ -488,6 +539,15 @@ journalctl -u aslf-tenant -f
 6. super dashboard and tenant dashboard data present
 7. WebSocket live updates visible
 8. upgrade publish + tenant sync success
+9. tenant disable/reactivate/rotate-token/delete success
+10. super audit contains lifecycle entries
+
+Optional scripted smoke:
+
+```bash
+API_BASE=https://sif1.marcbd.site SUPER_USER=admin SUPER_PASS='change-this-now' \
+  bash scripts/smoke_super_tenant.sh
+```
 
 ---
 
@@ -542,17 +602,41 @@ Do not store PAT tokens in tracked files.
 
 ---
 
-## 16. Important API endpoints reference
+## 16. Infrastructure-as-Code (Ansible)
+
+The repository now includes automated deployment assets:
+
+- `infra/ansible/inventory/prod.yml`
+- `infra/ansible/group_vars/all.yml`
+- `infra/ansible/playbooks/site.yml`
+
+Run:
+
+```bash
+cd /opt/sif-research-3/infra/ansible
+ansible-playbook -i inventory/prod.yml playbooks/site.yml
+```
+
+---
+
+## 17. Important API endpoints reference
 
 - `GET /health`
 - `POST /auth/super/login`
 - `POST /auth/tenant/login`
 - `GET /super/dashboard`
 - `GET /super/tenants`
+- `GET /super/tenants/{tenant_id}`
+- `GET /super/audit`
 - `POST /super/tenants`
 - `POST /super/tenants/{tenant_id}/assets`
+- `POST /super/tenants/{tenant_id}/disable`
+- `POST /super/tenants/{tenant_id}/reactivate`
+- `POST /super/tenants/{tenant_id}/rotate-token`
+- `DELETE /super/tenants/{tenant_id}`
 - `POST /super/upgrades`
 - `GET /tenant/{tenant_id}/dashboard`
+- `GET /tenant/{tenant_id}/sync`
 - `POST /tenant/{tenant_id}/events`
 - `POST /tenant/{tenant_id}/sync`
 - `GET /ws/super?token=<jwt>`

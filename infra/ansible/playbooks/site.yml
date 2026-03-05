@@ -1,0 +1,101 @@
+---
+- name: Deploy ASLF-OSINT super and tenant nodes
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Install OS dependencies
+      ansible.builtin.apt:
+        name: "{{ aslf_python_apt_packages }}"
+        update_cache: true
+        state: present
+
+    - name: Ensure install directory exists
+      ansible.builtin.file:
+        path: "{{ aslf_install_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Clone or update repository
+      ansible.builtin.git:
+        repo: "{{ aslf_repo_url }}"
+        dest: "{{ aslf_install_dir }}"
+        version: "{{ aslf_repo_version }}"
+        force: false
+
+    - name: Create virtual environment
+      ansible.builtin.command:
+        cmd: python3 -m venv {{ aslf_install_dir }}/.venv
+      args:
+        creates: "{{ aslf_install_dir }}/.venv/bin/activate"
+
+    - name: Install python requirements
+      ansible.builtin.pip:
+        requirements: "{{ aslf_install_dir }}/requirements.txt"
+        virtualenv: "{{ aslf_install_dir }}/.venv"
+        virtualenv_command: python3 -m venv
+
+    - name: Render runtime config
+      ansible.builtin.template:
+        src: "../templates/runtime.json.j2"
+        dest: "{{ aslf_install_dir }}/config/runtime.json"
+        mode: "0644"
+
+    - name: Render super environment file
+      ansible.builtin.template:
+        src: "../templates/env.super.j2"
+        dest: "{{ aslf_install_dir }}/.env.super"
+        mode: "0600"
+      when: aslf_role == "super"
+
+    - name: Render tenant environment file
+      ansible.builtin.template:
+        src: "../templates/env.tenant.j2"
+        dest: "{{ aslf_install_dir }}/.env.tenant"
+        mode: "0600"
+      when: aslf_role == "tenant"
+
+    - name: Install super systemd service
+      ansible.builtin.template:
+        src: "../templates/aslf-super.service.j2"
+        dest: /etc/systemd/system/aslf-super.service
+        mode: "0644"
+      when: aslf_role == "super"
+
+    - name: Install tenant systemd service
+      ansible.builtin.template:
+        src: "../templates/aslf-tenant.service.j2"
+        dest: /etc/systemd/system/aslf-tenant.service
+        mode: "0644"
+      when: aslf_role == "tenant"
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable and start super service
+      ansible.builtin.systemd:
+        name: aslf-super
+        enabled: true
+        state: restarted
+      when: aslf_role == "super"
+
+    - name: Enable and start tenant service
+      ansible.builtin.systemd:
+        name: aslf-tenant
+        enabled: true
+        state: restarted
+      when: aslf_role == "tenant"
+
+    - name: Wait for API health
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ aslf_api_port }}/health"
+        method: GET
+        status_code: 200
+        return_content: true
+      register: healthcheck
+      retries: 15
+      delay: 2
+      until: healthcheck.status == 200
+

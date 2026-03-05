@@ -1,0 +1,15 @@
+[Unit]
+Description=ASLF-OSINT Tenant Edge Runtime
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory={{ aslf_install_dir }}
+EnvironmentFile={{ aslf_install_dir }}/.env.tenant
+ExecStart={{ aslf_install_dir }}/.venv/bin/python {{ aslf_install_dir }}/run_control_api.py --host 0.0.0.0 --port {{ aslf_api_port }}
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+

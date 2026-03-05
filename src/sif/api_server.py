@@ -20,6 +20,7 @@ from .auth import (
     has_role,
     issue_super_admin_token,
     issue_tenant_token,
+    load_jwt_auth_manager_from_env,
     validate_super_credentials,
 )
 from .multi_tenant import SuperControlSystem, TenantSubsystem
@@ -48,6 +49,9 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
 
     rate_windows: Dict[str, List[float]] = {}
     rate_lock = threading.Lock()
+    auth_failures: Dict[str, List[float]] = {}
+    auth_lockouts: Dict[str, float] = {}
+    auth_lock = threading.Lock()
 
     allowed_origins: str = "*"
 
@@ -125,6 +129,51 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
             self.rate_windows[bucket] = values
             return True
 
+    def _auth_bucket(self, kind: str, identifier: str) -> str:
+        return f"{kind}:{self.client_address[0]}:{identifier}"
+
+    def _check_auth_lockout(self, bucket: str) -> bool:
+        now = time.time()
+        with self.auth_lock:
+            until = self.auth_lockouts.get(bucket, 0.0)
+            if until > now:
+                retry_after = max(int(until - now), 1)
+                self._send(
+                    423,
+                    {
+                        "error": "auth_temporarily_locked",
+                        "retry_after_seconds": retry_after,
+                    },
+                )
+                return False
+            if bucket in self.auth_lockouts and until <= now:
+                self.auth_lockouts.pop(bucket, None)
+        return True
+
+    def _register_auth_success(self, bucket: str) -> None:
+        with self.auth_lock:
+            self.auth_failures.pop(bucket, None)
+            self.auth_lockouts.pop(bucket, None)
+
+    def _register_auth_failure(self, bucket: str) -> None:
+        now = time.time()
+        window_seconds = 300
+        lockout_seconds = 300
+        max_failures = 5
+        with self.auth_lock:
+            failures = self.auth_failures.get(bucket, [])
+            cutoff = now - window_seconds
+            failures = [item for item in failures if item >= cutoff]
+            failures.append(now)
+            self.auth_failures[bucket] = failures
+            if len(failures) >= max_failures:
+                self.auth_lockouts[bucket] = now + lockout_seconds
+
+    def _claims_actor(self, claims: Dict[str, Any]) -> str:
+        role = str(claims.get("role", "unknown"))
+        subject = str(claims.get("sub", "anonymous"))
+        return f"{role}:{subject}"
+
     def _ws_send_json(self, client: _WsClient, payload: Dict[str, Any]) -> bool:
         data = json.dumps(payload).encode("utf-8")
         try:
@@ -195,7 +244,10 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
         if tenant_id:
             with self.state_lock:
                 if self.super_control.tenant_exists(tenant_id):
-                    tenant_payload = self.super_control.tenant_dashboard(tenant_id)
+                    try:
+                        tenant_payload = self.super_control.tenant_dashboard(tenant_id)
+                    except PermissionError:
+                        tenant_payload = None
                 else:
                     tenant_payload = None
             if tenant_payload:
@@ -265,10 +317,16 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
             if ws_kind == "super":
                 initial = {"type": "super_dashboard", "payload": self.super_control.super_dashboard()}
             else:
-                initial = {
-                    "type": "tenant_dashboard",
-                    "payload": self.super_control.tenant_dashboard(ws_tenant_id or ""),
-                }
+                try:
+                    initial = {
+                        "type": "tenant_dashboard",
+                        "payload": self.super_control.tenant_dashboard(ws_tenant_id or ""),
+                    }
+                except PermissionError:
+                    initial = {
+                        "type": "tenant_dashboard",
+                        "payload": {"error": "tenant_not_active"},
+                    }
         self._send_ws_frame(client, initial)
 
         self.connection.settimeout(1.0)
@@ -364,6 +422,36 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
             self._send(200, {"tenants": tenants})
             return
 
+        if len(parts) == 3 and parts[0] == "super" and parts[1] == "tenants":
+            claims = self._require_claims()
+            if not claims or not self._check_role(claims, ["super_admin"]):
+                return
+            tenant_id = parts[2]
+            with self.state_lock:
+                try:
+                    tenant = self.super_control.get_tenant(tenant_id)
+                except KeyError as exc:
+                    self._send(404, {"error": str(exc)})
+                    return
+            self._send(200, tenant)
+            return
+
+        if parts == ["super", "audit"]:
+            claims = self._require_claims()
+            if not claims or not self._check_role(claims, ["super_admin"]):
+                return
+            tenant_id = (query.get("tenant_id", [""])[0] or "").strip() or None
+            limit_raw = (query.get("limit", ["100"])[0] or "100").strip()
+            try:
+                limit = int(limit_raw)
+            except ValueError:
+                self._send(400, {"error": "invalid_limit"})
+                return
+            with self.state_lock:
+                events = self.super_control.list_audit(limit=limit, tenant_id=tenant_id)
+            self._send(200, {"events": events})
+            return
+
         if len(parts) == 3 and parts[0] == "tenant" and parts[2] == "sync":
             tenant_id = parts[1]
             claims = self._require_claims()
@@ -375,6 +463,9 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
                     payload = self.super_control.sync_tenant(tenant_id, installed)
                 except KeyError as exc:
                     self._send(404, {"error": str(exc)})
+                    return
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
                     return
             self._push_updates(tenant_id)
             self._send(200, payload)
@@ -390,6 +481,9 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
                     payload = self.super_control.tenant_dashboard(tenant_id)
                 except KeyError as exc:
                     self._send(404, {"error": str(exc)})
+                    return
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
                     return
             self._send(200, payload)
             return
@@ -414,10 +508,16 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
             if err:
                 self._send(400, {"error": err})
                 return
+            auth_bucket = self._auth_bucket("super", payload["username"])
+            if not self._check_auth_lockout(auth_bucket):
+                return
             if not validate_super_credentials(payload["username"], payload["password"]):
+                self._register_auth_failure(auth_bucket)
                 self._send(401, {"error": "invalid_credentials"})
                 return
-            token = issue_super_admin_token(self.auth_manager, payload["username"])
+            self._register_auth_success(auth_bucket)
+            ttl_seconds = int(os.getenv("ASLF_SUPER_TOKEN_TTL_SECONDS", "3600"))
+            token = issue_super_admin_token(self.auth_manager, payload["username"], ttl_seconds=ttl_seconds)
             self._send(200, {"token": token, "role": "super_admin"})
             return
 
@@ -430,6 +530,9 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
                 self._send(400, {"error": err})
                 return
             tenant_id = payload["tenant_id"]
+            auth_bucket = self._auth_bucket("tenant", tenant_id)
+            if not self._check_auth_lockout(auth_bucket):
+                return
             with self.state_lock:
                 try:
                     valid = self.super_control.validate_tenant_api_token(tenant_id, payload["api_token"])
@@ -437,9 +540,12 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
                     self._send(404, {"error": "unknown_tenant"})
                     return
             if not valid:
+                self._register_auth_failure(auth_bucket)
                 self._send(401, {"error": "invalid_tenant_credentials"})
                 return
-            token = issue_tenant_token(self.auth_manager, tenant_id)
+            self._register_auth_success(auth_bucket)
+            ttl_seconds = int(os.getenv("ASLF_TENANT_TOKEN_TTL_SECONDS", "3600"))
+            token = issue_tenant_token(self.auth_manager, tenant_id, ttl_seconds=ttl_seconds)
             self._send(200, {"token": token, "role": "tenant_admin", "tenant_id": tenant_id})
             return
 
@@ -457,7 +563,11 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
             with self.state_lock:
                 result = self.super_control.create_tenant(payload["organization_name"], payload["admin_email"])
                 tenant_id = result["tenant_id"]
-                self.tenant_nodes[tenant_id] = TenantSubsystem(Path.cwd(), tenant_id, self.super_control.platform_version)
+                self.tenant_nodes[tenant_id] = TenantSubsystem(
+                    self.super_control.repo_root,
+                    tenant_id,
+                    self.super_control.platform_version,
+                )
             self._push_updates(tenant_id)
             self._send(201, result)
             return
@@ -492,8 +602,66 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
                 except KeyError as exc:
                     self._send(404, {"error": str(exc)})
                     return
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
+                    return
             self._push_updates(tenant_id)
             self._send(201, asset)
+            return
+
+        if len(parts) == 4 and parts[0] == "super" and parts[1] == "tenants" and parts[3] == "disable":
+            if not self._check_role(claims, ["super_admin"]):
+                return
+            tenant_id = parts[2]
+            reason = str(payload.get("reason", "admin_request"))
+            actor = self._claims_actor(claims)
+            with self.state_lock:
+                try:
+                    result = self.super_control.disable_tenant(tenant_id, actor=actor, reason=reason)
+                except KeyError as exc:
+                    self._send(404, {"error": str(exc)})
+                    return
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
+                    return
+            self._push_updates(tenant_id)
+            self._send(200, result)
+            return
+
+        if len(parts) == 4 and parts[0] == "super" and parts[1] == "tenants" and parts[3] == "reactivate":
+            if not self._check_role(claims, ["super_admin"]):
+                return
+            tenant_id = parts[2]
+            actor = self._claims_actor(claims)
+            with self.state_lock:
+                try:
+                    result = self.super_control.reactivate_tenant(tenant_id, actor=actor)
+                except KeyError as exc:
+                    self._send(404, {"error": str(exc)})
+                    return
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
+                    return
+            self._push_updates(tenant_id)
+            self._send(200, result)
+            return
+
+        if len(parts) == 4 and parts[0] == "super" and parts[1] == "tenants" and parts[3] == "rotate-token":
+            if not self._check_role(claims, ["super_admin"]):
+                return
+            tenant_id = parts[2]
+            actor = self._claims_actor(claims)
+            with self.state_lock:
+                try:
+                    result = self.super_control.rotate_tenant_api_token(tenant_id, actor=actor)
+                except KeyError as exc:
+                    self._send(404, {"error": str(exc)})
+                    return
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
+                    return
+            self._push_updates(tenant_id)
+            self._send(200, result)
             return
 
         if parts == ["super", "upgrades"]:
@@ -515,12 +683,19 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
                 return
             with self.state_lock:
                 if tenant_id not in self.tenant_nodes:
-                    self.tenant_nodes[tenant_id] = TenantSubsystem(Path.cwd(), tenant_id, self.super_control.platform_version)
+                    self.tenant_nodes[tenant_id] = TenantSubsystem(
+                        self.super_control.repo_root,
+                        tenant_id,
+                        self.super_control.platform_version,
+                    )
                 node = self.tenant_nodes[tenant_id]
                 try:
                     result = node.protect_event(payload, self.super_control)
                 except KeyError as exc:
                     self._send(404, {"error": str(exc)})
+                    return
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
                     return
             self._push_updates(tenant_id)
             self._send(200, result)
@@ -532,10 +707,48 @@ class ASLFOSINTApiHandler(BaseHTTPRequestHandler):
                 return
             with self.state_lock:
                 if tenant_id not in self.tenant_nodes:
-                    self.tenant_nodes[tenant_id] = TenantSubsystem(Path.cwd(), tenant_id, self.super_control.platform_version)
+                    self.tenant_nodes[tenant_id] = TenantSubsystem(
+                        self.super_control.repo_root,
+                        tenant_id,
+                        self.super_control.platform_version,
+                    )
                 node = self.tenant_nodes[tenant_id]
-                result = node.sync_with_super(self.super_control)
+                try:
+                    result = node.sync_with_super(self.super_control)
+                except PermissionError as exc:
+                    self._send(403, {"error": str(exc)})
+                    return
             self._push_updates(tenant_id)
+            self._send(200, result)
+            return
+
+        self._send(404, {"error": "not_found"})
+
+    def do_DELETE(self) -> None:  # noqa: N802
+        _path, parts, query = self._route()
+
+        if not self._rate_limit(f"{self.client_address[0]}:DELETE:{_path}", max_per_minute=120):
+            self._send(429, {"error": "rate_limit_exceeded"})
+            return
+
+        claims = self._require_claims()
+        if not claims:
+            return
+
+        if len(parts) == 3 and parts[0] == "super" and parts[1] == "tenants":
+            if not self._check_role(claims, ["super_admin"]):
+                return
+            tenant_id = parts[2]
+            hard_delete = (query.get("hard", ["false"])[0] or "false").lower() in {"1", "true", "yes", "y"}
+            actor = self._claims_actor(claims)
+            with self.state_lock:
+                try:
+                    result = self.super_control.delete_tenant(tenant_id, actor=actor, hard_delete=hard_delete)
+                except KeyError as exc:
+                    self._send(404, {"error": str(exc)})
+                    return
+            self.tenant_nodes.pop(tenant_id, None)
+            self._push_updates()
             self._send(200, result)
             return
 
@@ -546,8 +759,7 @@ def serve(repo_root: Path, host: str = "0.0.0.0", port: int = 9000) -> None:
     handler_cls = ASLFOSINTApiHandler
     handler_cls.super_control = SuperControlSystem(repo_root)
 
-    jwt_secret = os.getenv("ASLF_JWT_SECRET", "").strip() or f"dev-{os.urandom(24).hex()}"
-    handler_cls.auth_manager = JwtAuthManager(jwt_secret)
+    handler_cls.auth_manager = load_jwt_auth_manager_from_env()
     handler_cls.allowed_origins = os.getenv("ASLF_ALLOWED_ORIGINS", "*")
 
     server = ThreadingHTTPServer((host, port), handler_cls)

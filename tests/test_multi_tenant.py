@@ -16,6 +16,7 @@ class MultiTenantTests(unittest.TestCase):
 
         created = self.super_control.create_tenant("Acme Corp", "secops@acme.example")
         self.tenant_id = created["tenant_id"]
+        self.tenant_api_token = created["api_token"]
         self.node = TenantSubsystem(self.repo_root, self.tenant_id, "3.0.0")
 
         source_event = Path(__file__).resolve().parents[1] / "examples" / "events" / "ddos.json"
@@ -69,6 +70,35 @@ class MultiTenantTests(unittest.TestCase):
 
         sync2 = self.super_control.sync_tenant(self.tenant_id, "3.1.0")
         self.assertFalse(sync2["upgrade_available"])
+
+    def test_tenant_lifecycle_controls(self):
+        first_token = self.tenant_api_token
+
+        rotated = self.super_control.rotate_tenant_api_token(self.tenant_id, actor="super_admin:admin")
+        self.assertNotEqual(first_token, rotated["api_token"])
+        self.assertTrue(self.super_control.validate_tenant_api_token(self.tenant_id, rotated["api_token"]))
+
+        disabled = self.super_control.disable_tenant(self.tenant_id, actor="super_admin:admin", reason="investigation")
+        self.assertEqual(disabled["status"], "disabled")
+        self.assertFalse(self.super_control.validate_tenant_api_token(self.tenant_id, rotated["api_token"]))
+
+        with self.assertRaises(PermissionError):
+            self.node.protect_event(self.event, self.super_control)
+
+        reactivated = self.super_control.reactivate_tenant(self.tenant_id, actor="super_admin:admin")
+        self.assertEqual(reactivated["status"], "active")
+
+        deleted = self.super_control.delete_tenant(self.tenant_id, actor="super_admin:admin")
+        self.assertEqual(deleted["status"], "deleted")
+        with self.assertRaises(PermissionError):
+            self.super_control.tenant_dashboard(self.tenant_id)
+
+        audit_events = self.super_control.list_audit(limit=30, tenant_id=self.tenant_id)
+        actions = {item["action"] for item in audit_events}
+        self.assertIn("tenant_token_rotated", actions)
+        self.assertIn("tenant_disabled", actions)
+        self.assertIn("tenant_reactivated", actions)
+        self.assertIn("tenant_deleted", actions)
 
 
 if __name__ == "__main__":

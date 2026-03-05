@@ -41,6 +41,8 @@ This repository is the combined and extended Research-3 artifact built from the 
 - federated propagation coordinator (`src/sif/federation.py`)
 - multi-tenant super control + tenant subsystem (`src/sif/multi_tenant.py`)
 - control API server (`src/sif/api_server.py`, `run_control_api.py`)
+- tenant lifecycle + audit controls (disable/reactivate/token-rotate/delete + `/super/audit`)
+- auth hardening (JWT key rotation support via `ASLF_JWT_SECRETS`, login lockout)
 
 3. Encrypted document distribution flow:
 - first-page public preview PDF
@@ -64,8 +66,19 @@ Auth and streaming endpoints:
 
 - `POST /auth/super/login`
 - `POST /auth/tenant/login`
+- `GET /super/audit`
+- `POST /super/tenants/{tenant_id}/disable`
+- `POST /super/tenants/{tenant_id}/reactivate`
+- `POST /super/tenants/{tenant_id}/rotate-token`
+- `DELETE /super/tenants/{tenant_id}`
 - `GET /ws/super?token=<jwt>`
 - `GET /ws/tenant/<tenant_id>?token=<jwt>`
+
+JWT rotation:
+- primary signing key: first entry in `ASLF_JWT_SECRETS`
+- verification keys: all entries in `ASLF_JWT_SECRETS`
+- fallback: `ASLF_JWT_SECRET`
+- if neither is set, startup fails unless `ASLF_ALLOW_EPHEMERAL_JWT=true`
 
 ## Rebuild encrypted artifacts
 
@@ -110,6 +123,13 @@ Default password used by gate/hash and artifact packaging:
 Use the full two-node playbook:
 
 - [DEPLOYMENT_PROXMOX_GUIDE.md](DEPLOYMENT_PROXMOX_GUIDE.md)
+- [infra/ansible/README.md](infra/ansible/README.md)
+
+Fast smoke run:
+
+```bash
+API_BASE=https://sif1.marcbd.site SUPER_USER=admin SUPER_PASS='...' bash scripts/smoke_super_tenant.sh
+```
 
 ## Security access policy for downloads
 
