@@ -6,33 +6,35 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>ASLF-OSINT Research Portal | Autonomous Self-Learning Serverless Intelligent Firewall</title>
-  <meta name="description" content="Research portal for Autonomous Self-Learning Serverless Intelligent Firewall: REST API threat intelligence, multi-paradigm machine learning, and federated zero-trust architecture.">
+  <title>ASLF-OSINT Research-3 Journal Portal | Autonomous Serverless Intelligent Firewall</title>
+  <meta name="description" content="Research-3 journal portal for ASLF-OSINT with Research-1 and Research-2 lineage, architecture, methods, evaluation graphs, and protected manuscript assets.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260305r3">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260305r4">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-  <script src="script.js?v=20260305r3" defer></script>
+  <script src="script.js?v=20260305r4" defer></script>
+  <style>
+    :root {
+      --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
+      --font-serif: "Merriweather", Georgia, serif;
+    }
+  </style>
 </head>
 <body>
   <nav class="site-nav">
     <div class="nav-inner">
-      <a class="nav-brand" href="#top">SIF Research-3</a>
+      <a class="nav-brand" href="#top">ASLF-OSINT Journal Portal</a>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">&#9776;</button>
       <ul class="nav-links" id="nav-links">
         <li><a href="#overview">Overview</a></li>
-        <li><a href="super-dashboard.html">Super Dashboard</a></li>
-        <li><a href="tenant-dashboard.html">Tenant Dashboard</a></li>
-        <li><a href="#author-focus">Author</a></li>
-        <li><a href="#linkage">R1 to R3</a></li>
-        <li><a href="#video">Video</a></li>
+        <li><a href="#lineage">Lineage</a></li>
+        <li><a href="#journal">Journal</a></li>
         <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#results">Results</a></li>
         <li><a href="#lab">Test Lab</a></li>
-        <li><a href="#results">Graphs</a></li>
-        <li><a href="#implementation">Implementation</a></li>
-        <li><a href="#paper">Paper</a></li>
-        <li><a href="#resources">Resources</a></li>
+        <li><a href="#assets">Assets</a></li>
+        <li><a href="#profiles">Profiles</a></li>
       </ul>
     </div>
   </nav>
@@ -42,83 +44,53 @@
       <div class="hero-grid">
         <div>
           <div class="eyebrow-row">
-            <span class="eyebrow accent">Journal-ready Research Artifact</span>
-            <span class="eyebrow">Last updated March 5, 2026</span>
+            <span class="eyebrow accent">Research-3 Primary Portal</span>
+            <span class="eyebrow">Build 2026-03-05-r4</span>
           </div>
-          <div class="author-focus-ribbon">
-            <span class="author-focus-tag">Lead Researcher</span>
-            <strong>MD ANISUR RAHMAN CHOWDHURY</strong>
-            <p>Cybersecurity Researcher | Serverless Security Architect | AI-Driven Zero-Trust Systems</p>
-          </div>
+
           <h1 class="hero-title">Autonomous Self-Learning Serverless Intelligent Firewall</h1>
           <p class="hero-subtitle">
-            Integrating REST API-driven open-source threat intelligence, multi-paradigm machine learning, and federated zero-trust architectures.
-            This portal combines your Research-1 and Research-2 lineage into a stronger Research-3 artifact with executable code, super-control operations, tenant-local subsystems, and protected manuscript distribution.
+            A complete journal-focused Research-3 website for ASLF-OSINT. This portal integrates your earlier Research-1 and Research-2 contributions,
+            presents the new super-control and tenant-subsystem architecture, and provides graph-rich evidence, implementation guidance, and protected artifact access.
           </p>
 
           <div class="author-block">
-            <p class="author-line">Md Anisur Rahman Chowdhury</p>
-            <p class="affiliation-line">Independent Cybersecurity Researcher | Serverless Security Architect</p>
+            <p class="author-line">MD ANISUR RAHMAN CHOWDHURY</p>
+            <p class="affiliation-line">Cybersecurity Researcher | Serverless Security Architect | Zero-Trust Systems</p>
             <div class="profile-row">
               <a class="profile-pill" href="https://linkedin.com/in/md-anisur-rahman-chowdhury-15862420a" target="_blank" rel="noreferrer">LinkedIn</a>
               <a class="profile-pill" href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">GitHub</a>
               <a class="profile-pill" href="https://scholar.google.com/citations?user=NQyywPoAAAAJ" target="_blank" rel="noreferrer">Google Scholar</a>
-              <a class="profile-pill" href="https://marcbd.com" target="_blank" rel="noreferrer">Portfolio</a>
               <a class="profile-pill" href="https://researchgate.net/profile/Md-Anisur-Rahman-Chowdhury" target="_blank" rel="noreferrer">ResearchGate</a>
+              <a class="profile-pill" href="https://marcbd.com" target="_blank" rel="noreferrer">Portfolio</a>
             </div>
           </div>
 
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#lab">Try the Test Lab</a>
-            <a class="btn btn-secondary" href="#results">Open Graph Dashboard</a>
-            <a class="btn btn-secondary" href="super-dashboard.html">Open Super Dashboard</a>
-            <a class="btn btn-secondary" href="tenant-dashboard.html">Open Tenant Dashboard</a>
-            <a class="btn btn-secondary" href="report.html">Read the HTML Report</a>
+            <a class="btn btn-primary" href="#journal">Read Journal Summary</a>
+            <a class="btn btn-secondary" href="#results">Open Evaluation Graphs</a>
+            <a class="btn btn-secondary" href="#lab">Run Test Lab</a>
+            <a class="btn btn-secondary" href="super-dashboard.html">Super Dashboard</a>
+            <a class="btn btn-secondary" href="tenant-dashboard.html">Tenant Dashboard</a>
             <a class="btn btn-secondary" href="implementation.html" data-open-implementation-gate>Implementation Guide</a>
             <button class="btn btn-ghost" type="button" data-open-gate>Secure Downloads</button>
           </div>
         </div>
 
         <aside class="hero-sidecard">
-          <div class="author-monogram">MAC</div>
-          <p class="author-card-kicker">Focused researcher profile</p>
-          <h2>MD ANISUR RAHMAN CHOWDHURY</h2>
+          <p class="author-card-kicker">Journal At A Glance</p>
+          <h2>ASLF-OSINT Research-3</h2>
           <p>
-            This website highlights your research trajectory from the first Serverless Intelligent Firewall publication to the ASLF-OSINT cross-cloud architecture.
+            Integrating REST API-driven open-source threat intelligence, multi-paradigm machine learning, and federated zero-trust architectures for enterprise multi-tenant deployment.
           </p>
           <div class="metric-grid">
-            <div class="metric-card">
-              <strong>3</strong>
-              <span>Connected research artifacts</span>
-            </div>
-            <div class="metric-card">
-              <strong>2025-2026</strong>
-              <span>Research continuity window</span>
-            </div>
+            <div class="metric-card"><strong>98.7%</strong><span>Detection accuracy</span></div>
+            <div class="metric-card"><strong>94.3%</strong><span>Few-shot zero-day detection</span></div>
+            <div class="metric-card"><strong>87 ms</strong><span>Average response latency</span></div>
+            <div class="metric-card"><strong>99.8%</strong><span>Federated policy consistency</span></div>
           </div>
           <hr class="hero-divider">
-          <h2>Research Context</h2>
-          <p>
-            This portal is organized as a journal-ready reproducible research artifact: public methodology + interactive evaluation + encrypted manuscript/source distribution with policy-gated access.
-          </p>
-          <div class="metric-grid">
-            <div class="metric-card">
-              <strong>98.7%</strong>
-              <span>Detection accuracy</span>
-            </div>
-            <div class="metric-card">
-              <strong>94.3%</strong>
-              <span>Zero-day detection (5-shot)</span>
-            </div>
-            <div class="metric-card">
-              <strong>87 ms</strong>
-              <span>Average response latency</span>
-            </div>
-            <div class="metric-card">
-              <strong>99.8%</strong>
-              <span>Federated policy consistency</span>
-            </div>
-          </div>
+          <p class="muted">Live pages: <a href="report.html">HTML report</a> | <a href="poster.html">Poster</a> | <a href="implementation.html" data-open-implementation-gate>Implementation</a></p>
         </aside>
       </div>
     </div>
@@ -127,415 +99,220 @@
   <main>
     <section class="section" id="overview">
       <div class="container">
-        <p class="section-kicker">Research Delta</p>
-        <h2 class="section-title">What changed in Research-3</h2>
+        <p class="section-kicker">Research-3 Focus</p>
+        <h2 class="section-title">A complete journal artifact website</h2>
         <p class="section-subtitle">
-          Research-3 extends your earlier studies into an autonomous self-learning defense stack. ASLF-OSINT combines REST API threat-intel enrichment, multi-paradigm scoring, and federated zero-trust policy propagation across cloud and private infrastructure.
+          This website is intentionally structured around your journal narrative: motivation, prior-work lineage, architecture, methodology, results, reproducibility assets,
+          and controlled manuscript distribution.
         </p>
 
         <div class="overview-grid">
           <article class="card">
-            <h3>From static controls to adaptive security</h3>
-            <p>
-              Research-1 introduced LSTM-centric serverless IDS foundations. Research-3 adds continuous feedback learning and federated policy synchronization to handle runtime drift and fast-changing attack behavior.
-            </p>
+            <h3>Scientific Positioning</h3>
+            <p>Research-3 is framed as a distinct contribution built from Research-1 and Research-2, not a copy. The novelty is architectural, methodological, and operational.</p>
           </article>
           <article class="card">
-            <h3>REST API OSINT integration</h3>
-            <p>
-              Threat context is enriched from open-source feeds through API adapters (for example AbuseIPDB/OTX patterns), fused with traffic and identity features before policy decisioning.
-            </p>
+            <h3>Enterprise Multi-Tenant Model</h3>
+            <p>Super-control governance provisions corporate clients while each tenant runs a compact subsystem with resilient local protection and synchronized upgrades.</p>
           </article>
           <article class="card">
-            <h3>Federated zero-trust operation</h3>
-            <p>
-              Policy enforcement remains consistent across AWS, Azure, GCP, and Proxmox nodes through a federated control path designed for low-latency allow/challenge/block outcomes.
-            </p>
-          </article>
-          <article class="card">
-            <h3>Super control and tenant autonomy</h3>
-            <p>
-              A global super-control layer provisions corporate clients, while each tenant runs a compact local subsystem that remains protective during disconnection and syncs upgrades automatically.
-            </p>
+            <h3>Continuous Threat Adaptation</h3>
+            <p>OSINT feeds are fused with runtime telemetry to support drift-aware adaptation and better handling of emerging threats and zero-day signals.</p>
           </article>
         </div>
 
         <div class="split-callout">
-          <div class="card">
-            <h3>Primary contributions</h3>
+          <article class="card">
+            <h3>Key Journal Contributions</h3>
             <ul class="list-tight">
-              <li>Autonomous self-learning risk engine with analyst feedback loops.</li>
-              <li>REST API-driven open-source threat intelligence enrichment.</li>
-              <li>Multi-paradigm scoring: behavior + anomaly + identity + threat-intel evidence.</li>
-              <li>Federated zero-trust policy propagation across cloud and private nodes.</li>
+              <li>Unified ASLF-OSINT architecture with super-control and tenant-local subsystems.</li>
+              <li>REST API-driven intelligence ingestion from MISP, OTX, and VirusTotal.</li>
+              <li>Multi-paradigm learning stack: PPO, continual adaptation, meta-learning, transfer, federated aggregation.</li>
+              <li>Real-time role-aware operations through authenticated control APIs and dashboard streaming.</li>
             </ul>
-          </div>
-          <div class="quote-box">
-            <strong>Practical intent:</strong> this artifact is publishable as research and runnable as an operational prototype.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-alt" id="author-focus">
-      <div class="container">
-        <p class="section-kicker">Researcher Focus</p>
-        <h2 class="section-title">MD ANISUR RAHMAN CHOWDHURY and core works</h2>
-        <p class="section-subtitle">
-          This section highlights your signature contributions and links visitors directly to your most important research assets, publications, and technical profiles.
-        </p>
-
-        <div class="works-grid">
-          <article class="work-card">
-            <span class="work-badge">Flagship Work 01</span>
-            <h3>Serverless Intelligent Firewall (Research-1)</h3>
-            <p>
-              Foundation artifact introducing the AI-driven firewall concept with LSTM-centered intrusion detection and zero-trust positioning in serverless systems.
-            </p>
-            <a class="btn btn-dark" href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-1/" target="_blank" rel="noreferrer">Open Research-1 website</a>
           </article>
-
-          <article class="work-card">
-            <span class="work-badge">Flagship Work 02</span>
-            <h3>ASLF-OSINT Cross-Cloud Firewall (Research-3)</h3>
-            <p>
-              Extended artifact integrating hybrid AI detection, cross-cloud adaptation, and unified zero-trust policy orchestration with graph-rich technical reporting.
-            </p>
-            <a class="btn btn-dark" href="#results">Explore Research-3 analytics</a>
-          </article>
-
-          <article class="work-card">
-            <span class="work-badge">Technical Presence</span>
-            <h3>Profiles and public channels</h3>
-            <p>
-              Centralized links to your GitHub, LinkedIn, Google Scholar, Portfolio, and ResearchGate for visibility, collaboration, and verification of authorship.
-            </p>
-            <a class="btn btn-dark" href="#profiles">Open profile hub</a>
-          </article>
-
-          <article class="work-card">
-            <span class="work-badge">Research Communication</span>
-            <h3>Overview video and dissemination</h3>
-            <p>
-              Public walkthrough video and website-first communication flow for reviewers, collaborators, and readers requesting controlled access to encrypted artifacts.
-            </p>
-            <a class="btn btn-dark" href="#video">Watch overview video</a>
+          <article class="quote-box">
+            <strong>Portal intent:</strong> make the journal review path clear, reproducible, and operationally demonstrable from one website.
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" id="linkage">
+    <section class="section section-alt" id="lineage">
       <div class="container">
-        <p class="section-kicker">Research Continuity</p>
-        <h2 class="section-title">Strong lineage: Research-1 to Research-3</h2>
+        <p class="section-kicker">Research Lineage</p>
+        <h2 class="section-title">Research-1 -> Research-2 -> Research-3</h2>
         <p class="section-subtitle">
-          Research-3 is not an isolated system. It is the direct evolution of Research-1, expanding detection quality into real multi-cloud orchestration and unified zero-trust governance.
+          This section explicitly links all three stages and clarifies what each stage contributes to the final ASLF-OSINT journal system.
         </p>
 
         <div class="linkage-grid">
-          <article class="chart-card">
-            <h3>Capability evolution chart</h3>
-            <div class="chart-wrap">
-              <canvas id="lineageChart" aria-label="Research lineage chart"></canvas>
+          <article class="card">
+            <h3>Stage progression</h3>
+            <ul class="report-list">
+              <li><strong>Research-1:</strong> LSTM-based serverless IDS baseline with zero-trust direction.</li>
+              <li><strong>Research-2:</strong> Cross-cloud adaptation and hybrid XGBoost+BiGRU security workflow.</li>
+              <li><strong>Research-3:</strong> Autonomous OSINT-driven firewall with federated multi-tenant control architecture.</li>
+            </ul>
+            <div class="hero-actions">
+              <a class="btn btn-dark" href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-1/" target="_blank" rel="noreferrer">Open Research-1</a>
+              <a class="btn btn-dark" href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-2/" target="_blank" rel="noreferrer">Open Research-2</a>
             </div>
           </article>
+
           <article class="card">
-            <h3>Research bridge highlights</h3>
-            <table class="stats-table comparison-table">
+            <h3>Novelty Matrix</h3>
+            <table class="stats-table">
               <thead>
                 <tr>
                   <th>Dimension</th>
-                  <th>Research-1</th>
-                  <th>Research-3</th>
+                  <th>R1</th>
+                  <th>R2</th>
+                  <th>R3</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Core model</td><td>LSTM IDS</td><td><strong>Autonomous multi-paradigm engine</strong></td></tr>
-                <tr><td>Threat context</td><td>Static datasets</td><td><strong>Live REST API OSINT feeds</strong></td></tr>
-                <tr><td>Deployment scope</td><td>Single-cloud oriented</td><td><strong>AWS + Azure + GCP + Proxmox</strong></td></tr>
-                <tr><td>Avg response latency</td><td>N/A</td><td><strong>87 ms</strong></td></tr>
-                <tr><td>Federated consistency</td><td>N/A</td><td><strong>99.8%</strong></td></tr>
+                <tr><td>Core model</td><td>LSTM</td><td>XGBoost+BiGRU</td><td>Multi-paradigm adaptive stack</td></tr>
+                <tr><td>Scope</td><td>Baseline IDS</td><td>Cross-cloud orchestration</td><td>Super/tenant federation</td></tr>
+                <tr><td>Update mode</td><td>Manual retrain</td><td>Scheduled refresh</td><td>Autonomous OSINT-driven</td></tr>
+                <tr><td>Tenant governance</td><td>Limited</td><td>Partial</td><td>Full multi-tenant lifecycle</td></tr>
+                <tr class="highlight"><td>Operational readiness</td><td>Research baseline</td><td>Prototype</td><td>Journal + deployable artifact</td></tr>
               </tbody>
             </table>
           </article>
         </div>
+      </div>
+    </section>
 
-        <div class="chart-grid">
-          <article class="chart-card">
-            <h3>Feature maturity radar</h3>
-            <div class="chart-wrap tight">
-              <canvas id="lineageFeatureChart" aria-label="Feature maturity radar chart"></canvas>
-            </div>
-          </article>
-          <article class="research-bridge">
-            <h3>Direct links to Research-1</h3>
+    <section class="section" id="journal">
+      <div class="container">
+        <p class="section-kicker">Journal Summary</p>
+        <h2 class="section-title">Everything aligned to your manuscript</h2>
+
+        <div class="overview-grid">
+          <article class="card">
+            <h3>Abstract snapshot</h3>
             <p>
-              Use these links to move between both artifacts. The combined documentation and implementation blueprint are structured to keep conceptual and technical continuity.
+              ASLF-OSINT addresses evolving cloud-native threats by combining live threat intelligence, adaptive learning, and federated zero-trust governance.
+              The system demonstrates strong detection quality while maintaining low latency and multi-tenant operational control.
             </p>
-            <div class="bridge-links">
-              <a class="btn btn-secondary" href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-1/" target="_blank" rel="noreferrer">Research-1 Website</a>
-              <a class="btn btn-secondary" href="https://github.com/ANIS151993/Serverless-Intelligent-Firewall-Research-1" target="_blank" rel="noreferrer">Research-1 Repository</a>
-              <a class="btn btn-secondary" href="report.html">Research-3 Report</a>
-              <a class="btn btn-secondary" href="implementation.html" data-open-implementation-gate>Combined Guide</a>
-            </div>
           </article>
+          <article class="card">
+            <h3>Method stack</h3>
+            <ul class="list-tight">
+              <li>PPO policy optimization</li>
+              <li>Continual drift adaptation</li>
+              <li>Few-shot meta-learning</li>
+              <li>Transfer learning</li>
+              <li>FedNova-based federated updates</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Data and runtime scope</h3>
+            <ul class="list-tight">
+              <li>CICIDS2017, CSE-CIC-IDS2018, UNSW-NB15, NSL-KDD</li>
+              <li>30-day live OSINT ingestion</li>
+              <li>AWS Lambda, Azure Functions, GCP Functions</li>
+              <li>Proxmox federation node deployment path</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="research-bridge">
+          <h3>Research question answered in this portal</h3>
+          <p>
+            Can a single architecture simultaneously deliver autonomous learning, federated zero-trust control, enterprise tenant management, and practical low-latency response for serverless systems?
+          </p>
         </div>
       </div>
     </section>
 
-    <section class="section" id="video">
+    <section class="section section-alt" id="video">
       <div class="container">
         <p class="section-kicker">Overview Video</p>
-        <h2 class="section-title">Walkthrough and demonstration</h2>
-        <p class="section-subtitle">
-          The overview video is now presented as a compact technical briefing module. Use chapter jumps to move directly through motivation, architecture, hybrid AI model flow, and real-time cross-cloud enforcement.
-        </p>
+        <h2 class="section-title">Walkthrough of the Research-3 system</h2>
+        <p class="section-subtitle">Interactive chapter controls are tied to your official video link.</p>
 
         <div class="video-interactive-grid">
-          <article class="video-info-card">
-            <h3>Technical coverage in this video</h3>
-            <p>
-              The session explains why a static firewall is insufficient for serverless workloads and demonstrates how ASLF-OSINT combines AI-driven detection with cloud-agnostic zero-trust orchestration.
-            </p>
-            <ul class="list-tight">
-              <li>Problem framing: identity sprawl, ephemeral workloads, fragmented policy.</li>
-              <li>Architecture explanation: ingestion, detection, orchestration, policy loops.</li>
-              <li>Model reasoning: Research-1 baseline versus Research-3 hybrid upgrades.</li>
-              <li>Operational view: latency, consistency, and deployment realism.</li>
-            </ul>
-            <div class="video-meta-row">
-              <span class="video-meta-pill">Research communication</span>
-              <span class="video-meta-pill">Technical walkthrough</span>
-              <span class="video-meta-pill">Implementation aligned</span>
-            </div>
-          </article>
-
-          <div>
-            <div class="video-frame video-frame-compact">
-              <iframe
-                id="overview-video-player"
-                src="https://www.youtube.com/embed/O_pLEz7cyaY?rel=0"
-                title="ASLF-OSINT overview video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
-            </div>
-            <p class="caption">Use the chapter controls below to jump directly to the most relevant technical segment.</p>
-          </div>
-        </div>
-
-        <div class="video-chapter-shell">
-          <div class="video-chapter-buttons">
-            <button class="video-chapter-btn is-active" type="button" data-video-start="0" data-video-node="1" data-video-title="Intro and motivation" data-video-note="Explains the core security gap in serverless and why Research-3 extends Research-1 into cross-cloud zero-trust enforcement.">00:00 Intro</button>
-            <button class="video-chapter-btn" type="button" data-video-start="45" data-video-node="2" data-video-title="Architecture breakdown" data-video-note="Walks through detection, orchestration, and unified control plane interactions in the ASLF-OSINT architecture.">00:45 Architecture</button>
-            <button class="video-chapter-btn" type="button" data-video-start="95" data-video-node="3" data-video-title="Model strategy and evaluation" data-video-note="Discusses autonomous learning logic and reported metrics including 98.7% accuracy and 94.3% zero-day detection.">01:35 Model + Results</button>
-            <button class="video-chapter-btn" type="button" data-video-start="150" data-video-node="4" data-video-title="Cross-cloud orchestration" data-video-note="Covers runtime behavior across AWS, Azure, and GCP including latency, scalability, and event routing patterns.">02:30 Multi-cloud</button>
-            <button class="video-chapter-btn" type="button" data-video-start="205" data-video-node="5" data-video-title="Practical implementation guidance" data-video-note="Summarizes real-world rollout direction and links directly to the implementation blueprint in this website.">03:25 Implementation</button>
+          <div class="video-frame video-frame-compact">
+            <iframe
+              id="overview-video-player"
+              src="https://www.youtube.com/embed/O_pLEz7cyaY?rel=0"
+              title="ASLF-OSINT overview video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
           </div>
 
-          <article class="video-chapter-detail">
-            <h3 id="video-chapter-title">Intro and motivation</h3>
-            <p id="video-chapter-note">
-              Explains the core security gap in serverless and why Research-3 extends Research-1 into cross-cloud zero-trust enforcement.
-            </p>
-            <div class="video-flow-rail">
-              <span class="video-flow-node is-active" data-video-node="1">Problem</span>
-              <span class="video-flow-node" data-video-node="2">Architecture</span>
-              <span class="video-flow-node" data-video-node="3">Model</span>
-              <span class="video-flow-node" data-video-node="4">Cloud Runtime</span>
-              <span class="video-flow-node" data-video-node="5">Implementation</span>
+          <aside class="video-info-card">
+            <h3 id="video-chapter-title">ASLF-OSINT overview</h3>
+            <p id="video-chapter-note">Use chapter controls to jump directly to architecture, implementation, and results discussion.</p>
+
+            <div class="video-chapter-shell">
+              <div class="video-chapter-buttons">
+                <button class="video-chapter-btn is-active" type="button" data-video-start="0" data-video-node="1" data-video-title="Intro" data-video-note="Research context and objective framing.">00:00 Intro</button>
+                <button class="video-chapter-btn" type="button" data-video-start="45" data-video-node="2" data-video-title="Architecture" data-video-note="Super-control, tenant subsystem, and federated flow.">00:45 Architecture</button>
+                <button class="video-chapter-btn" type="button" data-video-start="110" data-video-node="3" data-video-title="Learning Pipeline" data-video-note="Five-paradigm learning model and adaptation strategy.">01:50 Learning</button>
+                <button class="video-chapter-btn" type="button" data-video-start="170" data-video-node="4" data-video-title="Results" data-video-note="Performance metrics, zero-day score, latency profile.">02:50 Results</button>
+                <button class="video-chapter-btn" type="button" data-video-start="230" data-video-node="5" data-video-title="Deployment" data-video-note="Implementation and real-world rollout pathway.">03:50 Deployment</button>
+              </div>
+              <div class="video-flow-rail">
+                <span class="video-flow-node is-active" data-video-node="1">Context</span>
+                <span class="video-flow-node" data-video-node="2">Design</span>
+                <span class="video-flow-node" data-video-node="3">Learning</span>
+                <span class="video-flow-node" data-video-node="4">Evidence</span>
+                <span class="video-flow-node" data-video-node="5">Ops</span>
+              </div>
             </div>
-          </article>
+          </aside>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" id="architecture">
+    <section class="section" id="architecture">
       <div class="container">
-        <p class="section-kicker">Architecture</p>
-        <h2 class="section-title">Cross-cloud adaptive security flow</h2>
+        <p class="section-kicker">System Architecture</p>
+        <h2 class="section-title">Interactive architecture explorer</h2>
         <p class="section-subtitle">
-          This section is now compact but deeper: switch architecture views, inspect each stage, and read implementation-oriented descriptions without scrolling through oversized static blocks.
+          Explore the journal architecture in both static and interactive form. The nodes below map directly to your ASLF-OSINT subsystems.
         </p>
 
         <div class="architecture-compact-shell">
           <div class="architecture-top-grid">
-            <div class="architecture-figure architecture-figure-compact">
-              <img src="assets/images/system-architecture.png" alt="ASLF-OSINT system architecture diagram">
-              <p class="caption">
-                ASLF-OSINT joins AI detection, serverless response orchestration, and a unified zero-trust control plane across AWS, Azure, and GCP.
-              </p>
-              <div class="architecture-pill-row">
-                <span class="pill">Hybrid AI core</span>
-                <span class="pill">Cross-cloud runtime</span>
-                <span class="pill">Unified policy plane</span>
-              </div>
-            </div>
-
+            <article class="architecture-figure architecture-figure-compact">
+              <img src="assets/images/system-architecture.png" alt="ASLF-OSINT architecture diagram">
+              <p class="caption">Super-control governance, tenant-local compact protection, and cross-cloud policy orchestration.</p>
+            </article>
             <article class="architecture-narrative">
-              <h3>Architecture brief</h3>
-              <p>
-                ASLF-OSINT operates as a closed loop: telemetry ingestion, model-driven classification, provider-specific response, and policy enforcement feedback. This design keeps runtime security adaptive while preserving auditable governance.
-              </p>
-              <p>
-                Unlike a static firewall chain, each decision is context-aware and identity-aware. The control plane remains vendor-agnostic so policy continuity survives provider failover and workload migration.
-              </p>
-
+              <h3>Architecture interpretation modes</h3>
+              <p>Switch view modes to inspect logical layering, data flow, and deployment behavior.</p>
               <div class="architecture-mode-row">
-                <button class="architecture-mode-btn is-active" type="button" data-arch-mode="logical">Logical view</button>
-                <button class="architecture-mode-btn" type="button" data-arch-mode="dataflow">Data-flow view</button>
-                <button class="architecture-mode-btn" type="button" data-arch-mode="deployment">Deployment view</button>
+                <button class="architecture-mode-btn" type="button" data-arch-mode="logical">Logical view</button>
+                <button class="architecture-mode-btn" type="button" data-arch-mode="dataflow">Data flow</button>
+                <button class="architecture-mode-btn" type="button" data-arch-mode="deployment">Deployment</button>
               </div>
-
-              <article class="architecture-mode-card">
+              <div class="architecture-mode-card">
                 <h4 id="arch-mode-title">Logical architecture view</h4>
-                <p id="arch-mode-text">
-                  The system is organized into four stable layers: ingestion, detection, orchestration, and policy. Each layer can evolve independently without breaking the full security loop.
-                </p>
-                <ul class="arch-detail-list" id="arch-mode-list">
-                  <li>Layered separation keeps the platform maintainable.</li>
-                  <li>Detection quality can improve without policy rewrites.</li>
-                  <li>Policy enforcement remains cloud-agnostic and centralized.</li>
-                </ul>
-              </article>
+                <p id="arch-mode-text">Layered architecture description appears here.</p>
+                <ul class="arch-detail-list" id="arch-mode-list"></ul>
+              </div>
             </article>
           </div>
 
           <div class="arch-explorer">
-            <h3 class="compact-headline">Stage-by-stage interactive explorer</h3>
+            <h3 class="compact-headline">Subsystem explorer</h3>
             <div class="arch-node-grid">
-              <button class="arch-node is-active" type="button" data-arch-node="ingestion">
-                <strong>Phase 1</strong>
-                <span>Traffic ingestion</span>
-              </button>
-              <button class="arch-node" type="button" data-arch-node="feature">
-                <strong>Phase 2</strong>
-                <span>Feature fusion</span>
-              </button>
-              <button class="arch-node" type="button" data-arch-node="detection">
-                <strong>Phase 3</strong>
-                <span>Threat detection</span>
-              </button>
-              <button class="arch-node" type="button" data-arch-node="orchestration">
-                <strong>Phase 4</strong>
-                <span>Cloud response</span>
-              </button>
-              <button class="arch-node" type="button" data-arch-node="policy">
-                <strong>Phase 5</strong>
-                <span>Zero-trust policy</span>
-              </button>
+              <button class="arch-node" type="button" data-arch-node="ingestion"><strong>Node 1</strong><span>Ingestion</span></button>
+              <button class="arch-node" type="button" data-arch-node="feature"><strong>Node 2</strong><span>Feature Fusion</span></button>
+              <button class="arch-node" type="button" data-arch-node="detection"><strong>Node 3</strong><span>Detection</span></button>
+              <button class="arch-node" type="button" data-arch-node="orchestration"><strong>Node 4</strong><span>Orchestration</span></button>
+              <button class="arch-node" type="button" data-arch-node="policy"><strong>Node 5</strong><span>Zero-Trust</span></button>
             </div>
-            <article class="arch-detail-card">
+            <div class="arch-detail-card">
               <h3 id="arch-detail-title">Traffic ingestion and context capture</h3>
-              <p id="arch-detail-text">
-                Stream network telemetry and function-level events into the SIF pipeline while preserving cloud-origin metadata for policy-aware downstream analysis.
-              </p>
-              <ul class="arch-detail-list" id="arch-detail-list">
-                <li>Collect flow features and invocation metadata.</li>
-                <li>Attach cloud provider and identity context.</li>
-                <li>Forward normalized records into detection modules.</li>
-              </ul>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="lab">
-      <div class="container">
-        <p class="section-kicker">Interactive Test</p>
-        <h2 class="section-title">ASLF-OSINT Test Lab</h2>
-        <p class="section-subtitle">
-          This browser-based simulator lets visitors test the research output without a backend deployment. It is an explainable approximation of the published decision logic, not the exact training artifact.
-        </p>
-
-        <div class="lab-shell">
-          <div class="lab-grid">
-            <section class="lab-panel">
-              <h3>Simulate a cross-cloud event</h3>
-              <p>Enter representative traffic and policy signals, or load one of the preset scenarios.</p>
-
-              <div class="preset-row">
-                <button class="preset-btn" type="button" data-preset="benign">Benign flow</button>
-                <button class="preset-btn" type="button" data-preset="portscan">Recon / port scan</button>
-                <button class="preset-btn" type="button" data-preset="credential">Credential abuse</button>
-                <button class="preset-btn" type="button" data-preset="ddos">DDoS burst</button>
-              </div>
-
-              <div class="form-grid">
-                <div class="field">
-                  <label for="failedAuth">Failed authentications</label>
-                  <input id="failedAuth" type="number" min="0" max="50" value="1">
-                </div>
-                <div class="field">
-                  <label for="requestBurst">Requests / second</label>
-                  <input id="requestBurst" type="number" min="0" max="2000" value="48">
-                </div>
-                <div class="field">
-                  <label for="geoSpread">Active regions</label>
-                  <input id="geoSpread" type="number" min="1" max="10" value="1">
-                </div>
-                <div class="field">
-                  <label for="anomalyScore">Anomaly score</label>
-                  <input id="anomalyScore" type="number" min="0" max="100" value="14">
-                </div>
-                <div class="field">
-                  <label for="lateralHops">Lateral movement hops</label>
-                  <input id="lateralHops" type="number" min="0" max="20" value="1">
-                </div>
-                <div class="field">
-                  <label for="policyDrift">Policy drift score</label>
-                  <input id="policyDrift" type="number" min="0" max="100" value="8">
-                </div>
-                <div class="field">
-                  <label for="provider">Initial cloud provider</label>
-                  <select id="provider">
-                    <option value="aws">AWS Lambda</option>
-                    <option value="azure">Azure Functions</option>
-                    <option value="gcp">Google Cloud Functions</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>Execution note</label>
-                  <small>This test is deterministic and runs locally in the browser.</small>
-                </div>
-              </div>
-
-              <div class="hero-actions">
-                <button class="btn btn-primary btn-block" type="button" onclick="runSimulation()">Run ASLF-OSINT Simulation</button>
-              </div>
-            </section>
-
-            <section class="lab-output">
-              <span class="status-chip" id="statusChip">Simulated ASLF-OSINT assessment</span>
-              <div class="lab-score">
-                <div class="score-hero">
-                  <strong id="scoreValue">16</strong>
-                  <span>risk score / 100</span>
-                </div>
-                <div class="risk-bar" aria-label="Risk score">
-                  <div class="risk-bar-fill" id="riskFill"></div>
-                </div>
-                <div class="output-grid">
-                  <div class="output-box">
-                    <strong>Predicted class</strong>
-                    <span id="resultLabel">Benign / low risk</span>
-                  </div>
-                  <div class="output-box">
-                    <strong>Enforcement decision</strong>
-                    <span id="resultDecision">Allow</span>
-                  </div>
-                  <div class="output-box">
-                    <strong>Recommended action</strong>
-                    <p id="resultAction">Allow traffic and keep continuous verification active.</p>
-                  </div>
-                  <div class="output-box">
-                    <strong>Cross-cloud route</strong>
-                    <p id="resultProvider">AWS Lambda receives the event first, then forwards policy state to Azure and GCP.</p>
-                  </div>
-                </div>
-              </div>
-            </section>
+              <p id="arch-detail-text">Select a subsystem node to inspect detailed behavior.</p>
+              <ul class="arch-detail-list" id="arch-detail-list"></ul>
+            </div>
           </div>
         </div>
       </div>
@@ -543,120 +320,55 @@
 
     <section class="section section-alt" id="results">
       <div class="container">
-        <p class="section-kicker">Evaluation and Analytics</p>
-        <h2 class="section-title">Graph-rich performance dashboard</h2>
+        <p class="section-kicker">Evaluation</p>
+        <h2 class="section-title">Graphically interactive results dashboard</h2>
         <p class="section-subtitle">
-          This dashboard now includes multiple chart modes: bar chart, line graph, pie chart, radar chart, and scatter graph to make the results more realistic and interactive for reviewers.
+          All charts below are aligned with your published lineage and Research-3 reported metrics.
         </p>
 
         <div class="chart-grid">
           <article class="chart-card">
-            <h3>Model comparison bar chart</h3>
-            <div class="chart-wrap">
-              <canvas id="performanceChart" aria-label="Model comparison bar chart"></canvas>
-            </div>
+            <h3>Research stage comparison (bar)</h3>
+            <div class="chart-wrap"><canvas id="performanceChart"></canvas></div>
           </article>
           <article class="chart-card">
-            <h3>Cloud performance bar chart</h3>
-            <div class="chart-wrap">
-              <canvas id="cloudChart" aria-label="Cloud performance bar chart"></canvas>
-            </div>
+            <h3>Cross-cloud runtime and sync delay (bar)</h3>
+            <div class="chart-wrap"><canvas id="cloudChart"></canvas></div>
           </article>
         </div>
 
         <div class="chart-grid chart-grid-3">
           <article class="chart-card">
-            <h3>Accuracy trend line graph</h3>
-            <div class="chart-wrap tight">
-              <canvas id="accuracyTrendChart" aria-label="Accuracy trend line graph"></canvas>
-            </div>
+            <h3>Accuracy trend (line)</h3>
+            <div class="chart-wrap tight"><canvas id="accuracyTrendChart"></canvas></div>
           </article>
           <article class="chart-card">
-            <h3>Attack mix pie chart</h3>
-            <div class="chart-wrap tight">
-              <canvas id="attackDistributionPieChart" aria-label="Attack distribution pie chart"></canvas>
-            </div>
+            <h3>Attack distribution (pie)</h3>
+            <div class="chart-wrap tight"><canvas id="attackDistributionPieChart"></canvas></div>
           </article>
           <article class="chart-card">
-            <h3>Policy health radar chart</h3>
-            <div class="chart-wrap tight">
-              <canvas id="policyRadarChart" aria-label="Policy health radar chart"></canvas>
-            </div>
+            <h3>Policy maturity (radar)</h3>
+            <div class="chart-wrap tight"><canvas id="policyRadarChart"></canvas></div>
           </article>
         </div>
 
         <div class="chart-grid">
           <article class="chart-card">
-            <h3>Latency vs cost scatter graph</h3>
-            <div class="chart-wrap">
-              <canvas id="latencyCostScatterChart" aria-label="Latency versus cost scatter graph"></canvas>
-            </div>
+            <h3>Latency vs cost (scatter)</h3>
+            <div class="chart-wrap"><canvas id="latencyCostScatterChart"></canvas></div>
           </article>
-          <article class="chart-card">
-            <h3>Real-time rollout phase chart</h3>
-            <div class="chart-wrap">
-              <canvas id="realtimePhasesChart" aria-label="Real-time rollout phase chart"></canvas>
-            </div>
-          </article>
-        </div>
-
-        <div class="results-grid">
           <article class="card">
-            <h3>Classification metrics</h3>
+            <h3>Journal headline metrics</h3>
             <table class="stats-table">
               <thead>
-                <tr>
-                  <th>Model</th>
-                  <th>Accuracy</th>
-                  <th>Precision</th>
-                  <th>Recall</th>
-                  <th>F1</th>
-                </tr>
+                <tr><th>Metric</th><th>Value</th></tr>
               </thead>
               <tbody>
-                <tr><td>LSTM</td><td>96.14%</td><td>96.92%</td><td>96.65%</td><td>96.78%</td></tr>
-                <tr><td>Research-2 Hybrid</td><td>98.00%</td><td>98.00%</td><td>98.00%</td><td>98.00%</td></tr>
-                <tr class="highlight"><td>ASLF-OSINT</td><td>98.70%</td><td>98.62%</td><td>98.75%</td><td>98.68%</td></tr>
-              </tbody>
-            </table>
-          </article>
-
-          <article class="card">
-            <h3>Serverless latency and cost</h3>
-            <table class="stats-table">
-              <thead>
-                <tr>
-                  <th>Platform</th>
-                  <th>Avg. latency</th>
-                  <th>Cold start</th>
-                  <th>Cost / 10K</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>AWS Lambda</td><td>84 ms</td><td>221 ms</td><td>$0.24</td></tr>
-                <tr><td>Azure Functions</td><td>89 ms</td><td>263 ms</td><td>$0.27</td></tr>
-                <tr><td>Google Cloud Functions</td><td>88 ms</td><td>249 ms</td><td>$0.25</td></tr>
-                <tr class="highlight"><td>Super-tenant avg.</td><td>87 ms</td><td>244 ms</td><td>$0.25</td></tr>
-              </tbody>
-            </table>
-          </article>
-
-          <article class="card">
-            <h3>Zero-trust enforcement snapshot</h3>
-            <table class="stats-table">
-              <thead>
-                <tr>
-                  <th>Scope</th>
-                  <th>Policy delay</th>
-                  <th>Identity latency</th>
-                  <th>Consistency</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>AWS</td><td>92 ms</td><td>109 ms</td><td>99.8%</td></tr>
-                <tr><td>Azure</td><td>101 ms</td><td>115 ms</td><td>99.7%</td></tr>
-                <tr><td>GCP</td><td>96 ms</td><td>107 ms</td><td>99.9%</td></tr>
-                <tr class="highlight"><td>Federated avg.</td><td>95 ms</td><td>110.3 ms</td><td>99.8%</td></tr>
+                <tr><td>Detection accuracy</td><td>98.7%</td></tr>
+                <tr><td>Few-shot zero-day detection</td><td>94.3%</td></tr>
+                <tr><td>Average response latency</td><td>87 ms</td></tr>
+                <tr><td>Drift adaptation</td><td>12.4 minutes</td></tr>
+                <tr class="highlight"><td>Federated policy consistency</td><td>99.8%</td></tr>
               </tbody>
             </table>
           </article>
@@ -664,266 +376,197 @@
       </div>
     </section>
 
-    <section class="section" id="implementation">
+    <section class="section" id="lab">
       <div class="container">
-        <p class="section-kicker">Real-time Deployment Blueprint</p>
-        <h2 class="section-title">How to implement the Serverless Intelligent Firewall in production</h2>
+        <p class="section-kicker">ASLF-OSINT Test Lab</p>
+        <h2 class="section-title">Interactive simulation for reviewers and users</h2>
         <p class="section-subtitle">
-          The guide below combines Research-1 and Research-2 lineage into Research-3 execution. It starts from the proven IDS baseline and evolves into autonomous, federated zero-trust enforcement.
+          Use real-time controls to emulate threat scenarios and observe policy decisions for your firewall framework.
         </p>
 
-        <div class="implementation-roadmap">
-          <article class="roadmap-step">
-            <strong>Stage 1</strong>
-            <h3>Baseline IDS layer (Research-1)</h3>
-            <p>Train and validate LSTM detection, establish feature pipeline quality, and expose model scoring through an event-driven serverless endpoint.</p>
-          </article>
-          <article class="roadmap-step">
-            <strong>Stage 2</strong>
-            <h3>Hybrid detection upgrade (Research-3)</h3>
-            <p>Integrate PPO, SSF, meta-learning, transfer learning, and federated updates for autonomous adaptive detection.</p>
-          </article>
-          <article class="roadmap-step">
-            <strong>Stage 3</strong>
-            <h3>Cross-cloud orchestration</h3>
-            <p>Provision tenant-local compact subsystems and connect them to the super control plane for synchronized telemetry and policy flow.</p>
-          </article>
-          <article class="roadmap-step">
-            <strong>Stage 4</strong>
-            <h3>Unified zero-trust control plane</h3>
-            <p>Implement policy-as-code with automated global upgrades so all client subsystems receive new defenses without manual redeployment.</p>
-          </article>
-        </div>
+        <div class="lab-shell">
+          <div class="lab-grid">
+            <article class="lab-panel">
+              <h3>Input controls</h3>
+              <p>Adjust event features and run a simulated decision path.</p>
 
-        <div class="guide-callout">
-          <h3>Graphical implementation guidance</h3>
-          <p>
-            For detailed architecture diagrams, step-by-step cloud mapping, rollout checklist, and combined documentation from both research phases, open the dedicated guide page.
-          </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="implementation.html" data-open-implementation-gate>Open full implementation guide</a>
-            <a class="btn btn-secondary" href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-1/" target="_blank" rel="noreferrer">Open Research-1 portal</a>
+              <div class="hero-actions">
+                <button class="btn btn-secondary preset-btn" type="button" data-preset="benign">Preset: Benign</button>
+                <button class="btn btn-secondary preset-btn" type="button" data-preset="portscan">Preset: PortScan</button>
+                <button class="btn btn-secondary preset-btn" type="button" data-preset="credential">Preset: Credential Abuse</button>
+                <button class="btn btn-secondary preset-btn" type="button" data-preset="ddos">Preset: DDoS</button>
+              </div>
+
+              <div class="form-grid">
+                <div class="field">
+                  <label for="failedAuth">Failed Auth</label>
+                  <input id="failedAuth" type="number" min="0" max="30" value="1">
+                </div>
+                <div class="field">
+                  <label for="requestBurst">Request Burst</label>
+                  <input id="requestBurst" type="number" min="0" max="1200" value="48">
+                </div>
+                <div class="field">
+                  <label for="geoSpread">Geo Velocity</label>
+                  <input id="geoSpread" type="number" min="1" max="10" value="1">
+                </div>
+                <div class="field">
+                  <label for="anomalyScore">Anomaly Score</label>
+                  <input id="anomalyScore" type="number" min="0" max="100" value="14">
+                </div>
+                <div class="field">
+                  <label for="lateralHops">Lateral Hops</label>
+                  <input id="lateralHops" type="number" min="0" max="10" value="1">
+                </div>
+                <div class="field">
+                  <label for="policyDrift">Policy Drift</label>
+                  <input id="policyDrift" type="number" min="0" max="100" value="8">
+                </div>
+                <div class="field">
+                  <label for="provider">Provider</label>
+                  <select id="provider">
+                    <option value="aws">AWS</option>
+                    <option value="azure">Azure</option>
+                    <option value="gcp">GCP</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="hero-actions">
+                <button class="btn btn-primary btn-block" type="button" onclick="runSimulation()">Run ASLF-OSINT Simulation</button>
+              </div>
+            </article>
+
+            <article class="lab-output">
+              <h3>Simulation output</h3>
+              <div>
+                <span class="status-chip" id="statusChip">Simulated ASLF-OSINT assessment</span>
+              </div>
+
+              <div class="lab-score">
+                <div class="score-hero">
+                  <strong id="scoreValue">0</strong>
+                  <span>Composite risk score</span>
+                </div>
+                <div class="risk-bar">
+                  <div class="risk-bar-fill" id="riskFill" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="output-grid">
+                <article class="output-box">
+                  <strong>Classification</strong>
+                  <span id="resultLabel">Awaiting simulation</span>
+                </article>
+                <article class="output-box">
+                  <strong>Decision</strong>
+                  <span id="resultDecision">Awaiting simulation</span>
+                </article>
+                <article class="output-box">
+                  <strong>Response Action</strong>
+                  <p id="resultAction">Awaiting simulation</p>
+                </article>
+                <article class="output-box">
+                  <strong>Provider Route</strong>
+                  <p id="resultProvider">Awaiting simulation</p>
+                </article>
+              </div>
+            </article>
           </div>
-          <pre class="code-block"><code># Simplified real-time orchestration sequence
-ingest_event() -> score_with_hybrid_model()
-if threat_detected:
-    trigger_cloud_response(provider)
-    evaluate_zero_trust_policy()
-    enforce_allow_or_block()
-log_decision_to_unified_telemetry()</code></pre>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" id="paper">
+    <section class="section section-alt" id="assets">
       <div class="container">
-        <p class="section-kicker">Protected Manuscript</p>
-        <h2 class="section-title">Public first-page preview only</h2>
+        <p class="section-kicker">Journal Assets</p>
+        <h2 class="section-title">Paper, source, and reproducibility resources</h2>
         <p class="section-subtitle">
-          The site intentionally exposes only the first-page preview and abstract summary. The full manuscript and source package are provided through encrypted downloads after the policy gate.
+          Public first-page preview plus secure encrypted downloads, following your policy requirements.
         </p>
 
-        <div class="paper-preview-shell">
+        <div class="architecture-grid">
           <article class="paper-sheet">
-            <div class="paper-topline">
-              <span>Protected Journal Artifact</span>
-              <span>ASLF-OSINT</span>
+            <div class="paper-head">
+              <span class="pill accent">Research-3 Journal</span>
+              <span class="pill">ASLF-OSINT</span>
             </div>
             <h3 class="paper-title">Autonomous Self-Learning Serverless Intelligent Firewall: Integrating REST API-Driven Open-Source Threat Intelligence, Multi-Paradigm Machine Learning, and Federated Zero-Trust Architectures</h3>
-            <p class="paper-authors"><strong>Md Anisur Rahman Chowdhury</strong></p>
-            <p class="paper-affiliation">Cybersecurity Researcher | Serverless Security Architect</p>
-
-            <div class="paper-columns">
-              <div>
-                <h4>Abstract</h4>
-                <p>
-                  ASLF-OSINT addresses identity sprawl, fragmented cloud management, and cloud-native attack paths by combining open-source threat-intel APIs, adaptive model scoring, and federated zero-trust policy enforcement.
-                </p>
-                <p>
-                  The framework operationalizes continuous risk assessment with explainable contributions from behavior, anomaly, identity, and threat-intel dimensions.
-                </p>
-              </div>
-              <div>
-                <h4>Highlights</h4>
-                <p>
-                  Cross-cloud and private-node deployment supports deterministic allow/challenge/block actions while preserving policy consistency and auditability under federated operation.
-                </p>
-                <p>
-                  The full manuscript (`.doc` and `.pdf`) and LaTeX source files are password-protected and distributed as encrypted archives.
-                </p>
-              </div>
-            </div>
-
-            <div class="paper-lock">
-              Preview access is intentionally limited to the first page and summary. Use the secure download gate to request encrypted files.
-            </div>
+            <p>
+              Full manuscript artifacts are encrypted. The public site provides first-page visibility and complete policy-guided access flow.
+            </p>
             <div class="hero-actions">
-              <a class="btn btn-secondary" href="assets/papers/ASLF-OSINT-Research-First-Page-Preview.pdf" target="_blank" rel="noreferrer">Open first-page PDF preview</a>
+              <a class="btn btn-secondary" href="assets/papers/ASLF-OSINT-Research-First-Page-Preview.pdf" target="_blank" rel="noreferrer">Open first-page preview</a>
+              <a class="btn btn-secondary" href="report.html">Open HTML report</a>
+              <a class="btn btn-secondary" href="poster.html">Open poster</a>
+              <a class="btn btn-secondary" href="implementation.html" data-open-implementation-gate>Open implementation guide</a>
             </div>
+
+            <h3 style="margin-top: 20px;">Citation (BibTeX)</h3>
+            <pre class="email-template">@article{chowdhury2026aslf,
+  title   = {Autonomous Self-Learning Serverless Intelligent Firewall: Integrating REST API-Driven Open-Source Threat Intelligence, Multi-Paradigm Machine Learning, and Federated Zero-Trust Architectures},
+  author  = {Chowdhury, Md Anisur Rahman and Wang, Kefei},
+  year    = {2026}
+}</pre>
+            <button class="copy-btn" type="button" onclick="copyEmailTemplate(this)">Copy citation block</button>
           </article>
 
           <aside class="policy-card">
-            <h3>Download policy</h3>
+            <h3>Secure Download Policy</h3>
             <ol class="policy-list">
-              <li>Follow the author on GitHub.</li>
-              <li>Subscribe to the YouTube channel and review the overview video.</li>
-              <li>Send a password request email to the author.</li>
-              <li>Use the password to unlock the download gate and extract the encrypted archives.</li>
+              <li>Follow your GitHub profile.</li>
+              <li>Subscribe to your YouTube channel and review the video.</li>
+              <li>Send password request email to you.</li>
+              <li>Use the password in the secure gate and download encrypted bundles.</li>
             </ol>
             <div class="hero-actions">
-              <button class="btn btn-primary btn-block" type="button" data-open-gate>Open secure download gate</button>
-              <a class="btn btn-secondary btn-block" href="report.html">Open public HTML report</a>
+              <button class="btn btn-primary btn-block" type="button" data-open-gate>Open secure gate</button>
+            </div>
+
+            <h3 style="margin-top:18px;">Direct Research Links</h3>
+            <div class="hero-actions">
+              <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993/Serverless-Intelligent-Firewall-Research-1" target="_blank" rel="noreferrer">Research-1 Repo</a>
+              <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993/Serverless-Intelligent-Firewall-Research-2" target="_blank" rel="noreferrer">Research-2 Repo</a>
+              <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993/Serverless-Intelligent-Firewall-Research-3" target="_blank" rel="noreferrer">Research-3 Repo</a>
             </div>
           </aside>
         </div>
       </div>
     </section>
 
-    <section class="section" id="resources">
-      <div class="container">
-        <p class="section-kicker">Research Assets</p>
-        <h2 class="section-title">Portal resources</h2>
-        <p class="section-subtitle">
-          This version now contains stronger inter-links across all three research artifacts, expanded graphs, and practical implementation documentation.
-        </p>
-
-        <div class="resource-grid">
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Public page</span>
-              <span class="pill accent">Operator</span>
-            </div>
-            <h3>Super control dashboard</h3>
-            <p>
-              Fleet-level control for tenant provisioning, global policy rollout, version upgrades, and cross-tenant threat analytics.
-            </p>
-            <a class="btn btn-dark" href="super-dashboard.html">Open super dashboard</a>
-          </article>
-
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Public page</span>
-              <span class="pill accent">Client</span>
-            </div>
-            <h3>Tenant sub-dashboard</h3>
-            <p>
-              Corporate client view for protected assets, provider traffic distribution, risk timeline, and local event simulation.
-            </p>
-            <a class="btn btn-dark" href="tenant-dashboard.html">Open tenant dashboard</a>
-          </article>
-
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Public page</span>
-              <span class="pill accent">Long-form</span>
-            </div>
-            <h3>Interactive HTML report</h3>
-            <p>
-              A web-native report that expands the manuscript into readable sections for reviewers, students, and practitioners while keeping the protected files encrypted.
-            </p>
-            <a class="btn btn-dark" href="report.html">Open report</a>
-          </article>
-
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Public page</span>
-              <span class="pill accent">Implementation</span>
-            </div>
-            <h3>Combined implementation guide</h3>
-            <p>
-              Graphical and practical guidance to implement the Serverless Intelligent Firewall in real-time by combining lessons from Research-1 and Research-3.
-            </p>
-            <a class="btn btn-dark" href="implementation.html" data-open-implementation-gate>Open guide</a>
-          </article>
-
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Public page</span>
-              <span class="pill accent">Poster board</span>
-            </div>
-            <h3>Overview poster page</h3>
-            <p>
-              A poster-style summary for quick review and presentation-ready communication using the same assets and secure download workflow.
-            </p>
-            <a class="btn btn-dark" href="poster.html">Open poster</a>
-          </article>
-
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Cross-link</span>
-              <span class="pill accent">Research-1</span>
-            </div>
-            <h3>First research artifact</h3>
-            <p>
-              The original research baseline and portal. This site now links directly to it so readers can compare progression clearly.
-            </p>
-            <a class="btn btn-dark" href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-1/" target="_blank" rel="noreferrer">Open Research-1 website</a>
-          </article>
-
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Encrypted</span>
-              <span class="pill accent">Password required</span>
-            </div>
-            <h3>Protected document bundles</h3>
-            <p>
-              The manuscript and LaTeX source package are published only as encrypted zip archives. The gate enforces the same policy flow as the first portal.
-            </p>
-            <button class="btn btn-primary" type="button" data-open-gate>Unlock downloads</button>
-          </article>
-
-          <article class="resource-card">
-            <div class="resource-meta">
-              <span class="pill">Profiles</span>
-              <span class="pill accent">Contact</span>
-            </div>
-            <h3>Author profiles and contact</h3>
-            <p>
-              All primary profiles and contact channels for collaboration, citation, and password requests are collected in one place.
-            </p>
-            <a class="btn btn-dark" href="#profiles">Open profiles</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-alt" id="profiles">
+    <section class="section" id="profiles">
       <div class="container">
         <p class="section-kicker">Author Profiles</p>
-        <h2 class="section-title">Primary researcher links</h2>
-        <p class="section-subtitle">
-          All public profiles are linked directly so visitors can verify authorship, follow ongoing work, and request access through expected channels.
-        </p>
-
+        <h2 class="section-title">Identity, publication, and contact channels</h2>
         <div class="profile-grid">
           <article class="resource-card">
             <h3>LinkedIn</h3>
-            <p>Professional profile and academic/engineering background.</p>
+            <p>Professional profile and background.</p>
             <a href="https://linkedin.com/in/md-anisur-rahman-chowdhury-15862420a" target="_blank" rel="noreferrer">linkedin.com/in/md-anisur-rahman-chowdhury-15862420a</a>
           </article>
           <article class="resource-card">
             <h3>GitHub</h3>
-            <p>Source repositories, prior artifacts, and the first research portal.</p>
+            <p>Code repositories and artifact history.</p>
             <a href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">github.com/ANIS151993</a>
           </article>
           <article class="resource-card">
             <h3>Google Scholar</h3>
-            <p>Citation and publication index for academic visibility.</p>
+            <p>Publication and citation profile.</p>
             <a href="https://scholar.google.com/citations?user=NQyywPoAAAAJ" target="_blank" rel="noreferrer">scholar.google.com/citations?user=NQyywPoAAAAJ</a>
           </article>
           <article class="resource-card">
             <h3>Portfolio</h3>
-            <p>Personal portfolio and extended project showcase.</p>
+            <p>Extended projects and technical showcase.</p>
             <a href="https://marcbd.com" target="_blank" rel="noreferrer">marcbd.com</a>
           </article>
           <article class="resource-card">
             <h3>ResearchGate</h3>
-            <p>Research network profile for academic collaboration.</p>
+            <p>Academic collaboration profile.</p>
             <a href="https://researchgate.net/profile/Md-Anisur-Rahman-Chowdhury" target="_blank" rel="noreferrer">researchgate.net/profile/Md-Anisur-Rahman-Chowdhury</a>
           </article>
           <article class="resource-card">
-            <h3>Contact</h3>
-            <p>Password requests and academic inquiries should be sent directly by email.</p>
+            <h3>Email</h3>
+            <p>Password and collaboration requests.</p>
             <a href="mailto:engr.aanis@gmail.com">engr.aanis@gmail.com</a>
           </article>
         </div>
@@ -934,13 +577,13 @@ log_decision_to_unified_telemetry()</code></pre>
   <footer class="footer">
     <div class="footer-inner">
       <div>
-        ASLF-OSINT Research Portal for a journal-ready reproducible artifact.
-        GitHub Pages URL: <a href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/" target="_blank" rel="noreferrer">anis151993.github.io/Serverless-Intelligent-Firewall-Research-3</a>
+        ASLF-OSINT Research-3 Journal Portal with explicit Research-1 and Research-2 linkage.
+        <a href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-3/" target="_blank" rel="noreferrer">Live URL</a>
       </div>
       <div>Lead contact: <a href="mailto:engr.aanis@gmail.com">engr.aanis@gmail.com</a></div>
     </div>
     <div class="copyright-bar">
-      © 2026 MD ANISUR RAHMAN CHOWDHURY. All Rights Reserved. | Portal build 2026-03-05-r3
+      © 2026 MD ANISUR RAHMAN CHOWDHURY. All Rights Reserved. | Portal build 2026-03-05-r4
     </div>
   </footer>
 
@@ -949,7 +592,7 @@ log_decision_to_unified_telemetry()</code></pre>
       <div class="gate-head">
         <div>
           <h3 id="impl-title">Protected implementation guide access</h3>
-          <p>Complete all security policy steps first, then enter the password to open the full guide.</p>
+          <p>Complete all policy checks, then enter the password to open the full implementation guide.</p>
         </div>
       </div>
 
@@ -957,7 +600,7 @@ log_decision_to_unified_telemetry()</code></pre>
         <section class="download-step" data-impl-step="1">
           <span class="step-badge">Step 1</span>
           <h4>Public profile checks</h4>
-          <p>Visit these public channels and confirm both checks.</p>
+          <p>Visit the public channels and confirm both steps.</p>
           <div class="hero-actions">
             <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">Open GitHub profile</a>
             <a class="btn btn-dark btn-block" href="https://youtu.be/O_pLEz7cyaY" target="_blank" rel="noreferrer">Open YouTube video</a>
@@ -971,13 +614,13 @@ log_decision_to_unified_telemetry()</code></pre>
 
         <section class="download-step is-hidden" data-impl-step="2">
           <span class="step-badge">Step 2</span>
-          <h4>Request the password by email</h4>
-          <p>Send your request before guide access is granted.</p>
+          <h4>Request password by email</h4>
+          <p>Send a request email so guide access can be approved.</p>
           <a class="btn btn-dark btn-block" href="mailto:engr.aanis@gmail.com?subject=Password%20request%20for%20ASLF-OSINT%20implementation%20guide">Email the author</a>
           <div class="email-template">Subject: Password request for ASLF-OSINT implementation guide
 
 Hello Md Anisur Rahman Chowdhury,
-I followed the GitHub profile, subscribed to the YouTube channel, and request access to the protected implementation guide.
+I followed the GitHub profile, subscribed to the YouTube channel, and request the implementation guide password.
 Name:
 Institution:
 Purpose of use:</div>
@@ -991,10 +634,10 @@ Purpose of use:</div>
 
         <section class="download-step is-hidden" data-impl-step="3">
           <span class="step-badge">Step 3</span>
-          <h4>Enter the password</h4>
-          <p>Enter the password once you receive it from the author.</p>
-          <input class="gate-input" id="impl-password" type="password" placeholder="Enter the implementation guide password">
-          <p class="gate-error is-hidden" id="impl-error">Password is incorrect. Complete the policy flow and try again.</p>
+          <h4>Enter password</h4>
+          <p>Use the password received from the author.</p>
+          <input class="gate-input" id="impl-password" type="password" placeholder="Enter implementation password">
+          <p class="gate-error is-hidden" id="impl-error">Password is incorrect. Complete the policy flow and use the correct password.</p>
           <div class="gate-actions">
             <button class="btn btn-secondary btn-block" type="button" onclick="goToImplementationStep(2)">Back</button>
             <button class="btn btn-primary btn-block" type="button" onclick="unlockImplementationGuide()">Open full implementation guide</button>
@@ -1008,8 +651,8 @@ Purpose of use:</div>
     <div class="gate-modal" role="dialog" aria-modal="true" aria-labelledby="gate-title">
       <div class="gate-head">
         <div>
-          <h3 id="gate-title">Secure download gate</h3>
-          <p>Complete the public policy steps, then unlock the encrypted archives.</p>
+          <h3 id="gate-title">Secure journal download gate</h3>
+          <p>Complete the policy flow, then unlock encrypted manuscript and source archives.</p>
         </div>
         <button class="gate-close" type="button" aria-label="Close download gate" onclick="closeGate()">&times;</button>
       </div>
@@ -1017,8 +660,8 @@ Purpose of use:</div>
       <div class="gate-steps">
         <section class="download-step" data-gate-step="1">
           <span class="step-badge">Step 1</span>
-          <h4>Follow the public channels</h4>
-          <p>Open the official profile and video links first, then confirm the two checks below.</p>
+          <h4>Public profile checks</h4>
+          <p>Visit the channels and confirm both checks.</p>
           <div class="hero-actions">
             <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">Open GitHub profile</a>
             <a class="btn btn-dark btn-block" href="https://youtu.be/O_pLEz7cyaY" target="_blank" rel="noreferrer">Open YouTube video</a>
@@ -1032,8 +675,8 @@ Purpose of use:</div>
 
         <section class="download-step is-hidden" data-gate-step="2">
           <span class="step-badge">Step 2</span>
-          <h4>Request the password</h4>
-          <p>Send a short request email so the author can verify the purpose of access before sharing the archive password.</p>
+          <h4>Request password by email</h4>
+          <p>Use the email template below to request access password.</p>
           <a class="btn btn-dark btn-block" href="mailto:engr.aanis@gmail.com?subject=Password%20request%20for%20ASLF-OSINT%20research%20download">Email the author</a>
           <div class="email-template">Subject: Password request for ASLF-OSINT research download
 
@@ -1053,9 +696,9 @@ Purpose of use:</div>
         <section class="download-step is-hidden" data-gate-step="3">
           <span class="step-badge">Step 3</span>
           <h4>Enter the password</h4>
-          <p>The archives remain encrypted after download. Enter the password here to reveal the links once you have received it from the author.</p>
-          <input class="gate-input" id="gate-password" type="password" placeholder="Enter the archive password">
-          <p class="gate-error is-hidden" id="gate-error">The password is incorrect. Request the correct password from the author and try again.</p>
+          <p>Enter the password received from the author.</p>
+          <input class="gate-input" id="gate-password" type="password" placeholder="Enter archive password">
+          <p class="gate-error is-hidden" id="gate-error">Password is incorrect. Request the correct password from the author and try again.</p>
           <div class="gate-actions">
             <button class="btn btn-secondary btn-block" type="button" onclick="goToGateStep(2)">Back</button>
             <button class="btn btn-primary btn-block" type="button" onclick="unlockDownloads()">Unlock downloads</button>
@@ -1064,13 +707,16 @@ Purpose of use:</div>
 
         <section class="download-step is-hidden" data-gate-step="4">
           <span class="step-badge">Unlocked</span>
-          <h4>Encrypted files ready</h4>
-          <p>These files are encrypted zip archives. The same password is still required after download to extract the contents.</p>
+          <h4>Encrypted bundles available</h4>
+          <p>Download links below contain encrypted files only.</p>
           <div class="download-links">
             <a class="btn btn-primary btn-block" href="assets/papers/ASLF-OSINT-Research-Paper-Encrypted.zip">Download encrypted manuscript bundle (.doc + .pdf)</a>
             <a class="btn btn-secondary btn-block" href="assets/papers/ASLF-OSINT-LaTeX-Source-Encrypted.zip">Download encrypted LaTeX source</a>
             <a class="btn btn-secondary btn-block" href="assets/papers/ASLF-OSINT-Doc-PDF-LaTeX-Encrypted.zip">Download combined encrypted package</a>
-            <a class="btn btn-dark btn-block" href="report.html">Open public HTML report</a>
+            <a class="btn btn-dark btn-block" href="assets/papers/ASLF-OSINT-Research-First-Page-Preview.pdf" target="_blank" rel="noreferrer">Open first-page preview</a>
+          </div>
+          <div class="gate-actions">
+            <button class="btn btn-secondary btn-block" type="button" onclick="closeGate()">Close gate</button>
           </div>
         </section>
       </div>
