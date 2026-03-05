@@ -1,0 +1,17 @@
+{
+  "event_id": "evt-ddos-772",
+  "src_ip": "203.0.113.110",
+  "dst_service": "edge-ingress",
+  "protocol": "udp",
+  "provider": "gcp",
+  "requests_per_second": 1280,
+  "failed_auth": 5,
+  "geo_velocity": 6,
+  "anomaly_score": 92,
+  "lateral_hops": 3,
+  "policy_drift": 40,
+  "payload_entropy": 8.8,
+  "identity_confidence": 0.58,
+  "mfa_verified": false,
+  "user_id": "anonymous"
+}

@@ -1,0 +1,8 @@
+{
+  "dry_run_mode": true,
+  "peers": [
+    "http://sif1.marcbd.site:9000/federation/ingest",
+    "http://sif2.marcbd.site:9000/federation/ingest"
+  ],
+  "model_state_path": "state/model_state.json"
+}

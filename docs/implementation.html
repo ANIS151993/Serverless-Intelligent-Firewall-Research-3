@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASLF-OSINT Implementation Guide | Research-1 + Research-3</title>
+  <meta name="description" content="Implementation guide for the Autonomous Self-Learning Serverless Intelligent Firewall using Research-1 and Research-3 foundations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">SIF Research-3</a>
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Portal</a></li>
+        <li><a href="#combined">Combined Model</a></li>
+        <li><a href="#blueprint">Blueprint</a></li>
+        <li><a href="#steps">Implementation</a></li>
+        <li><a href="#protection">Protection Policy</a></li>
+        <li><a href="#ops">Operations</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="page-shell">
+    <div class="page-head">
+      <p class="section-kicker">Combined Documentation</p>
+      <h1 class="page-title">Real-time implementation guide for ASLF-OSINT</h1>
+      <p class="page-subtitle">
+        This guide combines both research phases. Use Research-1 as the model foundation and Research-3 as the autonomous, federated zero-trust upgrade for real deployments.
+      </p>
+      <div class="report-band">
+        <div class="report-metrics">
+          <span class="report-chip">Research-1: LSTM foundation</span>
+          <span class="report-chip">Research-3: multi-paradigm adaptive scoring</span>
+          <span class="report-chip">REST API OSINT enrichment</span>
+          <span class="report-chip">Federated zero-trust policy</span>
+        </div>
+        <a class="btn btn-primary" href="https://anis151993.github.io/Serverless-Intelligent-Firewall-Research-1/" target="_blank" rel="noreferrer">Open Research-1</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <section class="report-section" id="combined">
+        <h2>Combined research model</h2>
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Research-1 role</h3>
+            <ul class="report-list">
+              <li>Build and validate the baseline IDS capability with LSTM.</li>
+              <li>Confirm class-level threat separability and confusion matrix quality.</li>
+              <li>Establish first-generation serverless deployment mechanics.</li>
+              <li>Use as the reference benchmark for all later upgrades.</li>
+            </ul>
+          </article>
+          <article class="report-panel">
+            <h3>Research-3 role</h3>
+            <ul class="report-list">
+              <li>Upgrade model quality through XGBoost plus BiGRU hybrid fusion.</li>
+              <li>Extend runtime from single-cloud to AWS, Azure, and GCP orchestration.</li>
+              <li>Add unified zero-trust control plane for identity and policy consistency.</li>
+              <li>Measure practical SLOs: latency, cold-start, cost, and policy propagation.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3>Capability build-up chart</h3>
+            <div class="chart-wrap">
+              <canvas id="lineageChart" aria-label="Capability build-up chart"></canvas>
+            </div>
+          </article>
+          <article class="chart-card">
+            <h3>Maturity radar chart</h3>
+            <div class="chart-wrap">
+              <canvas id="lineageFeatureChart" aria-label="Maturity radar chart"></canvas>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" id="blueprint">
+        <h2>Graphical real-time architecture blueprint</h2>
+        <p>
+          This diagram shows the implementation path from event ingestion to policy enforcement in a multi-cloud runtime. The same pipeline supports baseline detection from Research-1 and hybrid upgrades from Research-3.
+        </p>
+        <div class="report-panel">
+          <svg viewBox="0 0 1200 420" width="100%" role="img" aria-label="Combined SIF implementation blueprint">
+            <defs>
+              <linearGradient id="boxA" x1="0" x2="1">
+                <stop offset="0%" stop-color="#153653" />
+                <stop offset="100%" stop-color="#2a5d88" />
+              </linearGradient>
+              <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                <polygon points="0,0 10,4 0,8" fill="#285f8f"></polygon>
+              </marker>
+            </defs>
+
+            <rect x="30" y="60" width="210" height="90" rx="14" fill="url(#boxA)"></rect>
+            <text x="50" y="98" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Traffic + telemetry</text>
+            <text x="50" y="124" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">Flow logs, identity context</text>
+
+            <rect x="285" y="60" width="220" height="90" rx="14" fill="url(#boxA)"></rect>
+            <text x="305" y="98" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Feature engineering</text>
+            <text x="305" y="124" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">Clean, normalize, sequence</text>
+
+            <rect x="550" y="35" width="230" height="90" rx="14" fill="url(#boxA)"></rect>
+            <text x="570" y="73" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Research-1 model path</text>
+            <text x="570" y="98" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">LSTM inference baseline</text>
+
+            <rect x="550" y="165" width="230" height="90" rx="14" fill="url(#boxA)"></rect>
+            <text x="570" y="203" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Research-3 model path</text>
+            <text x="570" y="228" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">XGBoost + BiGRU fusion</text>
+
+            <rect x="825" y="95" width="230" height="90" rx="14" fill="url(#boxA)"></rect>
+            <text x="845" y="133" fill="#ffffff" font-size="18" font-family="Manrope, sans-serif">Response orchestrator</text>
+            <text x="845" y="158" fill="#dbe9f4" font-size="14" font-family="Manrope, sans-serif">AWS | Azure | GCP actions</text>
+
+            <rect x="1080" y="95" width="95" height="90" rx="14" fill="#0f766e"></rect>
+            <text x="1096" y="131" fill="#ffffff" font-size="16" font-family="Manrope, sans-serif">UCP</text>
+            <text x="1089" y="157" fill="#e7fff9" font-size="13" font-family="Manrope, sans-serif">Zero-trust</text>
+
+            <line x1="240" y1="105" x2="283" y2="105" stroke="#285f8f" stroke-width="4" marker-end="url(#arrow)"></line>
+            <line x1="505" y1="105" x2="548" y2="80" stroke="#285f8f" stroke-width="4" marker-end="url(#arrow)"></line>
+            <line x1="505" y1="105" x2="548" y2="210" stroke="#285f8f" stroke-width="4" marker-end="url(#arrow)"></line>
+            <line x1="780" y1="80" x2="823" y2="120" stroke="#285f8f" stroke-width="4" marker-end="url(#arrow)"></line>
+            <line x1="780" y1="210" x2="823" y2="160" stroke="#285f8f" stroke-width="4" marker-end="url(#arrow)"></line>
+            <line x1="1055" y1="140" x2="1078" y2="140" stroke="#285f8f" stroke-width="4" marker-end="url(#arrow)"></line>
+          </svg>
+          <p class="caption">UCP = Unified Control Plane (policy + identity decision layer).</p>
+        </div>
+
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3>Latency vs cost scatter graph</h3>
+            <div class="chart-wrap">
+              <canvas id="latencyCostScatterChart" aria-label="Latency versus cost scatter chart"></canvas>
+            </div>
+          </article>
+          <article class="chart-card">
+            <h3>Implementation phase chart</h3>
+            <div class="chart-wrap">
+              <canvas id="realtimePhasesChart" aria-label="Implementation phase chart"></canvas>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" id="steps">
+        <h2>Step-by-step implementation sequence</h2>
+        <div class="implementation-roadmap">
+          <article class="roadmap-step">
+            <strong>Step 1</strong>
+            <h3>Data and feature pipeline</h3>
+            <p>Automate CIC-style feature extraction from cloud flow logs and function traces. Ensure consistent schema across all providers before model scoring.</p>
+          </article>
+          <article class="roadmap-step">
+            <strong>Step 2</strong>
+            <h3>Model deployment strategy</h3>
+            <p>Run baseline LSTM first, then deploy hybrid model as shadow mode. Compare decision drift before moving to active enforcement.</p>
+          </article>
+          <article class="roadmap-step">
+            <strong>Step 3</strong>
+            <h3>Orchestration and response</h3>
+            <p>Use event buses and provider-native function triggers to execute block/challenge/allow workflows with minimal response latency.</p>
+          </article>
+          <article class="roadmap-step">
+            <strong>Step 4</strong>
+            <h3>Zero-trust policy integration</h3>
+            <p>Apply policy-as-code and identity verification for every service interaction, not only external ingress requests.</p>
+          </article>
+        </div>
+
+        <div class="guide-callout">
+          <h3>Reference orchestration pseudocode</h3>
+          <p>
+            The following workflow describes a practical event path compatible with both research phases. It can be implemented as serverless handlers and queue workers.
+          </p>
+          <pre class="code-block"><code>def firewall_event_handler(flow_event):
+    features = preprocess(flow_event)
+    baseline_pred = lstm_predict(features)             # Research-1
+    hybrid_pred = fusion_predict(features)             # Research-3
+    final_pred = reconcile_predictions(baseline_pred, hybrid_pred)
+
+    context = build_zero_trust_context(flow_event, final_pred)
+    decision = policy_decision_point(context)
+
+    if decision in {"BLOCK", "CHALLENGE"}:
+        dispatch_cross_cloud_response(flow_event, decision)
+    persist_audit_log(flow_event, final_pred, decision)
+    return decision</code></pre>
+        </div>
+      </section>
+
+      <section class="report-section" id="protection">
+        <h2>Protection policy for full implementation assets</h2>
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Policy requirements</h3>
+            <ol class="report-list">
+              <li>Follow the author on GitHub: <a href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">github.com/ANIS151993</a>.</li>
+              <li>Review and subscribe through the overview video channel: <a href="https://youtu.be/O_pLEz7cyaY" target="_blank" rel="noreferrer">YouTube overview</a>.</li>
+              <li>Request the password by email before download access is granted.</li>
+              <li>Use the password in the secure gate to reveal encrypted archive links.</li>
+            </ol>
+          </article>
+          <article class="report-panel">
+            <h3>Access control notes</h3>
+            <p>
+              All implementation artifacts (PDF, LaTeX source, and related documents) are distributed only as encrypted archives. Public pages provide guidance, but direct source access stays protected.
+            </p>
+            <p>
+              The secure gate below applies the same workflow used across this portal so policy enforcement remains consistent.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-block" type="button" data-open-gate>Open secure download gate</button>
+              <a class="btn btn-secondary btn-block" href="report.html">Open public HTML report</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" id="ops">
+        <h2>Operational checklist and documentation map</h2>
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Pre-production checklist</h3>
+            <ul class="report-list">
+              <li>Validate model quality against replayed production traffic slices.</li>
+              <li>Set response-time SLOs and alert thresholds per cloud provider.</li>
+              <li>Define policy fallback behavior for temporary control-plane outages.</li>
+              <li>Run red-team simulations for DDoS, credential abuse, and policy drift cases.</li>
+              <li>Document rollback path from hybrid enforcement to baseline mode.</li>
+            </ul>
+          </article>
+          <article class="report-panel">
+            <h3>Combined documentation map</h3>
+            <ul class="report-list">
+              <li><strong>Research-1 website:</strong> baseline IDS concept, first publication context.</li>
+              <li><strong>Research-3 portal:</strong> cross-cloud adaptive architecture and expanded analytics.</li>
+              <li><strong>Research-3 report:</strong> web-native manuscript explanation.</li>
+              <li><strong>This guide:</strong> practical rollout sequence combining both works.</li>
+            </ul>
+            <div class="hero-actions">
+              <a class="btn btn-secondary btn-block" href="index.html">Back to portal</a>
+              <a class="btn btn-secondary btn-block" href="report.html">Open HTML report</a>
+              <a class="btn btn-secondary btn-block" href="https://github.com/ANIS151993/Serverless-Intelligent-Firewall-Research-1" target="_blank" rel="noreferrer">Research-1 repo</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="gate-overlay" id="implementation-gate" data-impl-mode="page">
+    <div class="gate-modal" role="dialog" aria-modal="true" aria-labelledby="impl-title">
+      <div class="gate-head">
+        <div>
+          <h3 id="impl-title">Protected implementation guide access</h3>
+          <p>Complete the security policy steps and enter the password to open the full implementation guide.</p>
+        </div>
+      </div>
+
+      <div class="gate-steps">
+        <section class="download-step" data-impl-step="1">
+          <span class="step-badge">Step 1</span>
+          <h4>Public profile checks</h4>
+          <p>Visit these public channels and confirm both checks.</p>
+          <div class="hero-actions">
+            <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">Open GitHub profile</a>
+            <a class="btn btn-dark btn-block" href="https://youtu.be/O_pLEz7cyaY" target="_blank" rel="noreferrer">Open YouTube video</a>
+          </div>
+          <label class="gate-check"><input id="impl-github" type="checkbox"> I followed the GitHub profile.</label>
+          <label class="gate-check"><input id="impl-youtube" type="checkbox"> I subscribed to the YouTube channel.</label>
+          <div class="gate-actions">
+            <button class="btn btn-primary btn-block" id="impl-next-1" type="button" onclick="continueImplementationGate(2)">Continue</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-impl-step="2">
+          <span class="step-badge">Step 2</span>
+          <h4>Request the password by email</h4>
+          <p>Send the request before unlocking implementation access.</p>
+          <a class="btn btn-dark btn-block" href="mailto:engr.aanis@gmail.com?subject=Password%20request%20for%20ASLF-OSINT%20implementation%20guide">Email the author</a>
+          <div class="email-template">Subject: Password request for ASLF-OSINT implementation guide
+
+Hello Md Anisur Rahman Chowdhury,
+I followed the GitHub profile, subscribed to the YouTube channel, and request access to the protected implementation guide.
+Name:
+Institution:
+Purpose of use:</div>
+          <button class="copy-btn" type="button" onclick="copyEmailTemplate(this)">Copy email template</button>
+          <label class="gate-check"><input id="impl-request" type="checkbox"> I sent the password request email.</label>
+          <div class="gate-actions">
+            <button class="btn btn-secondary btn-block" type="button" onclick="goToImplementationStep(1)">Back</button>
+            <button class="btn btn-primary btn-block" id="impl-next-2" type="button" onclick="continueImplementationGate(3)">Continue</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-impl-step="3">
+          <span class="step-badge">Step 3</span>
+          <h4>Enter the password</h4>
+          <p>Enter the guide access password once you receive it from the author.</p>
+          <input class="gate-input" id="impl-password" type="password" placeholder="Enter the implementation guide password">
+          <p class="gate-error is-hidden" id="impl-error">Password is incorrect. Complete the policy flow and use the correct password.</p>
+          <div class="gate-actions">
+            <button class="btn btn-secondary btn-block" type="button" onclick="goToImplementationStep(2)">Back</button>
+            <button class="btn btn-primary btn-block" type="button" onclick="unlockImplementationGuide()">Open full implementation guide</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>Combined implementation guide for Research-1 and Research-3.</div>
+      <div><a href="index.html">Return to the main portal</a></div>
+    </div>
+    <div class="copyright-bar">
+      © 2026 MD ANISUR RAHMAN CHOWDHURY. All Rights Reserved.
+    </div>
+  </footer>
+
+  <div class="gate-overlay is-hidden" id="download-gate">
+    <div class="gate-modal" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+      <div class="gate-head">
+        <div>
+          <h3 id="gate-title">Secure download gate</h3>
+          <p>Complete the policy steps, then reveal the encrypted archives.</p>
+        </div>
+        <button class="gate-close" type="button" aria-label="Close download gate" onclick="closeGate()">&times;</button>
+      </div>
+
+      <div class="gate-steps">
+        <section class="download-step" data-gate-step="1">
+          <span class="step-badge">Step 1</span>
+          <h4>Public profile checks</h4>
+          <p>Visit the author's public links, then confirm both checkboxes.</p>
+          <div class="hero-actions">
+            <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">Open GitHub profile</a>
+            <a class="btn btn-dark btn-block" href="https://youtu.be/O_pLEz7cyaY" target="_blank" rel="noreferrer">Open YouTube video</a>
+          </div>
+          <label class="gate-check"><input id="gate-github" type="checkbox"> I followed the GitHub profile.</label>
+          <label class="gate-check"><input id="gate-youtube" type="checkbox"> I subscribed to the YouTube channel.</label>
+          <div class="gate-actions">
+            <button class="btn btn-primary btn-block" id="gate-next-1" type="button" onclick="continueGate(2)">Continue</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-gate-step="2">
+          <span class="step-badge">Step 2</span>
+          <h4>Request the password by email</h4>
+          <p>Use the author's public email so access can be granted intentionally.</p>
+          <a class="btn btn-dark btn-block" href="mailto:engr.aanis@gmail.com?subject=Password%20request%20for%20ASLF-OSINT%20research%20download">Email the author</a>
+          <div class="email-template">Subject: Password request for ASLF-OSINT research download
+
+Hello Md Anisur Rahman Chowdhury,
+I followed the GitHub profile, subscribed to the YouTube channel, and would like the password for the encrypted ASLF-OSINT research package.
+Name:
+Institution:
+Purpose of use:</div>
+          <button class="copy-btn" type="button" onclick="copyEmailTemplate(this)">Copy email template</button>
+          <label class="gate-check"><input id="gate-request" type="checkbox"> I sent the password request email.</label>
+          <div class="gate-actions">
+            <button class="btn btn-secondary btn-block" type="button" onclick="goToGateStep(1)">Back</button>
+            <button class="btn btn-primary btn-block" id="gate-next-2" type="button" onclick="continueGate(3)">Continue</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-gate-step="3">
+          <span class="step-badge">Step 3</span>
+          <h4>Enter the password</h4>
+          <p>Enter the password once you receive it from the author.</p>
+          <input class="gate-input" id="gate-password" type="password" placeholder="Enter the archive password">
+          <p class="gate-error is-hidden" id="gate-error">The password is incorrect. Request the correct password from the author and try again.</p>
+          <div class="gate-actions">
+            <button class="btn btn-secondary btn-block" type="button" onclick="goToGateStep(2)">Back</button>
+            <button class="btn btn-primary btn-block" type="button" onclick="unlockDownloads()">Unlock downloads</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-gate-step="4">
+          <span class="step-badge">Unlocked</span>
+          <h4>Encrypted files ready</h4>
+          <p>These links expose only encrypted zip archives. The password is still required to extract the contents after download.</p>
+          <div class="download-links">
+            <a class="btn btn-primary btn-block" href="assets/papers/ASLF-OSINT-Research-Paper-Encrypted.zip">Download encrypted manuscript bundle (.doc + .pdf)</a>
+            <a class="btn btn-secondary btn-block" href="assets/papers/ASLF-OSINT-LaTeX-Source-Encrypted.zip">Download encrypted LaTeX source</a>
+            <a class="btn btn-secondary btn-block" href="assets/papers/ASLF-OSINT-Doc-PDF-LaTeX-Encrypted.zip">Download combined encrypted package</a>
+            <a class="btn btn-dark btn-block" href="index.html">Return to portal</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

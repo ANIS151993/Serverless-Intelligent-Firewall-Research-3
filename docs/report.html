@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASLF-OSINT HTML Research Report | Research-3</title>
+  <meta name="description" content="HTML report for the Autonomous Self-Learning Serverless Intelligent Firewall Research-3 artifact.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">SIF Research-3</a>
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Portal</a></li>
+        <li><a href="#summary">Summary</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="implementation.html">Implementation</a></li>
+        <li><a href="#download">Downloads</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="page-shell">
+    <div class="page-head">
+      <p class="section-kicker">Public HTML Report</p>
+      <h1 class="page-title">ASLF-OSINT research report</h1>
+      <p class="page-subtitle">
+        This page converts the protected manuscript into a readable web report. It keeps the full manuscript private while exposing methodology, architecture, and evaluation outcomes.
+      </p>
+
+      <div class="report-band">
+        <div class="report-metrics">
+          <span class="report-chip">98% accuracy</span>
+          <span class="report-chip">0.990 ROC-AUC</span>
+          <span class="report-chip">135 ms cross-cloud latency</span>
+          <span class="report-chip">99.6% policy consistency</span>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-primary" type="button" data-open-gate>Secure downloads</button>
+          <a class="btn btn-secondary" href="implementation.html">Combined guide</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container report-grid" id="summary">
+      <section class="report-panel">
+        <h3>Executive summary</h3>
+        <p>
+          ASLF-OSINT extends the original Serverless Intelligent Firewall research into an autonomous, self-learning, multi-cloud security architecture. The framework combines threat-intel APIs, hybrid risk scoring, and federated zero-trust policy control.
+        </p>
+        <p>
+          The core research gap is the lack of serverless-native systems that unify adaptive analytics, federated policy enforcement, and practical runtime orchestration across cloud and private infrastructure.
+        </p>
+      </section>
+
+      <aside class="report-panel">
+        <h3>Artifact note</h3>
+        <p>
+          This report is the public-facing part of the Research-3 artifact. Manuscript and source files remain protected and are distributed only through encrypted archives behind the policy gate.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-secondary btn-block" href="poster.html">Open poster page</a>
+          <a class="btn btn-secondary btn-block" href="index.html">Return to portal</a>
+        </div>
+      </aside>
+    </div>
+
+    <div class="container">
+      <section class="report-section" id="method">
+        <h2>Research scope and methodology</h2>
+        <p>
+          The paper uses the CIC-IDS2017 dataset and applies a multi-stage preprocessing pipeline: column normalization, duplicate removal, anomaly correction, class consolidation, manual outlier filtering, and balancing by undersampling. This reduces noise and gives the downstream learning pipeline a cleaner feature space.
+        </p>
+
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Data preparation pipeline</h3>
+            <ul class="report-list">
+              <li>Remove duplicate rows and redundant columns.</li>
+              <li>Replace infinite values and drop rows with missing values.</li>
+              <li>Consolidate attack labels into broader operational classes.</li>
+              <li>Standardize numerical features and trim high-impact outliers.</li>
+              <li>Balance remaining classes for more stable supervised learning.</li>
+            </ul>
+          </article>
+
+          <article class="report-panel">
+            <h3>Model design</h3>
+            <ul class="report-list">
+              <li>XGBoost captures non-linear feature importance and supports fast feature-level learning.</li>
+              <li>BiGRU models bidirectional temporal relationships in traffic behavior.</li>
+              <li>A weighted fusion layer balances static and temporal evidence.</li>
+              <li>Serverless response hooks trigger provider-specific actions after detection.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="report-highlight">
+          <strong>Design intent:</strong> the architecture deliberately separates detection from policy governance so identity, trust, and response can evolve independently as workloads shift across clouds.
+        </div>
+      </section>
+
+      <section class="report-section">
+        <h2>System architecture</h2>
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Architecture figure</h3>
+            <img src="assets/images/system-architecture.png" alt="ASLF-OSINT architecture">
+            <p class="caption">The manuscript’s main architecture figure shows the detection engine, orchestration layer, and unified control plane spanning AWS, Azure, and GCP.</p>
+          </article>
+          <article class="report-panel">
+            <h3>Operational layers</h3>
+            <ul class="report-list">
+              <li><strong>Detection layer:</strong> classifies traffic and scores threats.</li>
+              <li><strong>Orchestration layer:</strong> triggers event-driven response workflows.</li>
+              <li><strong>Policy layer:</strong> enforces zero-trust decisions using cloud-agnostic identity and policy logic.</li>
+              <li><strong>Provider layer:</strong> executes localized actions in each cloud without losing global policy consistency.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" id="results">
+        <h2>Evaluation highlights</h2>
+        <p>
+          The proposed model outperforms the reported baselines on the paper’s primary classification metrics. The web portal retains the exact headline numbers from the manuscript and exposes them as reviewer-friendly tables and charts.
+        </p>
+
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3>Model comparison</h3>
+            <div class="chart-wrap">
+              <canvas id="performanceChart"></canvas>
+            </div>
+          </article>
+          <article class="chart-card">
+            <h3>Cross-cloud execution</h3>
+            <div class="chart-wrap">
+              <canvas id="cloudChart"></canvas>
+            </div>
+          </article>
+        </div>
+
+        <div class="chart-grid chart-grid-3">
+          <article class="chart-card">
+            <h3>Accuracy trend line graph</h3>
+            <div class="chart-wrap tight">
+              <canvas id="reportTrendChart"></canvas>
+            </div>
+          </article>
+          <article class="chart-card">
+            <h3>Attack mix pie chart</h3>
+            <div class="chart-wrap tight">
+              <canvas id="reportAttackPieChart"></canvas>
+            </div>
+          </article>
+          <article class="chart-card">
+            <h3>Policy health radar chart</h3>
+            <div class="chart-wrap tight">
+              <canvas id="reportPolicyRadarChart"></canvas>
+            </div>
+          </article>
+        </div>
+
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Performance summary</h3>
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Reported value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Accuracy</td><td>98.00%</td></tr>
+                <tr><td>Precision</td><td>98.00%</td></tr>
+                <tr><td>Recall</td><td>98.00%</td></tr>
+                <tr><td>F1-score</td><td>98.00%</td></tr>
+                <tr class="highlight"><td>ROC-AUC</td><td>0.990</td></tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="report-panel">
+            <h3>Zero-trust runtime summary</h3>
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th>Measure</th>
+                  <th>Reported value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Policy propagation delay</td><td>88.3 ms average</td></tr>
+                <tr><td>Identity verification latency</td><td>111.3 ms average</td></tr>
+                <tr><td>Policy consistency</td><td>99.6%</td></tr>
+                <tr class="highlight"><td>Cross-cloud avg. latency</td><td>135 ms</td></tr>
+              </tbody>
+            </table>
+          </article>
+        </div>
+
+        <div class="figure-grid">
+          <article class="figure-card">
+            <h3>Confusion matrix</h3>
+            <img src="assets/images/confusion-matrix.png" alt="Confusion matrix">
+            <p class="caption">High diagonal density indicates strong separation across benign and attack classes.</p>
+          </article>
+          <article class="figure-card">
+            <h3>ROC curve</h3>
+            <img src="assets/images/roc-curve.png" alt="ROC curve">
+            <p class="caption">ASLF-OSINT shows the steepest rise and strongest area under the curve.</p>
+          </article>
+          <article class="figure-card">
+            <h3>Cross-cloud stance</h3>
+            <img src="assets/images/control-plane-diagram.png" alt="Cross cloud control plane">
+            <p class="caption">The control plane normalizes policy and identity posture across providers.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" id="download">
+        <h2>Protected artifact access</h2>
+        <div class="report-columns">
+          <article class="report-panel">
+            <h3>Why the files are protected</h3>
+            <p>
+              The full PDF, TeX, and bibliography are intentionally packaged as encrypted archives to keep the submission private while still allowing controlled access for reviewers and collaborators.
+            </p>
+            <p>
+              The public HTML report remains available so readers can understand the project without direct access to the protected source files.
+            </p>
+          </article>
+          <article class="report-panel">
+            <h3>Access flow</h3>
+            <ol class="report-list">
+              <li>Follow the public GitHub profile.</li>
+              <li>Review the overview video and subscribe to the YouTube channel.</li>
+              <li>Email the author to request the password.</li>
+              <li>Use the secure gate to reveal the encrypted archive links.</li>
+            </ol>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-block" type="button" data-open-gate>Open secure gate</button>
+              <a class="btn btn-secondary btn-block" href="implementation.html">Open implementation guide</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>Public HTML report for the ASLF-OSINT submission.</div>
+      <div><a href="index.html">Return to the main portal</a></div>
+    </div>
+    <div class="copyright-bar">
+      © 2026 MD ANISUR RAHMAN CHOWDHURY. All Rights Reserved.
+    </div>
+  </footer>
+
+  <div class="gate-overlay is-hidden" id="download-gate">
+    <div class="gate-modal" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+      <div class="gate-head">
+        <div>
+          <h3 id="gate-title">Secure download gate</h3>
+          <p>Complete the policy steps, then reveal the encrypted archives.</p>
+        </div>
+        <button class="gate-close" type="button" aria-label="Close download gate" onclick="closeGate()">&times;</button>
+      </div>
+
+      <div class="gate-steps">
+        <section class="download-step" data-gate-step="1">
+          <span class="step-badge">Step 1</span>
+          <h4>Public profile checks</h4>
+          <p>Visit the author’s public links, then confirm both checkboxes.</p>
+          <div class="hero-actions">
+            <a class="btn btn-dark btn-block" href="https://github.com/ANIS151993" target="_blank" rel="noreferrer">Open GitHub profile</a>
+            <a class="btn btn-dark btn-block" href="https://youtu.be/O_pLEz7cyaY" target="_blank" rel="noreferrer">Open YouTube video</a>
+          </div>
+          <label class="gate-check"><input id="gate-github" type="checkbox"> I followed the GitHub profile.</label>
+          <label class="gate-check"><input id="gate-youtube" type="checkbox"> I subscribed to the YouTube channel.</label>
+          <div class="gate-actions">
+            <button class="btn btn-primary btn-block" id="gate-next-1" type="button" onclick="continueGate(2)">Continue</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-gate-step="2">
+          <span class="step-badge">Step 2</span>
+          <h4>Request the password by email</h4>
+          <p>Use the author’s public email so access can be granted intentionally.</p>
+          <a class="btn btn-dark btn-block" href="mailto:engr.aanis@gmail.com?subject=Password%20request%20for%20ASLF-OSINT%20research%20download">Email the author</a>
+          <div class="email-template">Subject: Password request for ASLF-OSINT research download
+
+Hello Md Anisur Rahman Chowdhury,
+I followed the GitHub profile, subscribed to the YouTube channel, and would like the password for the encrypted ASLF-OSINT research package.
+Name:
+Institution:
+Purpose of use:</div>
+          <button class="copy-btn" type="button" onclick="copyEmailTemplate(this)">Copy email template</button>
+          <label class="gate-check"><input id="gate-request" type="checkbox"> I sent the password request email.</label>
+          <div class="gate-actions">
+            <button class="btn btn-secondary btn-block" type="button" onclick="goToGateStep(1)">Back</button>
+            <button class="btn btn-primary btn-block" id="gate-next-2" type="button" onclick="continueGate(3)">Continue</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-gate-step="3">
+          <span class="step-badge">Step 3</span>
+          <h4>Enter the password</h4>
+          <p>Enter the password once you receive it from the author.</p>
+          <input class="gate-input" id="gate-password" type="password" placeholder="Enter the archive password">
+          <p class="gate-error is-hidden" id="gate-error">The password is incorrect. Request the correct password from the author and try again.</p>
+          <div class="gate-actions">
+            <button class="btn btn-secondary btn-block" type="button" onclick="goToGateStep(2)">Back</button>
+            <button class="btn btn-primary btn-block" type="button" onclick="unlockDownloads()">Unlock downloads</button>
+          </div>
+        </section>
+
+        <section class="download-step is-hidden" data-gate-step="4">
+          <span class="step-badge">Unlocked</span>
+          <h4>Encrypted files ready</h4>
+          <p>These links expose only encrypted zip archives. The password is still required to extract the contents after download.</p>
+          <div class="download-links">
+            <a class="btn btn-primary btn-block" href="assets/papers/ASLF-OSINT-Research-Paper-Encrypted.zip">Download encrypted manuscript bundle (.doc + .pdf)</a>
+            <a class="btn btn-secondary btn-block" href="assets/papers/ASLF-OSINT-LaTeX-Source-Encrypted.zip">Download encrypted LaTeX source</a>
+            <a class="btn btn-secondary btn-block" href="assets/papers/ASLF-OSINT-Doc-PDF-LaTeX-Encrypted.zip">Download combined encrypted package</a>
+            <a class="btn btn-dark btn-block" href="assets/papers/ASLF-OSINT-Research-First-Page-Preview.pdf" target="_blank" rel="noreferrer">Open first-page preview PDF</a>
+            <a class="btn btn-dark btn-block" href="poster.html">Open poster page</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

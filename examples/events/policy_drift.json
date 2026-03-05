@@ -1,0 +1,17 @@
+{
+  "event_id": "evt-policy-219",
+  "src_ip": "172.16.185.182",
+  "dst_service": "policy-sync",
+  "protocol": "https",
+  "provider": "proxmox",
+  "requests_per_second": 120,
+  "failed_auth": 3,
+  "geo_velocity": 2,
+  "anomaly_score": 59,
+  "lateral_hops": 2,
+  "policy_drift": 56,
+  "payload_entropy": 6.3,
+  "identity_confidence": 0.62,
+  "mfa_verified": true,
+  "user_id": "federation-agent"
+}

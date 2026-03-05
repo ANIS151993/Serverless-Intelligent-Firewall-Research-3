@@ -1,0 +1,7 @@
+{
+  "block_threshold": 80,
+  "challenge_threshold": 55,
+  "identity_confidence_floor": 0.65,
+  "policy_drift_limit": 30,
+  "require_mfa": true
+}
