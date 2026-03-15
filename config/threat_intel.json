@@ -1,7 +1,0 @@
-{
-  "abuseipdb_api_key": "",
-  "abuseipdb_base_url": "https://api.abuseipdb.com/api/v2/check",
-  "otx_api_key": "",
-  "otx_base_url": "https://otx.alienvault.com/api/v1/indicators/IPv4/{ip}/general",
-  "timeout_seconds": 2.5
-}

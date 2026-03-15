@@ -1,1 +1,0 @@
-# Standard-library implementation (no external dependency required).
