@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: sif-core
+    static_configs:
+      - targets: ["sif-core:8000"]
+
+  - job_name: sif-ai-engine
+    static_configs:
+      - targets: ["sif-ai-engine:8001"]
+
+  - job_name: sif-client-host
+    static_configs:
+      - targets: ["sif-client-host:8500"]
+
+  - job_name: node-exporter
+    static_configs:
+      - targets:
+          - "sif-core:9100"
+          - "sif-ai-engine:9100"
+          - "sif-dashboard:9100"
+          - "sif-client-host:9100"
+          - "sif-broker:9100"
+          - "sif-monitor:9100"

@@ -1,0 +1,36 @@
+services:
+  sif-firewall:
+    image: python:3.11-slim
+    container_name: sif-CLIENT_ID-firewall
+    environment:
+      CLIENT_ID: CLIENT_ID_VALUE
+      API_KEY: API_KEY_VAL
+      AI_ENGINE_URL: http://172.16.185.230:8001
+      SUPER_CONTROL_URL: http://172.16.185.97:8000
+      BROKER_URL: amqp://sifadmin:SIF_Rabbit2024!@172.16.185.236:5672/
+    volumes:
+      - sif-CLIENT_ID-models:/models
+      - sif-CLIENT_ID-logs:/logs
+      - /opt/sif-client-host/subsystem_app:/app:ro
+    working_dir: /app
+    command: >
+      sh -c "pip install --quiet fastapi uvicorn httpx pika redis &&
+             uvicorn firewall_app:app --host 0.0.0.0 --port 8080"
+    restart: unless-stopped
+    extra_hosts:
+      - "sif-core:172.16.185.97"
+      - "sif-ai-engine:172.16.185.230"
+      - "sif-broker:172.16.185.236"
+      - "sif-monitor:172.16.185.167"
+    ports:
+      - "127.0.0.1:CLIENT_HOST_PORT:8080"
+    networks:
+      - sif-CLIENT_ID-net
+
+networks:
+  sif-CLIENT_ID-net:
+    driver: bridge
+
+volumes:
+  sif-CLIENT_ID-models:
+  sif-CLIENT_ID-logs:

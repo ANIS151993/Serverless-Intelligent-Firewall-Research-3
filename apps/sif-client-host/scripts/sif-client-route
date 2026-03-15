@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+command_name="${1:-}"
+client_id="${2:-}"
+fqdn="${3:-}"
+port="${4:-}"
+config_path="/etc/nginx/conf.d/sif-client-${client_id}.conf"
+
+case "${command_name}" in
+  up)
+    test -n "${client_id}"
+    test -n "${fqdn}"
+    test -n "${port}"
+    cat >"${config_path}" <<EOF
+server {
+    listen 80;
+    server_name ${fqdn};
+
+    location / {
+        proxy_pass http://127.0.0.1:${port};
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+    nginx -t
+    systemctl reload nginx
+    ;;
+  down)
+    test -n "${client_id}"
+    rm -f "${config_path}"
+    nginx -t
+    systemctl reload nginx
+    ;;
+  *)
+    echo "usage: $0 {up <client_id> <fqdn> <port>|down <client_id>}" >&2
+    exit 64
+    ;;
+esac
