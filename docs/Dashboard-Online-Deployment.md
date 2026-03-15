@@ -18,17 +18,32 @@ Do not use Firebase Hosting for the main dashboards.
 
 ## Target Domains
 
-Use two separate DNS patterns:
+Use two separate DNS patterns.
+
+Your current production plan is:
+
+- Super Dashboard: `sif-admin.marcbd.site`
+- Client Dashboards: `*.sif.marcbd.site`
+
+In generic form, the pattern is:
 
 - Super Dashboard: `ops.example.com`
 - Client Dashboards: `*.clients.example.com`
 
 Then set the same client base domain in both places:
 
-- VM101 `sif-core`: `SIF_PUBLIC_CLIENT_DOMAIN=clients.example.com`
-- VM201 `sif-provisioner`: `PUBLIC_BASE_DOMAIN=clients.example.com`
+- VM101 `sif-core`: `SIF_PUBLIC_CLIENT_DOMAIN=sif.marcbd.site`
+- VM201 `sif-provisioner`: `PUBLIC_BASE_DOMAIN=sif.marcbd.site`
 
 If those two values do not match, the links returned by `sif-core` will not match the actual nginx routes on `sif-client-host`.
+
+## Important Certificate Note
+
+`sif-admin.marcbd.site` is a standard single-level subdomain and is straightforward to publish through Cloudflare.
+
+`*.sif.marcbd.site` is different. It is a multi-level wildcard hostname because the live client URLs will look like `client-a.sif.marcbd.site`.
+
+Before you publish client dashboards on that pattern, make sure your Cloudflare zone has certificate coverage for `*.sif.marcbd.site`. Cloudflare documents that multi-level subdomains require an Advanced Certificate. If you do not want that dependency, switch the client hostname pattern to a single-level wildcard such as `*.marcbd.site` and set both VM101 and VM201 to `marcbd.site` instead.
 
 ## Step 1: Update Domain Settings On The VMs
 
@@ -41,7 +56,7 @@ sudo systemctl edit --full sif-core
 Add this environment line under `[Service]`:
 
 ```ini
-Environment=SIF_PUBLIC_CLIENT_DOMAIN=clients.example.com
+Environment=SIF_PUBLIC_CLIENT_DOMAIN=sif.marcbd.site
 ```
 
 Then reload and restart:
@@ -60,7 +75,7 @@ sudo systemctl edit --full sif-provisioner
 Add this environment line under `[Service]`:
 
 ```ini
-Environment=PUBLIC_BASE_DOMAIN=clients.example.com
+Environment=PUBLIC_BASE_DOMAIN=sif.marcbd.site
 ```
 
 Then reload and restart:
@@ -78,14 +93,14 @@ On VM103:
 2. Authenticate the machine with your Cloudflare account.
 3. Create a tunnel for the Super Dashboard.
 4. Point the tunnel to local nginx on port `80`.
-5. Route `ops.example.com` to that tunnel.
+5. Route `sif-admin.marcbd.site` to that tunnel.
 
 Example flow:
 
 ```bash
 cloudflared tunnel login
 cloudflared tunnel create sif-super-dashboard
-cloudflared tunnel route dns sif-super-dashboard ops.example.com
+cloudflared tunnel route dns sif-super-dashboard sif-admin.marcbd.site
 ```
 
 Create `/etc/cloudflared/config.yml`:
@@ -95,7 +110,7 @@ tunnel: <SUPER_TUNNEL_ID>
 credentials-file: /root/.cloudflared/<SUPER_TUNNEL_ID>.json
 
 ingress:
-  - hostname: ops.example.com
+  - hostname: sif-admin.marcbd.site
     service: http://localhost:80
   - service: http_status:404
 ```
@@ -112,7 +127,7 @@ sudo systemctl enable --now cloudflared
 In Cloudflare Zero Trust:
 
 1. Go to `Access`.
-2. Create a self-hosted application for `ops.example.com`.
+2. Create a self-hosted application for `sif-admin.marcbd.site`.
 3. Restrict it to your engineering/admin identities.
 4. Prefer email + IdP-backed groups over one-time pins for staff access.
 
@@ -128,15 +143,22 @@ On VM201:
 1. Install `cloudflared`.
 2. Create a second tunnel dedicated to client dashboards.
 3. Point the tunnel to local nginx on port `80`.
-4. Route `*.clients.example.com` through that tunnel if your Cloudflare setup allows wildcard tunnel hostnames.
-5. If you do not want wildcard hostnames at the tunnel layer, create per-client public hostnames instead and keep the nginx side the same.
+4. In the Cloudflare dashboard, add a published application route for `*.sif.marcbd.site` to `http://localhost:80`.
+5. Make sure the zone has certificate coverage for `*.sif.marcbd.site` before testing client dashboards.
+6. If your account or workflow does not use wildcard tunnel routes, create one public hostname per client instead and keep the nginx side the same.
 
 Example tunnel flow:
 
 ```bash
 cloudflared tunnel login
 cloudflared tunnel create sif-client-dashboards
-cloudflared tunnel route dns sif-client-dashboards clients.example.com
+cloudflared tunnel route dns sif-client-dashboards '*.sif.marcbd.site'
+```
+
+If the wildcard DNS command is not accepted in your setup, create the tunnel first, then add the published application in the Cloudflare dashboard or create a proxied CNAME record:
+
+```dns
+*.sif.marcbd.site -> <CLIENT_TUNNEL_ID>.cfargotunnel.com
 ```
 
 Create `/etc/cloudflared/config.yml`:
@@ -146,7 +168,7 @@ tunnel: <CLIENT_TUNNEL_ID>
 credentials-file: /root/.cloudflared/<CLIENT_TUNNEL_ID>.json
 
 ingress:
-  - hostname: "*.clients.example.com"
+  - hostname: "*.sif.marcbd.site"
     service: http://localhost:80
   - service: http_status:404
 ```
@@ -166,7 +188,7 @@ The current flow is:
 2. VM101 stores the client record and calls VM201.
 3. VM201 creates a dedicated Docker stack for that client.
 4. VM201 assigns a localhost port for the client dashboard.
-5. VM201 writes an nginx vhost for `<client-subdomain>.clients.example.com`.
+5. VM201 writes an nginx vhost for `<client-subdomain>.sif.marcbd.site`.
 6. Cloudflare sends the public request to VM201.
 7. nginx proxies that request to the correct client container.
 
@@ -179,9 +201,17 @@ Use Cloudflare Access in front of client dashboards too.
 Recommended policy options:
 
 - Strongest: one Access application per client hostname, restricted to that client’s named users.
-- Simpler: one wildcard Access app for `*.clients.example.com`, with client-specific allow lists managed by email rules or identity groups.
+- Operationally simpler: one wildcard Access app for `*.sif.marcbd.site`, but only if you also implement client-level auth inside the dashboard or maintain subdomain-specific allow rules.
+
+Do not put all client users behind one broad wildcard allow rule today. The current client dashboard does not yet enforce its own per-client user auth, so a broad wildcard Access policy would allow an authenticated client user to reach other client hostnames.
 
 If you expect many clients, automate client Access app creation through the Cloudflare API instead of managing each one manually.
+
+For your current requirement, the recommended production split is:
+
+- One staff Access application for `sif-admin.marcbd.site`.
+- One client Access application per concrete client hostname such as `acme.sif.marcbd.site`.
+- Automation later, once you want self-service onboarding at scale.
 
 ## Step 7: GitHub Workflow
 
@@ -231,7 +261,8 @@ To reach your full target state, add:
 - VM103 `sif-dashboard` reachable locally on port `80`.
 - VM201 `sif-provisioner` running and `PUBLIC_BASE_DOMAIN` set correctly.
 - VM201 nginx running and returning `404` for unknown hosts.
-- Cloudflare tunnel for `ops.example.com` active.
+- Cloudflare tunnel for `sif-admin.marcbd.site` active.
 - Cloudflare tunnel for client dashboards active.
+- Cloudflare certificate coverage for `*.sif.marcbd.site` active.
 - Cloudflare Access policies applied for staff and clients.
 - Provisioning a new client returns the expected public dashboard URL.

@@ -91,6 +91,7 @@ After=network.target postgresql.service redis-server.service
 User=sifadmin
 WorkingDirectory=/opt/sif-core
 Environment=PYTHONPATH=/opt/sif-core
+Environment=SIF_PUBLIC_CLIENT_DOMAIN=sif.marcbd.site
 ExecStart=/opt/sif-core/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
 Restart=always
 RestartSec=5
