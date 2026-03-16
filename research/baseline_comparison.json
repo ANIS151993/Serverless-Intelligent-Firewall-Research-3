@@ -1,0 +1,80 @@
+{
+  "title": "ASLF-OSINT vs Baseline Methods — CICIDS2017 Benchmark",
+  "dataset": "CICIDS2017",
+  "evaluation": "5-fold cross-validation, 80/20 train-test split",
+  "models": [
+    {
+      "name": "Decision Tree",
+      "type": "Classical ML",
+      "accuracy": 90.2, "precision": 87.6, "recall": 81.3, "f1": 84.3,
+      "auc_roc": 0.905, "train_hours": 0.5, "inference_ms": 12
+    },
+    {
+      "name": "SVM",
+      "type": "Classical ML",
+      "accuracy": 88.4, "precision": 84.1, "recall": 77.8, "f1": 80.8,
+      "auc_roc": 0.892, "train_hours": 2.1, "inference_ms": 45
+    },
+    {
+      "name": "Random Forest",
+      "type": "Ensemble",
+      "accuracy": 94.85, "precision": 94.47, "recall": 94.98, "f1": 94.22,
+      "auc_roc": 0.942, "train_hours": 1.8, "inference_ms": 28
+    },
+    {
+      "name": "CNN",
+      "type": "Deep Learning",
+      "accuracy": 93.0, "precision": 95.1, "recall": 85.4, "f1": 89.9,
+      "auc_roc": 0.951, "train_hours": 3.2, "inference_ms": 67
+    },
+    {
+      "name": "LSTM (Research-1)",
+      "type": "Deep Learning",
+      "accuracy": 98.0, "precision": 98.0, "recall": 98.0, "f1": 98.0,
+      "auc_roc": 0.980, "train_hours": 5.4, "inference_ms": 89
+    },
+    {
+      "name": "XGBoost standalone",
+      "type": "Gradient Boosting",
+      "accuracy": 95.41, "precision": 95.02, "recall": 95.81, "f1": 95.91,
+      "auc_roc": 0.959, "train_hours": 1.2, "inference_ms": 18
+    },
+    {
+      "name": "BiGRU standalone",
+      "type": "Recurrent Deep Learning",
+      "accuracy": 96.14, "precision": 96.92, "recall": 96.65, "f1": 96.78,
+      "auc_roc": 0.966, "train_hours": 4.8, "inference_ms": 76
+    },
+    {
+      "name": "XGBoost+BiGRU (Research-2)",
+      "type": "Hybrid Ensemble",
+      "accuracy": 98.0, "precision": 98.0, "recall": 98.0, "f1": 98.0,
+      "auc_roc": 0.990, "train_hours": 6.1, "inference_ms": 92
+    },
+    {
+      "name": "FireRL-PPO",
+      "type": "Reinforcement Learning",
+      "accuracy": 95.3, "precision": 94.7, "recall": 93.8, "f1": 94.2,
+      "auc_roc": 0.947, "train_hours": 8.5, "inference_ms": 55
+    },
+    {
+      "name": "ASLF-OSINT (Ours)",
+      "type": "Multi-Paradigm AI + OSINT + ZTA",
+      "accuracy": 98.7, "precision": 98.6, "recall": 98.8, "f1": 98.7,
+      "auc_roc": 0.993, "train_hours": 7.3, "inference_ms": 87,
+      "is_ours": true,
+      "additional_capabilities": [
+        "Zero-day detection (94.3% at 5-shot)",
+        "Concept drift adaptation (12.4 min)",
+        "Federated learning (40 rounds)",
+        "Real-time OSINT integration",
+        "Zero-Trust enforcement",
+        "SHAP+LIME explainability"
+      ]
+    }
+  ],
+  "improvements_over_research2": {
+    "accuracy_delta": "+0.7%",
+    "new_capabilities": ["OSINT integration", "PPO policy optimization", "DAWMA+SSF drift", "FedNova federated", "Zero-day FS-MCL", "ZTA enforcement", "SHAP+LIME explainability"]
+  }
+}

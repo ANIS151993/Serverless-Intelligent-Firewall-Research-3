@@ -1,0 +1,92 @@
+{
+  "paper": {
+    "title": "Autonomous Self-Learning Serverless Intelligent Firewall",
+    "subtitle": "Integrating REST API-Driven Open-Source Threat Intelligence, Multi-Paradigm Machine Learning, and Federated Zero-Trust Architectures",
+    "authors": ["Md Anisur Rahman Chowdhury", "Kefei Wang"],
+    "institution": "Gannon University, Erie, Pennsylvania, USA",
+    "email": "engr.aanis@gmail.com"
+  },
+  "headline_metrics": {
+    "detection_accuracy": 98.7,
+    "precision": 98.6,
+    "recall": 98.8,
+    "f1_score": 98.7,
+    "auc_roc": 0.993,
+    "avg_latency_ms": 87,
+    "zero_day_5shot": 94.3,
+    "drift_recovery_min": 12.4,
+    "federated_rounds": 40,
+    "federated_accuracy": 95.6,
+    "policy_consistency_pct": 99.8,
+    "analyst_trust_score_pct": 91.2,
+    "cost_per_10k_usd": 0.25,
+    "cold_start_ms": 244
+  },
+  "table1_comparison": [
+    {"model":"Decision Tree","accuracy":90.2,"precision":87.6,"recall":81.3,"f1":84.3,"auc":0.905,"train_hours":0.5},
+    {"model":"SVM","accuracy":88.4,"precision":84.1,"recall":77.8,"f1":80.8,"auc":0.892,"train_hours":2.1},
+    {"model":"Random Forest","accuracy":94.85,"precision":94.47,"recall":94.98,"f1":94.22,"auc":0.942,"train_hours":1.8},
+    {"model":"CNN","accuracy":93.0,"precision":95.1,"recall":85.4,"f1":89.9,"auc":0.951,"train_hours":3.2},
+    {"model":"LSTM (Research-1)","accuracy":98.0,"precision":98.0,"recall":98.0,"f1":98.0,"auc":0.980,"train_hours":5.4},
+    {"model":"XGBoost standalone","accuracy":95.41,"precision":95.02,"recall":95.81,"f1":95.91,"auc":0.959,"train_hours":1.2},
+    {"model":"BiGRU standalone","accuracy":96.14,"precision":96.92,"recall":96.65,"f1":96.78,"auc":0.966,"train_hours":4.8},
+    {"model":"XGBoost+BiGRU (Research-2)","accuracy":98.0,"precision":98.0,"recall":98.0,"f1":98.0,"auc":0.990,"train_hours":6.1},
+    {"model":"FireRL-PPO","accuracy":95.3,"precision":94.7,"recall":93.8,"f1":94.2,"auc":0.947,"train_hours":8.5},
+    {"model":"ASLF-OSINT (Ours)","accuracy":98.7,"precision":98.6,"recall":98.8,"f1":98.7,"auc":0.993,"train_hours":7.3,"is_ours":true}
+  ],
+  "table2_classwise": [
+    {"class":"BENIGN","precision":99.2,"recall":94.6,"f1":96.8,"support":10000},
+    {"class":"DoS","precision":98.4,"recall":99.1,"f1":98.7,"support":10000},
+    {"class":"DDoS","precision":99.3,"recall":99.8,"f1":99.5,"support":10000},
+    {"class":"PortScan","precision":99.1,"recall":99.9,"f1":99.5,"support":10000},
+    {"class":"BruteForce","precision":97.8,"recall":98.3,"f1":98.0,"support":10000},
+    {"class":"WebAttack","precision":98.1,"recall":97.6,"f1":97.8,"support":10000},
+    {"class":"Botnet","precision":97.3,"recall":96.8,"f1":97.0,"support":5000},
+    {"class":"Other","precision":94.6,"recall":99.1,"f1":96.8,"support":3606}
+  ],
+  "table4_zeroday": [
+    {"method":"Random Baseline","shot1":20.0,"shot5":20.0,"shot10":20.0,"shot20":20.0},
+    {"method":"Nearest Neighbor","shot1":45.3,"shot5":62.8,"shot10":71.2,"shot20":76.4},
+    {"method":"Transfer Learning","shot1":68.7,"shot5":79.3,"shot10":84.6,"shot20":87.9},
+    {"method":"Prototypical Networks","shot1":78.4,"shot5":88.6,"shot10":92.3,"shot20":94.1},
+    {"method":"FC-Net","shot1":81.2,"shot5":91.5,"shot10":94.8,"shot20":96.2},
+    {"method":"FS-MCL","shot1":82.6,"shot5":92.1,"shot10":95.3,"shot20":96.8},
+    {"method":"ASLF-OSINT (Ours)","shot1":84.3,"shot5":94.3,"shot10":96.7,"shot20":97.9,"is_ours":true}
+  ],
+  "table5_drift": [
+    {"method":"Static Model (no adaptation)","pre_drift":98.7,"post_drift":72.4,"recovery_min":null,"post_adapt":72.4},
+    {"method":"Periodic Retraining (daily)","pre_drift":98.7,"post_drift":73.1,"recovery_min":1440,"post_adapt":97.2},
+    {"method":"ADWIN","pre_drift":98.7,"post_drift":74.8,"recovery_min":18.3,"post_adapt":96.4},
+    {"method":"DDM","pre_drift":98.7,"post_drift":76.2,"recovery_min":22.7,"post_adapt":96.8},
+    {"method":"DWOIDS","pre_drift":98.7,"post_drift":77.5,"recovery_min":15.6,"post_adapt":97.8},
+    {"method":"ASLF-OSINT DAWMA+SSF (Ours)","pre_drift":98.7,"post_drift":78.3,"recovery_min":12.4,"post_adapt":98.5,"is_ours":true}
+  ],
+  "table6_rl": {
+    "initial":  {"accuracy":72.3,"fpr":18.7,"fnr":9.0,"throughput_mbps":145,"latency_ms":87,"reward":-8.3},
+    "trained":  {"accuracy":96.8,"fpr":2.4,"fnr":3.2,"throughput_mbps":312,"latency_ms":43,"reward":15.7}
+  },
+  "table7_federated": [
+    {"algorithm":"FedAvg","rounds":52,"accuracy":94.8,"comm_mb":2340,"time_min":104},
+    {"algorithm":"FedProx","rounds":48,"accuracy":95.1,"comm_mb":2160,"time_min":96},
+    {"algorithm":"FedNova","rounds":42,"accuracy":95.3,"comm_mb":1890,"time_min":84},
+    {"algorithm":"ASLF-OSINT Federated (Ours)","rounds":40,"accuracy":95.6,"comm_mb":1800,"time_min":80,"is_ours":true}
+  ],
+  "table8_latency": [
+    {"platform":"AWS Lambda","avg_ms":85,"cold_ms":221,"p95_ms":142,"throughput":1450,"cost":0.24},
+    {"platform":"Azure Functions","avg_ms":89,"cold_ms":263,"p95_ms":156,"throughput":1320,"cost":0.27},
+    {"platform":"Google Cloud Functions","avg_ms":87,"cold_ms":249,"p95_ms":148,"throughput":1380,"cost":0.25},
+    {"platform":"ASLF-OSINT Cross-Cloud Avg","avg_ms":87,"cold_ms":244,"p95_ms":149,"throughput":1383,"cost":0.25,"is_ours":true}
+  ],
+  "table9_zta": [
+    {"platform":"AWS","propagation_ms":88,"identity_ms":110,"consistency_pct":99.6,"mtls_ms":34},
+    {"platform":"Azure","propagation_ms":92,"identity_ms":116,"consistency_pct":99.4,"mtls_ms":38},
+    {"platform":"Google Cloud","propagation_ms":85,"identity_ms":108,"consistency_pct":99.7,"mtls_ms":31},
+    {"platform":"Cross-Cloud Avg","propagation_ms":88.3,"identity_ms":111.3,"consistency_pct":99.8,"mtls_ms":34.3,"is_ours":true}
+  ],
+  "table10_explainability": {
+    "shap":  {"fidelity":94.7,"consistency":88.6,"sparsity":12.3,"compute_ms":145,"trust_pct":89.4},
+    "lime":  {"fidelity":91.3,"consistency":82.1,"sparsity":8.7,"compute_ms":67,"trust_pct":92.7},
+    "combined": {"fidelity":93.0,"consistency":85.4,"sparsity":10.5,"compute_ms":106,"trust_pct":91.2}
+  },
+  "attack_classes": ["BENIGN","DoS","DDoS","BruteForce","PortScan","WebAttack","Botnet","Other"]
+}

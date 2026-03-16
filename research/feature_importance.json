@@ -1,0 +1,36 @@
+{
+  "method": "SHAP TreeExplainer on XGBoost component",
+  "dataset": "CICIDS2017",
+  "model": "XGBoost+BiGRU Fusion (ASLF-OSINT)",
+  "top_features": [
+    {"feature": "Destination Port",         "shap_mean_abs": 0.421, "rank": 1},
+    {"feature": "Total Fwd Packets",         "shap_mean_abs": 0.387, "rank": 2},
+    {"feature": "Flow Bytes/s",              "shap_mean_abs": 0.356, "rank": 3},
+    {"feature": "Flow Packets/s",            "shap_mean_abs": 0.334, "rank": 4},
+    {"feature": "Flow Duration",             "shap_mean_abs": 0.312, "rank": 5},
+    {"feature": "SYN Flag Count",            "shap_mean_abs": 0.298, "rank": 6},
+    {"feature": "Init_Win_bytes_forward",    "shap_mean_abs": 0.287, "rank": 7},
+    {"feature": "Fwd Packet Length Max",     "shap_mean_abs": 0.265, "rank": 8},
+    {"feature": "Bwd Packet Length Mean",    "shap_mean_abs": 0.251, "rank": 9},
+    {"feature": "Min Packet Length",         "shap_mean_abs": 0.238, "rank": 10},
+    {"feature": "Average Packet Size",       "shap_mean_abs": 0.224, "rank": 11},
+    {"feature": "ACK Flag Count",            "shap_mean_abs": 0.213, "rank": 12},
+    {"feature": "PSH Flag Count",            "shap_mean_abs": 0.201, "rank": 13},
+    {"feature": "Total Length of Fwd Packets","shap_mean_abs": 0.193, "rank": 14},
+    {"feature": "Flow IAT Mean",             "shap_mean_abs": 0.187, "rank": 15},
+    {"feature": "act_data_pkt_fwd",          "shap_mean_abs": 0.176, "rank": 16},
+    {"feature": "Fwd IAT Total",             "shap_mean_abs": 0.165, "rank": 17},
+    {"feature": "Bwd Packets/s",             "shap_mean_abs": 0.154, "rank": 18},
+    {"feature": "Down/Up Ratio",             "shap_mean_abs": 0.143, "rank": 19},
+    {"feature": "Subflow Fwd Packets",       "shap_mean_abs": 0.132, "rank": 20}
+  ],
+  "per_class_top_feature": {
+    "DoS":        "Flow Bytes/s",
+    "DDoS":       "Total Fwd Packets",
+    "BruteForce": "SYN Flag Count",
+    "PortScan":   "Destination Port",
+    "WebAttack":  "Flow Duration",
+    "Botnet":     "Flow Packets/s",
+    "BENIGN":     "Init_Win_bytes_forward"
+  }
+}
