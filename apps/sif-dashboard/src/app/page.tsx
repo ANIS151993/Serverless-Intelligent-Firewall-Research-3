@@ -69,7 +69,7 @@ export default function Dashboard() {
       try {
         const [overviewData, aiData] = await Promise.all([
           fetchJson<Overview>("/api/sif/dashboard/overview"),
-          fetchJson<AIStatus>("/api/ai/")
+          fetchJson<AIStatus>("/api/ai")
         ]);
         if (!active) {
           return;
@@ -309,24 +309,36 @@ export default function Dashboard() {
 
       <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Core API Docs", href: "http://172.16.185.97:8000/docs" },
-          { label: "AI Engine Docs", href: "http://172.16.185.230:8001/docs" },
-          { label: "Grafana", href: "http://172.16.185.167:3000" },
-          { label: "RabbitMQ Mgmt", href: "http://172.16.185.236:15672" }
+          {
+            label: "Core API Docs",
+            note: "Private VM endpoint. Expose with a dedicated Cloudflare Access app before using online."
+          },
+          {
+            label: "AI Engine Docs",
+            note: "Private VM endpoint. Expose with a dedicated Cloudflare Access app before using online."
+          },
+          {
+            label: "Grafana",
+            note: "Private observability UI. Publish separately if you want browser access from the internet."
+          },
+          {
+            label: "RabbitMQ Mgmt",
+            note: "Private broker UI. Keep internal unless you intentionally publish it with strict Access rules."
+          }
         ].map((link) => (
-          <a
+          <div
             key={link.label}
-            href={link.href}
-            target="_blank"
-            rel="noreferrer"
-            className="glass rounded-[22px] border-white/5 px-5 py-4 text-sm text-slate-200 transition hover:border-cyan-300/30 hover:text-white"
+            className="glass rounded-[22px] border-white/5 px-5 py-4 text-sm text-slate-200"
           >
             <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Quick Link</div>
-            <div className="mt-3 flex items-center justify-between gap-3">
+            <div className="mt-3 flex items-start justify-between gap-3">
               <span>{link.label}</span>
-              <span className="text-cyan-200">↗</span>
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-amber-200">
+                Internal
+              </span>
             </div>
-          </a>
+            <p className="mt-3 text-xs leading-5 text-slate-400">{link.note}</p>
+          </div>
         ))}
       </section>
     </main>

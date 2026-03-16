@@ -318,6 +318,13 @@ fi
 cd /opt/sif-dashboard
 sudo -u sifadmin npm install --silent
 sudo -u sifadmin npm run build
+sudo -u sifadmin mkdir -p /opt/sif-dashboard/.next/standalone/.next
+rm -rf /opt/sif-dashboard/.next/standalone/.next/static
+ln -s /opt/sif-dashboard/.next/static /opt/sif-dashboard/.next/standalone/.next/static
+if [ -d /opt/sif-dashboard/public ]; then
+  rm -rf /opt/sif-dashboard/.next/standalone/public
+  ln -s /opt/sif-dashboard/public /opt/sif-dashboard/.next/standalone/public
+fi
 cat > /etc/systemd/system/sif-dashboard.service <<'SVC'
 [Unit]
 Description=SIF Super Control Dashboard
