@@ -337,8 +337,8 @@ WantedBy=multi-user.target
 SVC
 cat > /etc/nginx/sites-available/sif-dashboard <<'NGINX'
 server {
-    listen 80 default_server;
-    server_name _;
+    listen 80;
+    server_name sif-admin.marcbd.site;
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
@@ -346,8 +346,16 @@ server {
         proxy_set_header Connection "upgrade";
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
     }
+}
+
+server {
+    listen 80 default_server;
+    server_name _;
+    return 404;
 }
 NGINX
 rm -f /etc/nginx/sites-enabled/default
