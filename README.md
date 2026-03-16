@@ -36,12 +36,12 @@ ASLF-OSINT is a fully autonomous, self-learning serverless intelligent firewall 
 | Service | URL | Description |
 |---|---|---|
 | 🖥️ Super Dashboard | [sif-admin.marcbd.site](https://sif-admin.marcbd.site) | Super Control System |
-| 🔌 Core API | [api.sif.marcbd.site/docs](https://api.sif.marcbd.site/docs) | FastAPI Swagger UI |
-| 🤖 AI Engine | [ai.sif.marcbd.site/docs](https://ai.sif.marcbd.site/docs) | AI Engine + Research Endpoints |
-| 📊 MLflow | [mlflow.sif.marcbd.site](https://mlflow.sif.marcbd.site) | Model Tracking |
-| 📈 Grafana | [monitor.sif.marcbd.site](https://monitor.sif.marcbd.site) | Research Proof Dashboard |
-| 🔭 Prometheus | [prometheus.sif.marcbd.site](https://prometheus.sif.marcbd.site) | Metrics |
-| 🐇 RabbitMQ | [broker.sif.marcbd.site](https://broker.sif.marcbd.site) | Message Broker |
+| 🔌 Core API | [api.sif.marcbd.site/docs](https://sif-api.marcbd.site/docs) | FastAPI Swagger UI |
+| 🤖 AI Engine | [ai.sif.marcbd.site/docs](https://sif-ai.marcbd.site/docs) | AI Engine + Research Endpoints |
+| 📊 MLflow | [mlflow.sif.marcbd.site](https://sif-mlflow.marcbd.site) | Model Tracking |
+| 📈 Grafana | [monitor.sif.marcbd.site](https://sif-monitor.marcbd.site) | Research Proof Dashboard |
+| 🔭 Prometheus | [prometheus.sif.marcbd.site](https://sif-prometheus.marcbd.site) | Metrics |
+| 🐇 RabbitMQ | [broker.sif.marcbd.site](https://sif-broker.marcbd.site) | Message Broker |
 
 ---
 
@@ -196,22 +196,22 @@ chmod +x deploy/deploy_all.sh
 ./deploy/deploy_all.sh
 
 # 3. Validate
-curl https://api.sif.marcbd.site/health
-curl https://ai.sif.marcbd.site/health
-curl https://ai.sif.marcbd.site/research/metrics | python3 -m json.tool
+curl https://sif-api.marcbd.site/health
+curl https://sif-ai.marcbd.site/health
+curl https://sif-ai.marcbd.site/research/metrics | python3 -m json.tool
 ```
 
 ### Provision a Client
 
 ```bash
-curl -X POST "https://api.sif.marcbd.site/api/v1/clients/provision?name=MyCompany&email=admin@mycompany.com"
+curl -X POST "https://sif-api.marcbd.site/api/v1/clients/provision?name=MyCompany&email=admin@mycompany.com"
 # Returns: { "client_id": "...", "subdomain": "mycompany", "dashboard_url": "https://mycompany.marcbd.site" }
 ```
 
 ### Run AI Detection
 
 ```bash
-curl -X POST https://ai.sif.marcbd.site/detect \
+curl -X POST https://sif-ai.marcbd.site/detect \
   -H "Content-Type: application/json" \
   -d '{"features": [0,10000,0,0,1500000,9800,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], "source_ip": "10.0.0.1"}'
 ```
@@ -219,7 +219,7 @@ curl -X POST https://ai.sif.marcbd.site/detect \
 ### Trigger OSINT Cycle
 
 ```bash
-curl -X POST https://ai.sif.marcbd.site/osint/sync
+curl -X POST https://sif-ai.marcbd.site/osint/sync
 ```
 
 ---
