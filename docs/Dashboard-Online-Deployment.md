@@ -60,6 +60,14 @@ Add this environment line under `[Service]`:
 Environment=SIF_PUBLIC_CLIENT_DOMAIN=marcbd.site
 ```
 
+If you want `sif-core` to auto-create and auto-delete Cloudflare Access apps for each client dashboard, add these too:
+
+```ini
+Environment=SIF_CLOUDFLARE_ACCOUNT_ID=<your-cloudflare-account-id>
+Environment=SIF_CLOUDFLARE_API_TOKEN=<cloudflare-api-token-with-access-app-write>
+Environment=SIF_CLOUDFLARE_ACCESS_SESSION_DURATION=24h
+```
+
 Then reload and restart:
 
 ```bash

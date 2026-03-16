@@ -6,6 +6,7 @@ import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from app.cloudflare_access import CloudflareAccessManager
 from app.config import get_settings
 from app.database import get_db
 from app.models import Client
@@ -15,6 +16,7 @@ from app.schemas import ClientRead
 router = APIRouter()
 log = logging.getLogger("sif-core.clients")
 settings = get_settings()
+access_manager = CloudflareAccessManager(settings)
 
 
 def _slugify(value: str) -> str:
@@ -44,6 +46,7 @@ async def provision_client(
         subdomain = f"{base_slug}-{collision_count}"
 
     subsystem_id = f"pending-{client_id[:8]}"
+    dashboard_url = f"https://{subdomain}.{settings.public_client_domain}"
     payload = {"client_id": client_id, "subdomain": subdomain, "api_key": api_key}
 
     try:
@@ -62,17 +65,54 @@ async def provision_client(
         api_key=api_key,
         subsystem_id=subsystem_id,
         subdomain=subdomain,
+        config={"dashboard_url": dashboard_url},
     )
     db.add(client)
     db.commit()
     db.refresh(client)
 
+    access_status = "disabled"
+    access_warning = None
+    try:
+        access_app = await access_manager.create_client_app(subdomain=subdomain, email=email)
+        if access_app:
+            config = dict(client.config or {})
+            config.update(
+                {
+                    "dashboard_url": dashboard_url,
+                    "cloudflare_access_managed": True,
+                    "cloudflare_access_app_id": access_app["id"],
+                    "cloudflare_access_aud": access_app.get("aud"),
+                    "cloudflare_access_policy_ids": access_app.get("policy_ids", []),
+                }
+            )
+            client.config = config
+            db.commit()
+            db.refresh(client)
+            access_status = "managed"
+    except Exception as exc:
+        access_warning = str(exc)[:300]
+        log.warning("Cloudflare Access onboarding failed for %s: %s", client_id, exc)
+        config = dict(client.config or {})
+        config.update(
+            {
+                "dashboard_url": dashboard_url,
+                "cloudflare_access_managed": False,
+                "cloudflare_access_last_error": access_warning,
+            }
+        )
+        client.config = config
+        db.commit()
+        db.refresh(client)
+
     return {
         "client_id": client.id,
         "api_key": client.api_key,
         "subdomain": client.subdomain,
-        "dashboard_url": f"https://{client.subdomain}.{settings.public_client_domain}",
+        "dashboard_url": dashboard_url,
         "status": "provisioned" if not subsystem_id.startswith("pending-") else "pending",
+        "access_status": access_status,
+        "access_warning": access_warning,
     }
 
 
@@ -101,6 +141,19 @@ async def deprovision_client(client_id: str, db: Session = Depends(get_db)):
     except Exception as exc:
         log.warning("Deprovision request failed for %s: %s", client_id, exc)
 
+    access_app_id = (client.config or {}).get("cloudflare_access_app_id")
+    if access_app_id:
+        try:
+            await access_manager.delete_app(str(access_app_id))
+        except Exception as exc:
+            log.warning("Cloudflare Access cleanup failed for %s: %s", client_id, exc)
+
     client.active = False
+    config = dict(client.config or {})
+    config["cloudflare_access_managed"] = False
+    config.pop("cloudflare_access_app_id", None)
+    config.pop("cloudflare_access_aud", None)
+    config.pop("cloudflare_access_policy_ids", None)
+    client.config = config
     db.commit()
     return {"status": "deprovisioned", "client_id": client_id}

@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     public_client_domain: str = "marcbd.site"
     broker_url: str = "amqp://sifadmin:SIF_Rabbit2024!@sif-broker:5672/"
     redis_url: str = "redis://:SIF_Redis2024!@localhost:6379/0"
+    cloudflare_account_id: str | None = None
+    cloudflare_api_token: str | None = None
+    cloudflare_access_api_base: str = "https://api.cloudflare.com/client/v4"
+    cloudflare_access_session_duration: str = "24h"
 
 
 @lru_cache(maxsize=1)
