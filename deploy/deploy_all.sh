@@ -91,7 +91,7 @@ After=network.target postgresql.service redis-server.service
 User=sifadmin
 WorkingDirectory=/opt/sif-core
 Environment=PYTHONPATH=/opt/sif-core
-Environment=SIF_PUBLIC_CLIENT_DOMAIN=sif.marcbd.site
+Environment=SIF_PUBLIC_CLIENT_DOMAIN=marcbd.site
 ExecStart=/opt/sif-core/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
 Restart=always
 RestartSec=5
@@ -208,7 +208,7 @@ After=network.target docker.service
 [Service]
 User=sifadmin
 WorkingDirectory=/opt/sif-client-host
-Environment=PUBLIC_BASE_DOMAIN=sif.marcbd.site
+Environment=PUBLIC_BASE_DOMAIN=marcbd.site
 ExecStart=/opt/sif-client-host/venv/bin/uvicorn provisioner:app --host 0.0.0.0 --port 8500 --workers 1
 Restart=always
 RestartSec=5
@@ -384,7 +384,7 @@ phase8_validate() {
   client_id="$(printf '%s' "${client_payload}" | python3 -c 'import json,sys; print(json.load(sys.stdin)["client_id"])')"
   local client_subdomain
   client_subdomain="$(printf '%s' "${client_payload}" | python3 -c 'import json,sys; print(json.load(sys.stdin)["subdomain"])')"
-  remote "sif-client-host" "curl -sfL -H 'Host: ${client_subdomain}.sif.marcbd.site' http://127.0.0.1/ >/dev/null"
+  remote "sif-client-host" "curl -sfL -H 'Host: ${client_subdomain}.marcbd.site' http://127.0.0.1/ >/dev/null"
 
   remote "sif-ai-engine" "curl -sf -X POST http://127.0.0.1:8001/detect -H 'Content-Type: application/json' -d '{\"features\":[0,10000,0,0,1500000,9800,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"source_ip\":\"192.168.100.50\",\"client_id\":\"${client_id}\"}'"
   remote "sif-core" "curl -sf -X POST http://127.0.0.1:8000/api/v1/threats/ingest -H 'Content-Type: application/json' -d '{\"client_id\":\"${client_id}\",\"attack_type\":\"DDoS\",\"source_ip\":\"10.0.0.99\",\"destination_ip\":\"172.16.185.97\",\"confidence\":0.96,\"trust_score\":0.12,\"action_taken\":\"block_ip\",\"model_version\":\"3.0.0-base\"}'"

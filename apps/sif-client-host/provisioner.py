@@ -26,7 +26,7 @@ Instrumentator().instrument(app).expose(app)
 
 TEMPLATE = "/opt/sif-client-host/templates/client-stack.yml"
 STACKS = "/opt/sif-client-host/stacks"
-PUBLIC_BASE_DOMAIN = os.getenv("PUBLIC_BASE_DOMAIN", "sif.marcbd.site")
+PUBLIC_BASE_DOMAIN = os.getenv("PUBLIC_BASE_DOMAIN", "marcbd.site")
 ROUTE_HELPER = os.getenv("ROUTE_HELPER", "/usr/local/bin/sif-client-route")
 
 

@@ -376,7 +376,7 @@ async def provision_client(name: str, email: str,
         "client_id":     client_id,
         "api_key":       api_key,
         "subdomain":     subdomain,
-        "dashboard_url": f"https://{subdomain}.sif.marcbd.site",
+        "dashboard_url": f"https://{subdomain}.marcbd.site",
         "status":        "provisioned"
     }
 

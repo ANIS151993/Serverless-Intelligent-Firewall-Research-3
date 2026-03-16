@@ -23,7 +23,7 @@ Use two separate DNS patterns.
 Your current production plan is:
 
 - Super Dashboard: `sif-admin.marcbd.site`
-- Client Dashboards: `*.sif.marcbd.site`
+- Client Dashboards: `*.marcbd.site`
 
 In generic form, the pattern is:
 
@@ -32,18 +32,19 @@ In generic form, the pattern is:
 
 Then set the same client base domain in both places:
 
-- VM101 `sif-core`: `SIF_PUBLIC_CLIENT_DOMAIN=sif.marcbd.site`
-- VM201 `sif-provisioner`: `PUBLIC_BASE_DOMAIN=sif.marcbd.site`
+- VM101 `sif-core`: `SIF_PUBLIC_CLIENT_DOMAIN=marcbd.site`
+- VM201 `sif-provisioner`: `PUBLIC_BASE_DOMAIN=marcbd.site`
 
 If those two values do not match, the links returned by `sif-core` will not match the actual nginx routes on `sif-client-host`.
 
-## Important Certificate Note
+## Certificate Note
 
-`sif-admin.marcbd.site` is a standard single-level subdomain and is straightforward to publish through Cloudflare.
+This runbook uses the free-friendly hostname pattern:
 
-`*.sif.marcbd.site` is different. It is a multi-level wildcard hostname because the live client URLs will look like `client-a.sif.marcbd.site`.
+- Super Dashboard: `sif-admin.marcbd.site`
+- Client Dashboards: `<client-subdomain>.marcbd.site`
 
-Before you publish client dashboards on that pattern, make sure your Cloudflare zone has certificate coverage for `*.sif.marcbd.site`. Cloudflare documents that multi-level subdomains require an Advanced Certificate. If you do not want that dependency, switch the client hostname pattern to a single-level wildcard such as `*.marcbd.site` and set both VM101 and VM201 to `marcbd.site` instead.
+Cloudflare Universal SSL already covers `*.marcbd.site`, so this pattern avoids the Advanced Certificate Manager requirement that applies to multi-level wildcards such as `*.sif.marcbd.site`.
 
 ## Step 1: Update Domain Settings On The VMs
 
@@ -56,7 +57,7 @@ sudo systemctl edit --full sif-core
 Add this environment line under `[Service]`:
 
 ```ini
-Environment=SIF_PUBLIC_CLIENT_DOMAIN=sif.marcbd.site
+Environment=SIF_PUBLIC_CLIENT_DOMAIN=marcbd.site
 ```
 
 Then reload and restart:
@@ -75,7 +76,7 @@ sudo systemctl edit --full sif-provisioner
 Add this environment line under `[Service]`:
 
 ```ini
-Environment=PUBLIC_BASE_DOMAIN=sif.marcbd.site
+Environment=PUBLIC_BASE_DOMAIN=marcbd.site
 ```
 
 Then reload and restart:
@@ -143,8 +144,8 @@ On VM201:
 1. Install `cloudflared`.
 2. Create a second tunnel dedicated to client dashboards.
 3. Point the tunnel to local nginx on port `80`.
-4. In the Cloudflare dashboard, add a published application route for `*.sif.marcbd.site` to `http://localhost:80`.
-5. Make sure the zone has certificate coverage for `*.sif.marcbd.site` before testing client dashboards.
+4. In the Cloudflare dashboard, add a published application route for `*.marcbd.site` to `http://localhost:80`.
+5. Keep `sif-admin.marcbd.site` as a separate explicit DNS hostname pointing to the Super Dashboard tunnel.
 6. If your account or workflow does not use wildcard tunnel routes, create one public hostname per client instead and keep the nginx side the same.
 
 Example tunnel flow:
@@ -152,13 +153,13 @@ Example tunnel flow:
 ```bash
 cloudflared tunnel login
 cloudflared tunnel create sif-client-dashboards
-cloudflared tunnel route dns sif-client-dashboards '*.sif.marcbd.site'
+cloudflared tunnel route dns sif-client-dashboards '*.marcbd.site'
 ```
 
 If the wildcard DNS command is not accepted in your setup, create the tunnel first, then add the published application in the Cloudflare dashboard or create a proxied CNAME record:
 
 ```dns
-*.sif.marcbd.site -> <CLIENT_TUNNEL_ID>.cfargotunnel.com
+*.marcbd.site -> <CLIENT_TUNNEL_ID>.cfargotunnel.com
 ```
 
 Create `/etc/cloudflared/config.yml`:
@@ -168,7 +169,7 @@ tunnel: <CLIENT_TUNNEL_ID>
 credentials-file: /root/.cloudflared/<CLIENT_TUNNEL_ID>.json
 
 ingress:
-  - hostname: "*.sif.marcbd.site"
+  - hostname: "*.marcbd.site"
     service: http://localhost:80
   - service: http_status:404
 ```
@@ -188,7 +189,7 @@ The current flow is:
 2. VM101 stores the client record and calls VM201.
 3. VM201 creates a dedicated Docker stack for that client.
 4. VM201 assigns a localhost port for the client dashboard.
-5. VM201 writes an nginx vhost for `<client-subdomain>.sif.marcbd.site`.
+5. VM201 writes an nginx vhost for `<client-subdomain>.marcbd.site`.
 6. Cloudflare sends the public request to VM201.
 7. nginx proxies that request to the correct client container.
 
@@ -201,7 +202,7 @@ Use Cloudflare Access in front of client dashboards too.
 Recommended policy options:
 
 - Strongest: one Access application per client hostname, restricted to that client’s named users.
-- Operationally simpler: one wildcard Access app for `*.sif.marcbd.site`, but only if you also implement client-level auth inside the dashboard or maintain subdomain-specific allow rules.
+- Operationally simpler: one wildcard Access app for `*.marcbd.site`, but only if you also implement client-level auth inside the dashboard or maintain subdomain-specific allow rules.
 
 Do not put all client users behind one broad wildcard allow rule today. The current client dashboard does not yet enforce its own per-client user auth, so a broad wildcard Access policy would allow an authenticated client user to reach other client hostnames.
 
@@ -210,7 +211,7 @@ If you expect many clients, automate client Access app creation through the Clou
 For your current requirement, the recommended production split is:
 
 - One staff Access application for `sif-admin.marcbd.site`.
-- One client Access application per concrete client hostname such as `acme.sif.marcbd.site`.
+- One client Access application per concrete client hostname such as `acme.marcbd.site`.
 - Automation later, once you want self-service onboarding at scale.
 
 ## Step 7: GitHub Workflow
@@ -263,6 +264,5 @@ To reach your full target state, add:
 - VM201 nginx running and returning `404` for unknown hosts.
 - Cloudflare tunnel for `sif-admin.marcbd.site` active.
 - Cloudflare tunnel for client dashboards active.
-- Cloudflare certificate coverage for `*.sif.marcbd.site` active.
 - Cloudflare Access policies applied for staff and clients.
 - Provisioning a new client returns the expected public dashboard URL.

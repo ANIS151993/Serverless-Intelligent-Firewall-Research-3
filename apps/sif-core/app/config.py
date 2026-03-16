@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     version: str = "3.0.0"
     database_url: str = "postgresql://sif_user:SIF_DB_Pass2024!@localhost/sif_platform"
     provisioner_url: str = "http://sif-client-host:8500"
-    public_client_domain: str = "sif.marcbd.site"
+    public_client_domain: str = "marcbd.site"
     broker_url: str = "amqp://sifadmin:SIF_Rabbit2024!@sif-broker:5672/"
     redis_url: str = "redis://:SIF_Redis2024!@localhost:6379/0"
 
