@@ -1,9 +1,9 @@
 """
 Per-client autonomous firewall instance.
 
-The service forwards flow features to the AI engine, stores a rolling in-memory event
-buffer for the client mini-dashboard, and listens for model update broadcasts from
-RabbitMQ so each client stack can react to new model versions without manual restarts.
+The client runtime forwards flow features to the AI engine, stores a rolling event
+buffer for the tenant dashboard, persists a small dashboard configuration document,
+and reacts to model update broadcasts from RabbitMQ.
 """
 
 from __future__ import annotations
@@ -13,17 +13,20 @@ import json
 import logging
 import os
 import threading
+import uuid
 from collections import deque
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pika
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
-from fastapi.responses import RedirectResponse
-from pydantic import BaseModel
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s %(message)s")
@@ -35,6 +38,10 @@ AI_ENGINE_URL = os.getenv("AI_ENGINE_URL", "http://sif-ai-engine:8001")
 CONTROL_URL = os.getenv("SUPER_CONTROL_URL", "http://sif-core:8000")
 BROKER_URL = os.getenv("BROKER_URL", "amqp://sifadmin:SIF_Rabbit2024!@sif-broker:5672/")
 MODEL_VERSION_FILE = Path("/models/current_version.json")
+STATE_FILE = Path("/models/client_dashboard_state.json")
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+TEMPLATE_FILE = BASE_DIR / "templates" / "client-dashboard.html"
 
 app = FastAPI(title=f"SIF Client Firewall [{CLIENT_ID}]", version="3.0.0")
 app.add_middleware(
@@ -44,9 +51,41 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+app.mount("/assets", StaticFiles(directory=str(STATIC_DIR)), name="client-assets")
 
-events: deque[dict] = deque(maxlen=200)
+events: deque[dict[str, Any]] = deque(maxlen=250)
 model_version = "3.0.0-base"
+state_lock = threading.Lock()
+
+DEFAULT_STATE: dict[str, Any] = {
+    "profile": {
+        "company_name": CLIENT_ID.replace("-", " ").title(),
+        "company_logo": "",
+        "primary_contact": "",
+        "environment": "production",
+    },
+    "protection": {
+        "block_threshold": 0.30,
+        "challenge_threshold": 0.70,
+        "auto_block_osint": True,
+        "strict_mode": False,
+        "rate_limit": 2500,
+    },
+    "notifications": {
+        "emails": [],
+        "slack_webhook": "",
+        "pagerduty_key": "",
+        "quiet_hours": "",
+        "severity": "warning",
+    },
+    "assets": [],
+    "blocklist": [],
+    "whitelist": [],
+    "rules": [],
+    "team": [],
+}
+
+dashboard_state: dict[str, Any] = deepcopy(DEFAULT_STATE)
 
 
 class FlowRequest(BaseModel):
@@ -54,6 +93,25 @@ class FlowRequest(BaseModel):
     source_ip: str = ""
     destination_ip: str = ""
     protocol: int = 6
+
+
+class DashboardStatePatch(BaseModel):
+    profile: dict[str, Any] = Field(default_factory=dict)
+    protection: dict[str, Any] = Field(default_factory=dict)
+    notifications: dict[str, Any] = Field(default_factory=dict)
+    assets: list[dict[str, Any]] | None = None
+    team: list[dict[str, Any]] | None = None
+
+
+class ValueEntry(BaseModel):
+    value: str
+
+
+class RuleCreate(BaseModel):
+    name: str
+    condition: str
+    action: str
+    enabled: bool = True
 
 
 def _load_model_version():
@@ -69,16 +127,66 @@ def _store_model_version(version: str):
     global model_version
     model_version = version
     MODEL_VERSION_FILE.parent.mkdir(parents=True, exist_ok=True)
-    MODEL_VERSION_FILE.write_text(json.dumps({"version": version, "updated_at": datetime.utcnow().isoformat()}))
+    MODEL_VERSION_FILE.write_text(
+        json.dumps({"version": version, "updated_at": datetime.utcnow().isoformat()}),
+        encoding="utf-8",
+    )
 
 
-def _record_event(payload: dict):
+def _normalize_state(raw: dict[str, Any] | None) -> dict[str, Any]:
+    state = deepcopy(DEFAULT_STATE)
+    if not raw:
+        return state
+    for key, default_value in DEFAULT_STATE.items():
+        value = raw.get(key)
+        if isinstance(default_value, dict):
+            merged = dict(default_value)
+            if isinstance(value, dict):
+                merged.update(value)
+            state[key] = merged
+        elif isinstance(default_value, list):
+            state[key] = value if isinstance(value, list) else list(default_value)
+        else:
+            state[key] = value if value is not None else default_value
+    return state
+
+
+def _load_dashboard_state():
+    global dashboard_state
+    if not STATE_FILE.exists():
+        dashboard_state = deepcopy(DEFAULT_STATE)
+        return
+    try:
+        dashboard_state = _normalize_state(json.loads(STATE_FILE.read_text(encoding="utf-8")))
+    except Exception as exc:
+        log.warning("Failed to load client dashboard state: %s", exc)
+        dashboard_state = deepcopy(DEFAULT_STATE)
+
+
+def _save_dashboard_state():
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATE_FILE.write_text(json.dumps(dashboard_state, indent=2), encoding="utf-8")
+
+
+def _snapshot_state() -> dict[str, Any]:
+    with state_lock:
+        return deepcopy(dashboard_state)
+
+
+def _update_state(mutator):
+    with state_lock:
+        mutator(dashboard_state)
+        _save_dashboard_state()
+        return deepcopy(dashboard_state)
+
+
+def _record_event(payload: dict[str, Any]):
     payload = payload.copy()
     payload["timestamp"] = datetime.utcnow().isoformat()
     events.appendleft(payload)
 
 
-async def _report_to_super_control(payload: dict):
+async def _report_to_super_control(payload: dict[str, Any]):
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             response = await client.post(f"{CONTROL_URL}/api/v1/threats/ingest", json=payload)
@@ -119,15 +227,39 @@ def start_model_update_consumer():
     thread.start()
 
 
+def _render_dashboard(section: str) -> HTMLResponse:
+    safe_section = section if section in {"overview", "traffic", "threats", "protection", "reports", "settings"} else "overview"
+    bootstrap = {
+        "clientId": CLIENT_ID,
+        "section": safe_section,
+        "modelVersion": model_version,
+        "apiKeyPresent": bool(API_KEY),
+    }
+    template = TEMPLATE_FILE.read_text(encoding="utf-8")
+    html = template.replace("__BOOTSTRAP__", json.dumps(bootstrap))
+    return HTMLResponse(html)
+
+
 @app.on_event("startup")
 async def startup():
     _load_model_version()
+    _load_dashboard_state()
     start_model_update_consumer()
 
 
 @app.get("/")
 def root():
-    return RedirectResponse(url="/dashboard", status_code=307)
+    return RedirectResponse(url="/dashboard/overview", status_code=307)
+
+
+@app.get("/dashboard")
+def dashboard_root():
+    return RedirectResponse(url="/dashboard/overview", status_code=307)
+
+
+@app.get("/dashboard/{section}", response_class=HTMLResponse)
+def dashboard(section: str):
+    return _render_dashboard(section)
 
 
 @app.get("/api/v1/status")
@@ -155,74 +287,93 @@ def list_events():
     return {"client_id": CLIENT_ID, "count": len(events), "events": list(events)}
 
 
-@app.get("/dashboard", response_class=HTMLResponse)
-def dashboard():
-    return f"""
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SIF Client Dashboard</title>
-    <style>
-      body {{
-        font-family: "Segoe UI", sans-serif;
-        margin: 0;
-        color: #ecfeff;
-        background: radial-gradient(circle at top left, #164e63, #082f49 45%, #020617 100%);
-      }}
-      main {{ max-width: 1100px; margin: 0 auto; padding: 24px; }}
-      .panel {{
-        background: rgba(15, 23, 42, 0.75);
-        border: 1px solid rgba(125, 211, 252, 0.18);
-        border-radius: 18px;
-        padding: 18px;
-        backdrop-filter: blur(10px);
-      }}
-      table {{ width: 100%; border-collapse: collapse; }}
-      th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid rgba(148, 163, 184, 0.15); }}
-      .badge {{ display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; }}
-      .block {{ background: rgba(220, 38, 38, 0.18); color: #fecaca; }}
-      .auth {{ background: rgba(202, 138, 4, 0.18); color: #fde68a; }}
-      .allow {{ background: rgba(22, 163, 74, 0.18); color: #bbf7d0; }}
-    </style>
-  </head>
-  <body>
-    <main>
-      <div class="panel">
-        <h1>Client Sub-Dashboard</h1>
-        <p>Client <strong>{CLIENT_ID}</strong> · Model <strong id="model-version">{model_version}</strong></p>
-      </div>
-      <div class="panel" style="margin-top: 20px;">
-        <h2>Recent Events</h2>
-        <table>
-          <thead>
-            <tr><th>Time</th><th>Attack</th><th>Source</th><th>Confidence</th><th>Action</th></tr>
-          </thead>
-          <tbody id="events"></tbody>
-        </table>
-      </div>
-    </main>
-    <script>
-      async function refresh() {{
-        const res = await fetch('/api/v1/events');
-        const data = await res.json();
-        document.getElementById('events').innerHTML = data.events.map((event) => `
-          <tr>
-            <td>${{new Date(event.timestamp).toLocaleTimeString()}}</td>
-            <td>${{event.attack_type}}</td>
-            <td>${{event.source_ip || '—'}}</td>
-            <td>${{Math.round((event.confidence || 0) * 100)}}%</td>
-            <td><span class="badge ${{event.action_taken === 'block_ip' ? 'block' : event.action_taken === 'require_auth' ? 'auth' : 'allow'}}">${{event.action_taken}}</span></td>
-          </tr>
-        `).join('') || '<tr><td colspan="5">No events yet</td></tr>';
-      }}
-      refresh();
-      setInterval(refresh, 5000);
-    </script>
-  </body>
-</html>
-"""
+@app.get("/api/v1/dashboard/state")
+def get_dashboard_state():
+    return _snapshot_state()
+
+
+@app.patch("/api/v1/dashboard/state")
+def patch_dashboard_state(payload: DashboardStatePatch):
+    def mutator(state: dict[str, Any]):
+        if payload.profile:
+            state["profile"].update(payload.profile)
+        if payload.protection:
+            state["protection"].update(payload.protection)
+        if payload.notifications:
+            state["notifications"].update(payload.notifications)
+        if payload.assets is not None:
+            state["assets"] = payload.assets
+        if payload.team is not None:
+            state["team"] = payload.team
+
+    return _update_state(mutator)
+
+
+@app.post("/api/v1/dashboard/blocklist")
+def add_blocklist_entry(entry: ValueEntry):
+    value = entry.value.strip()
+    if not value:
+        raise HTTPException(status_code=400, detail="Value is required")
+
+    def mutator(state: dict[str, Any]):
+        if value not in state["blocklist"]:
+            state["blocklist"].append(value)
+
+    return {"status": "ok", "state": _update_state(mutator)}
+
+
+@app.delete("/api/v1/dashboard/blocklist/{value}")
+def remove_blocklist_entry(value: str):
+    def mutator(state: dict[str, Any]):
+        state["blocklist"] = [item for item in state["blocklist"] if item != value]
+
+    return {"status": "ok", "state": _update_state(mutator)}
+
+
+@app.post("/api/v1/dashboard/whitelist")
+def add_whitelist_entry(entry: ValueEntry):
+    value = entry.value.strip()
+    if not value:
+        raise HTTPException(status_code=400, detail="Value is required")
+
+    def mutator(state: dict[str, Any]):
+        if value not in state["whitelist"]:
+            state["whitelist"].append(value)
+
+    return {"status": "ok", "state": _update_state(mutator)}
+
+
+@app.delete("/api/v1/dashboard/whitelist/{value}")
+def remove_whitelist_entry(value: str):
+    def mutator(state: dict[str, Any]):
+        state["whitelist"] = [item for item in state["whitelist"] if item != value]
+
+    return {"status": "ok", "state": _update_state(mutator)}
+
+
+@app.post("/api/v1/dashboard/rules")
+def create_rule(payload: RuleCreate):
+    def mutator(state: dict[str, Any]):
+        state["rules"].append(
+            {
+                "id": str(uuid.uuid4()),
+                "name": payload.name,
+                "condition": payload.condition,
+                "action": payload.action,
+                "enabled": payload.enabled,
+                "created_at": datetime.utcnow().isoformat(),
+            }
+        )
+
+    return {"status": "ok", "state": _update_state(mutator)}
+
+
+@app.delete("/api/v1/dashboard/rules/{rule_id}")
+def delete_rule(rule_id: str):
+    def mutator(state: dict[str, Any]):
+        state["rules"] = [rule for rule in state["rules"] if rule.get("id") != rule_id]
+
+    return {"status": "ok", "state": _update_state(mutator)}
 
 
 @app.post("/api/v1/detect")
@@ -258,6 +409,10 @@ async def detect(request: FlowRequest):
         "trust_score": result.get("trust_score", 0.5),
         "action_taken": result.get("action_taken", "allow"),
         "model_version": result.get("model_version", model_version),
+        "protocol": request.protocol,
+        "bytes": max(256, int(sum(request.features[:5]) * 12)) if request.features else 256,
+        "packets": max(4, int(sum(request.features[:3]) * 2)) if request.features else 4,
+        "duration_ms": max(1, int(request.features[0] if request.features else 1)),
     }
     _record_event(event)
 

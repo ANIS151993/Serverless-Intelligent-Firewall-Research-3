@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SIF Client Dashboard</title>
+    <link rel="stylesheet" href="/assets/client-dashboard.css" />
+  </head>
+  <body>
+    <div class="client-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <div class="brand-mark">SIF</div>
+          <div>
+            <div class="eyebrow">ASLF-OSINT Client Portal</div>
+            <h1 id="company-title">Client Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="search-box">Search threats, IPs, reports</div>
+          <div class="notification-pill" id="notification-pill">0 alerts</div>
+          <div class="profile-chip" id="profile-chip">Client Admin</div>
+        </div>
+      </header>
+
+      <nav class="nav-row" id="nav-row">
+        <button data-section="overview">Overview</button>
+        <button data-section="traffic">Traffic</button>
+        <button data-section="threats">Threats</button>
+        <button data-section="protection">Protection</button>
+        <button data-section="reports">Reports</button>
+        <button data-section="settings">Settings</button>
+      </nav>
+
+      <main class="content-shell">
+        <section class="hero-panel" id="hero-panel"></section>
+        <section id="content"></section>
+      </main>
+    </div>
+
+    <div class="toast-shell" id="toast-shell"></div>
+
+    <script>
+      window.SIF_CLIENT_BOOTSTRAP = __BOOTSTRAP__;
+    </script>
+    <script defer src="/assets/client-dashboard.js"></script>
+  </body>
+</html>
