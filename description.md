@@ -152,3 +152,8 @@ Disk size: 60 GiB
 CPU cores: 2
 Memory: 4096 MiB
 
+Required Access permission:
+
+both Proxmox server Root user: root ; password: MARC@151995#
+GitHub Repo: https://github.com/ANIS151993/Serverless-Intelligent-Firewall-Research-3.git
+GitHub token: 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
