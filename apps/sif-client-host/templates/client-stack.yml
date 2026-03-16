@@ -1,7 +1,7 @@
 services:
   sif-firewall:
     image: python:3.11-slim
-    container_name: sif-CLIENT_ID-firewall
+    container_name: sif-CLIENT_STACK_ID-firewall
     environment:
       CLIENT_ID: CLIENT_ID_VALUE
       API_KEY: API_KEY_VAL
@@ -9,8 +9,8 @@ services:
       SUPER_CONTROL_URL: http://172.16.185.97:8000
       BROKER_URL: amqp://sifadmin:SIF_Rabbit2024!@172.16.185.236:5672/
     volumes:
-      - sif-CLIENT_ID-models:/models
-      - sif-CLIENT_ID-logs:/logs
+      - sif-CLIENT_STACK_ID-models:/models
+      - sif-CLIENT_STACK_ID-logs:/logs
       - /opt/sif-client-host/subsystem_app:/app:ro
     working_dir: /app
     command: >
@@ -25,12 +25,12 @@ services:
     ports:
       - "127.0.0.1:CLIENT_HOST_PORT:8080"
     networks:
-      - sif-CLIENT_ID-net
+      - sif-CLIENT_STACK_ID-net
 
 networks:
-  sif-CLIENT_ID-net:
+  sif-CLIENT_STACK_ID-net:
     driver: bridge
 
 volumes:
-  sif-CLIENT_ID-models:
-  sif-CLIENT_ID-logs:
+  sif-CLIENT_STACK_ID-models:
+  sif-CLIENT_STACK_ID-logs:

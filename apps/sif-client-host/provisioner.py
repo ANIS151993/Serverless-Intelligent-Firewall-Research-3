@@ -89,7 +89,7 @@ def provision(request: ProvisionRequest):
     with open(TEMPLATE, "r", encoding="utf-8") as handle:
         compose = handle.read()
     compose = compose.replace("CLIENT_ID_VALUE", request.client_id)
-    compose = compose.replace("CLIENT_ID", request.client_id)
+    compose = compose.replace("CLIENT_STACK_ID", request.client_id)
     compose = compose.replace("API_KEY_VAL", request.api_key)
     compose = compose.replace("CLIENT_HOST_PORT", str(host_port))
 
